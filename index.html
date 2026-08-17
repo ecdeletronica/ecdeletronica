@@ -94,7 +94,7 @@
         }
 
         /* ============================================
-                   HEADER - LOGO, QR CODE E MOLDURA MAIORES
+                   HEADER - LOGO, QR CODE E MOLDURA AINDA MAIORES
                    ============================================ */
         header {
             background: rgba(255,255,255,0.92);
@@ -105,7 +105,7 @@
             top: 0;
             z-index: 1000;
             border-bottom: 2px solid rgba(230, 126, 34, 0.15);
-            padding: 18px 0;
+            padding: 20px 0; /* AUMENTADO */
         }
         header .container {
             display: flex;
@@ -119,38 +119,38 @@
         .logo-area {
             display: flex;
             align-items: center;
-            gap: 1.5rem;
+            gap: 1.8rem; /* AUMENTADO */
         }
 
-        /* MOLDURA GROSSA - 6px */
+        /* MOLDURA MAIS GROSSA - 8px */
         .logo-wrapper {
             background: rgba(255,255,255,0.8);
-            padding: 10px; /* AUMENTADO de 8px para 10px */
-            border-radius: 20px; /* AUMENTADO de 16px para 20px */
-            box-shadow: 0 6px 15px rgba(10, 46, 77, 0.15);
+            padding: 12px; /* AUMENTADO de 10px para 12px */
+            border-radius: 24px; /* AUMENTADO de 20px para 24px */
+            box-shadow: 0 8px 25px rgba(10, 46, 77, 0.18);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            border: 6px solid rgba(230, 126, 34, 0.35); /* GROSSA: 6px */
+            border: 8px solid rgba(230, 126, 34, 0.4); /* GROSSA: 8px */
         }
         .logo-wrapper:hover {
-            transform: scale(1.03);
-            box-shadow: 0 8px 25px rgba(230, 126, 34, 0.25);
+            transform: scale(1.04);
+            box-shadow: 0 10px 35px rgba(230, 126, 34, 0.3);
             border-color: var(--secondary);
         }
         .logo-wrapper img {
-            width: 130px; /* AUMENTADO de 110px para 130px */
+            width: 150px; /* AUMENTADO de 130px para 150px */
             height: auto;
-            max-height: 130px;
-            border-radius: 12px;
+            max-height: 150px;
+            border-radius: 14px;
             object-fit: contain;
             background: white;
             display: block;
         }
 
         .logo-text h1 {
-            font-size: 2.2rem;
+            font-size: 2.4rem; /* AUMENTADO */
             line-height: 1.2;
             color: var(--primary);
             font-weight: 800;
@@ -160,7 +160,7 @@
             color: var(--secondary);
         }
         .logo-text .slogan {
-            font-size: 0.9rem;
+            font-size: 1rem; /* AUMENTADO */
             color: var(--gray-600);
             font-weight: 400;
             letter-spacing: 0.3px;
@@ -168,28 +168,28 @@
             margin-top: -2px;
         }
 
-        /* QR CODE MAIOR */
+        /* QR CODE AINDA MAIOR */
         .qrcode-header {
             display: flex;
             align-items: center;
-            gap: 1rem; /* AUMENTADO de 0.8rem para 1rem */
-            background: rgba(230, 126, 34, 0.06);
-            padding: 0.8rem 1.8rem; /* AUMENTADO */
+            gap: 1.2rem; /* AUMENTADO */
+            background: rgba(230, 126, 34, 0.08);
+            padding: 0.8rem 2rem; /* AUMENTADO */
             border-radius: 100px;
-            border: 2px solid rgba(230, 126, 34, 0.15); /* GROSSA: 2px */
+            border: 2px solid rgba(230, 126, 34, 0.2);
             transition: all 0.3s ease;
             text-decoration: none;
         }
         .qrcode-header:hover {
-            background: rgba(230, 126, 34, 0.1);
-            transform: scale(1.02);
-            box-shadow: var(--shadow-sm);
+            background: rgba(230, 126, 34, 0.15);
+            transform: scale(1.03);
+            box-shadow: 0 8px 30px rgba(230, 126, 34, 0.15);
             border-color: var(--secondary);
         }
         .qrcode-header img {
-            width: 56px; /* AUMENTADO de 44px para 56px */
-            height: 56px;
-            border-radius: 14px;
+            width: 64px; /* AUMENTADO de 56px para 64px */
+            height: 64px;
+            border-radius: 16px;
             background: white;
             padding: 6px;
             object-fit: contain;
@@ -200,8 +200,8 @@
             line-height: 1.2;
         }
         .qrcode-header .qr-text span {
-            font-size: 1.1rem; /* AUMENTADO de 1rem para 1.1rem */
-            font-weight: 600;
+            font-size: 1.2rem; /* AUMENTADO de 1.1rem para 1.2rem */
+            font-weight: 700;
             color: var(--primary);
         }
         .qrcode-header .qr-text span i {
@@ -210,12 +210,12 @@
         }
         .qrcode-header .qr-text small {
             color: var(--gray-600);
-            font-size: 0.8rem; /* AUMENTADO de 0.75rem para 0.8rem */
+            font-size: 0.85rem; /* AUMENTADO de 0.8rem para 0.85rem */
         }
 
         .nav-links {
             display: flex;
-            gap: 32px;
+            gap: 36px; /* AUMENTADO */
             list-style: none;
             align-items: center;
         }
@@ -224,7 +224,7 @@
             text-decoration: none;
             font-weight: 600;
             transition: 0.3s;
-            font-size: 1rem;
+            font-size: 1.05rem; /* AUMENTADO */
         }
         .nav-links a:hover {
             color: var(--primary);
@@ -232,7 +232,7 @@
         .nav-cta {
             background: var(--secondary);
             color: var(--white) !important;
-            padding: 12px 32px;
+            padding: 12px 34px; /* AUMENTADO */
             border-radius: 50px;
             font-weight: 700;
         }
@@ -262,7 +262,7 @@
                    ============================================ */
         .hero {
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-            padding: 170px 0 80px;
+            padding: 180px 0 80px; /* AUMENTADO */
             color: var(--white);
         }
         .hero .container {
@@ -716,8 +716,8 @@
                 display: none;
             }
             .logo-wrapper img {
-                width: 100px;
-                max-height: 100px;
+                width: 110px;
+                max-height: 110px;
             }
             .logo-text h1 {
                 font-size: 1.8rem;
@@ -753,7 +753,7 @@
                 display: flex;
             }
             .hero {
-                padding: 150px 0 60px;
+                padding: 160px 0 60px;
             }
             .hero h1 {
                 font-size: 2rem;
@@ -768,12 +768,12 @@
                 font-size: 0.65rem;
             }
             .logo-wrapper img {
-                width: 74px;
-                max-height: 74px;
+                width: 80px;
+                max-height: 80px;
             }
             .logo-wrapper {
                 padding: 8px;
-                border-width: 4px;
+                border-width: 5px;
             }
             .contact-form {
                 padding: 24px;
@@ -816,12 +816,12 @@
                 font-size: 0.55rem;
             }
             .logo-wrapper img {
-                width: 60px;
-                max-height: 60px;
+                width: 64px;
+                max-height: 64px;
             }
             .logo-wrapper {
                 padding: 6px;
-                border-width: 3px;
+                border-width: 4px;
             }
             .hero h1 {
                 font-size: 1.6rem;
@@ -843,7 +843,7 @@
 <body>
 
     <!-- ==========================================
-    HEADER - LOGO, QR CODE E MOLDURA MAIORES
+    HEADER - LOGO, QR CODE E MOLDURA AINDA MAIORES
     ========================================== -->
     <header>
         <div class="container">
