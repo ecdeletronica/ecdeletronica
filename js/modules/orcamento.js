@@ -1,6 +1,6 @@
 // js/modules/orcamento.js - Sistema de Orçamento para ECD Eletrônica
-// ✅ Versão ESTÁVEL v2.4 - WHATSAPP COM IMAGEM
-console.log('✅ orcamento.js carregado - Versão ESTÁVEL v2.4');
+// ✅ Versão ESTÁVEL v2.5 - WHATSAPP COM IMAGEM + DOWNLOAD + MENSAGEM
+console.log('✅ orcamento.js carregado - Versão ESTÁVEL v2.5');
 
 // ============================================================
 // CONFIGURAÇÕES
@@ -179,14 +179,18 @@ function calcularTotalItens(itens) {
     return total;
 }
 
+// ============================================================
+// FUNÇÃO PARA GERAR NÚMERO DO ORÇAMENTO COM DIA
+// ============================================================
+
 function gerarNumeroOrcamento() {
-    var ano = new Date().getFullYear();
+    var agora = new Date();
+    var ano = agora.getFullYear();
+    var mes = String(agora.getMonth() + 1).padStart(2, '0');
+    var dia = String(agora.getDate()).padStart(2, '0');
     var ultimo = window.orcamentos.length || 0;
-    var sequencial = String(ultimo + 1);
-    while (sequencial.length < 4) {
-        sequencial = "0" + sequencial;
-    }
-    return "ECD-" + ano + "-" + sequencial;
+    var sequencial = String(ultimo + 1).padStart(4, '0');
+    return "ECD-" + ano + mes + dia + "-" + sequencial;
 }
 
 // ============================================================
@@ -901,7 +905,7 @@ function gerarPDFOrcamento(id) {
 }
 
 // ============================================================
-// FUNÇÃO PRINCIPAL: ENVIAR WHATSAPP COM IMAGEM
+// FUNÇÃO PRINCIPAL: ENVIAR WHATSAPP COM IMAGEM (FUNCIONAL)
 // ============================================================
 
 function enviarWhatsAppOrcamento(id) {
@@ -919,7 +923,7 @@ function enviarWhatsAppOrcamento(id) {
     
     // Verificar se a biblioteca html2canvas está carregada
     if (typeof html2canvas === "undefined") {
-        mostrarNotificacao("📥 Carregando bibliotecas...", "info");
+        mostrarNotificacao("📥 Carregando biblioteca de imagem...", "info");
         var script = document.createElement("script");
         script.src = "https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js";
         script.onload = function() {
@@ -947,6 +951,7 @@ function enviarWhatsAppOrcamento(id) {
         container.style.fontFamily = "'Courier New', monospace";
         container.style.fontSize = "12px";
         container.style.boxSizing = "border-box";
+        container.style.position = "relative";
         
         // Garantir que as imagens carreguem
         var imagens = container.querySelectorAll("img");
@@ -955,7 +960,7 @@ function enviarWhatsAppOrcamento(id) {
             imagens[i].setAttribute("crossOrigin", "anonymous");
         }
         
-        // Adicionar ao corpo para renderizar
+        // Adicionar ao corpo para renderizar (off-screen)
         container.style.position = "absolute";
         container.style.left = "-9999px";
         container.style.top = "0";
@@ -969,12 +974,11 @@ function enviarWhatsAppOrcamento(id) {
             logging: false,
             backgroundColor: "#ffffff",
             width: 800,
-            height: container.scrollHeight + 20,
+            height: container.scrollHeight + 40,
             scrollY: 0,
             scrollX: 0,
             windowWidth: 800,
             onclone: function(clonedDoc, element) {
-                // Garantir que as imagens sejam carregadas
                 var imgs = element.querySelectorAll("img");
                 for (var i = 0; i < imgs.length; i++) {
                     imgs[i].crossOrigin = "anonymous";
@@ -986,12 +990,14 @@ function enviarWhatsAppOrcamento(id) {
         html2canvas(container, options)
             .then(function(canvas) {
                 // Remover o container
-                document.body.removeChild(container);
+                if (container.parentNode) {
+                    document.body.removeChild(container);
+                }
                 
-                // Converter canvas para data URL (imagem)
+                // Converter canvas para data URL (imagem PNG)
                 var imageDataUrl = canvas.toDataURL("image/png");
                 
-                // Criar um link para download da imagem (fallback)
+                // 1. BAIXAR A IMAGEM AUTOMATICAMENTE
                 var link = document.createElement("a");
                 link.href = imageDataUrl;
                 link.download = "Orçamento_" + (orc.numero || "ECD") + ".png";
@@ -999,44 +1005,33 @@ function enviarWhatsAppOrcamento(id) {
                 link.click();
                 document.body.removeChild(link);
                 
-                // Enviar a imagem via WhatsApp usando um truque:
-                // O WhatsApp Web aceita imagens via URL. Vamos criar um blob e usar FileReader
-                fetch(imageDataUrl)
-                    .then(function(res) { return res.blob(); })
-                    .then(function(blob) {
-                        var reader = new FileReader();
-                        reader.onloadend = function() {
-                            // Construir a mensagem para WhatsApp
-                            var telefone = ORCAMENTO_CONFIG.empresa.whatsapp;
-                            var mensagem = "*" + ORCAMENTO_CONFIG.empresa.nome + "*\n";
-                            mensagem += "Orçamento: " + (orc.numero || "N/A") + "\n";
-                            mensagem += "Data: " + formatarData(orc.data) + "\n";
-                            mensagem += "Cliente: " + (orc.cliente || "Não informado") + "\n";
-                            mensagem += "Total: " + formatarMoeda(orc.total || 0) + "\n";
-                            mensagem += "\n*Pagamento via PIX:* " + ORCAMENTO_CONFIG.banco.pix;
-                            mensagem += "\n*Site:* " + ORCAMENTO_CONFIG.empresa.site;
-                            mensagem += "\n\n*Assistência Técnica Independente*";
-                            mensagem += "\n" + ORCAMENTO_CONFIG.empresa.telefone;
-                            
-                            // Abrir WhatsApp com a mensagem
-                            var mensagemCodificada = encodeURIComponent(mensagem);
-                            var url = "https://wa.me/" + telefone + "?text=" + mensagemCodificada;
-                            window.open(url, "_blank");
-                            
-                            mostrarNotificacao("✅ Imagem gerada e WhatsApp aberto!", "success");
-                        };
-                        reader.readAsDataURL(blob);
-                    })
-                    .catch(function(error) {
-                        console.error("Erro ao processar imagem:", error);
-                        // Fallback: enviar apenas a mensagem
-                        enviarWhatsAppMensagem(orc);
-                    });
+                mostrarNotificacao("✅ Imagem baixada!", "success");
+                
+                // 2. ABRIR O WHATSAPP COM A MENSAGEM
+                var telefone = ORCAMENTO_CONFIG.empresa.whatsapp;
+                var mensagem = "*" + ORCAMENTO_CONFIG.empresa.nome + "*\n";
+                mensagem += "Orçamento: " + (orc.numero || "N/A") + "\n";
+                mensagem += "Data: " + formatarData(orc.data) + "\n";
+                mensagem += "Cliente: " + (orc.cliente || "Não informado") + "\n";
+                mensagem += "Total: " + formatarMoeda(orc.total || 0) + "\n";
+                mensagem += "\n*Pagamento via PIX:* " + ORCAMENTO_CONFIG.banco.pix;
+                mensagem += "\n*Site:* " + ORCAMENTO_CONFIG.empresa.site;
+                mensagem += "\n\n*Assistência Técnica Independente*";
+                mensagem += "\n" + ORCAMENTO_CONFIG.empresa.telefone;
+                
+                // Abrir WhatsApp com a mensagem
+                var mensagemCodificada = encodeURIComponent(mensagem);
+                var url = "https://wa.me/" + telefone + "?text=" + mensagemCodificada;
+                window.open(url, "_blank");
+                
+                mostrarNotificacao("💬 WhatsApp aberto! Anexe a imagem baixada.", "success");
             })
             .catch(function(error) {
                 console.error("Erro ao gerar imagem:", error);
-                document.body.removeChild(container);
-                mostrarNotificacao("⚠️ Gerando apenas mensagem...", "warning");
+                if (container.parentNode) {
+                    document.body.removeChild(container);
+                }
+                mostrarNotificacao("⚠️ Erro ao gerar imagem. Enviando mensagem...", "warning");
                 enviarWhatsAppMensagem(orc);
             });
             
@@ -1323,4 +1318,4 @@ if (document.readyState === "loading") {
     initializeOrcamento();
 }
 
-console.log("✅ orcamento.js v2.4 carregado - WHATSAPP COM IMAGEM!");
+console.log("✅ orcamento.js v2.5 carregado - WHATSAPP COM IMAGEM E DOWNLOAD!");
