@@ -1162,8 +1162,6 @@ window.duplicarOrcamento = duplicarOrcamento;
 window.mostrarNotificacao = mostrarNotificacao;
 window.fecharModalWin98 = fecharModalWin98;
 
-console.log('✅ orcamento.js v1.5 carregado - TODOS OS BOTÕES CORRIGIDOS!');
-
 // ============================================================
 // INICIALIZAR
 // ============================================================
@@ -1173,3 +1171,5 @@ if (document.readyState === 'loading') {
 } else {
     initializeOrcamento();
 }
+
+console.log('✅ orcamento.js v1.5 carregado - TODOS OS BOTÕES CORRIGIDOS!');
