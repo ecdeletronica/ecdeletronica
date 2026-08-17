@@ -1,7 +1,10 @@
 // js/modules/orcamento.js - Sistema de Orçamento para ECD Eletrônica
-// ✅ Versão ESTÁVEL v2.8 - CORREÇÕES: PDF e WhatsApp do Recibo, ícone Admin, senha e213
+// ✅ Versão ESTÁVEL v2.9 - CORREÇÃO DO WHATSAPP DO RECIBO
+console.log('✅ orcamento.js carregado - Versão ESTÁVEL v2.9');
+
 // ============================================================
-console.log('✅ orcamento.js carregado - Versão ESTÁVEL v2.8');
+// CONFIGURAÇÕES
+// ============================================================
 
 var ORCAMENTO_CONFIG = {
     password: "ecd60",
@@ -51,7 +54,39 @@ function gerarNumeroOrcamento() {
 }
 
 // ============================================================
-// FUNÇÃO PARA GERAR RECIBO
+// FUNÇÕES DE FORMATAÇÃO (necessárias para o recibo)
+// ============================================================
+
+function formatarMoeda(valor) {
+    if (!valor && valor !== 0) return "R$ 0,00";
+    return new Intl.NumberFormat("pt-BR", {
+        style: "currency",
+        currency: "BRL"
+    }).format(valor);
+}
+
+function formatarData(data) {
+    if (!data) return "";
+    try {
+        var d = new Date(data);
+        return d.toLocaleDateString("pt-BR");
+    } catch (e) {
+        return data;
+    }
+}
+
+function formatarDataHora(data) {
+    if (!data) return "";
+    try {
+        var d = new Date(data);
+        return d.toLocaleDateString("pt-BR") + " " + d.toLocaleTimeString("pt-BR");
+    } catch (e) {
+        return data;
+    }
+}
+
+// ============================================================
+// FUNÇÃO PARA GERAR RECIBO (CORRIGIDA)
 // ============================================================
 
 function gerarRecibo(id) {
@@ -104,6 +139,23 @@ function gerarRecibo(id) {
 function gerarHtmlRecibo(orc) {
     var dataAtual = formatarDataHora(new Date().toISOString());
     var valorPorExtenso = converterValorPorExtenso(orc.total || 0);
+    var orcId = orc.id;
+    var orcNumero = orc.numero || "N/A";
+    var orcCliente = orc.cliente || "Não informado";
+    var orcTotal = orc.total || 0;
+    var orcData = orc.data || "";
+    var orcCnpj = orc.cnpj || "";
+    var orcEndereco = orc.endereco || "";
+    
+    // Construir a lista de itens
+    var itensHtml = "";
+    for (var i = 0; i < orc.itens.length; i++) {
+        var item = orc.itens[i];
+        itensHtml += "<div style=\"font-size:0.7rem; padding:2px 0; border-bottom:1px dotted #eee;\">";
+        itensHtml += (i + 1) + ". " + (item.descricao || "Item") + " - " + (item.quantidade || 1) + "x " + formatarMoeda(item.valor_unitario || 0);
+        itensHtml += " = " + formatarMoeda((item.quantidade || 0) * (item.valor_unitario || 0));
+        itensHtml += "</div>";
+    }
     
     var html = "";
     html += "<div class=\"recibo-container\">";
@@ -111,7 +163,7 @@ function gerarHtmlRecibo(orc) {
     // CABEÇALHO - SEM EMOJI
     html += "<div class=\"recibo-header\">";
     html += "<h1>NOTA DE RECIBO</h1>";
-    html += "<div class=\"numero\"><strong>Nº:</strong> " + (orc.numero || "N/A") + " | <strong>Data:</strong> " + formatarData(orc.data) + "</div>";
+    html += "<div class=\"numero\"><strong>Nº:</strong> " + orcNumero + " | <strong>Data:</strong> " + formatarData(orcData) + "</div>";
     html += "<div style=\"font-size:0.75rem; color:#666;\">" + ORCAMENTO_CONFIG.empresa.nome + " - CNPJ: " + ORCAMENTO_CONFIG.empresa.cnpj + "</div>";
     html += "</div>";
     
@@ -120,19 +172,19 @@ function gerarHtmlRecibo(orc) {
     html += "<p style=\"text-align:center; font-size:0.85rem; margin-bottom:8px;\"><strong>RECEBEMOS DE:</strong></p>";
     
     // DADOS DO CLIENTE
-    html += "<div class=\"recibo-linha\"><span class=\"label\">CLIENTE:</span><span class=\"valor\">" + (orc.cliente || "Não informado") + "</span></div>";
-    if (orc.cnpj) {
-        html += "<div class=\"recibo-linha\"><span class=\"label\">CNPJ/CPF:</span><span class=\"valor\">" + orc.cnpj + "</span></div>";
+    html += "<div class=\"recibo-linha\"><span class=\"label\">CLIENTE:</span><span class=\"valor\">" + orcCliente + "</span></div>";
+    if (orcCnpj) {
+        html += "<div class=\"recibo-linha\"><span class=\"label\">CNPJ/CPF:</span><span class=\"valor\">" + orcCnpj + "</span></div>";
     }
-    if (orc.endereco) {
-        html += "<div class=\"recibo-linha\"><span class=\"label\">ENDEREÇO:</span><span class=\"valor\">" + orc.endereco + "</span></div>";
+    if (orcEndereco) {
+        html += "<div class=\"recibo-linha\"><span class=\"label\">ENDEREÇO:</span><span class=\"valor\">" + orcEndereco + "</span></div>";
     }
     
     html += "<div style=\"height:8px;\"></div>";
     
     // VALOR
     html += "<div class=\"recibo-total\">";
-    html += "VALOR RECEBIDO: <strong>" + formatarMoeda(orc.total || 0) + "</strong>";
+    html += "VALOR RECEBIDO: <strong>" + formatarMoeda(orcTotal) + "</strong>";
     html += "</div>";
     
     html += "<div style=\"text-align:center; font-size:0.75rem; margin:4px 0 12px;\">";
@@ -142,13 +194,7 @@ function gerarHtmlRecibo(orc) {
     // DESCRIÇÃO DOS SERVIÇOS
     html += "<div style=\"margin:8px 0; padding:6px; background:#f5f5f5; border:1px solid #ddd;\">";
     html += "<p style=\"font-weight:700; margin-bottom:4px; font-size:0.7rem;\">REFERENTE A:</p>";
-    for (var i = 0; i < orc.itens.length; i++) {
-        var item = orc.itens[i];
-        html += "<div style=\"font-size:0.7rem; padding:2px 0; border-bottom:1px dotted #eee;\">";
-        html += (i + 1) + ". " + (item.descricao || "Item") + " - " + (item.quantidade || 1) + "x " + formatarMoeda(item.valor_unitario || 0);
-        html += " = " + formatarMoeda((item.quantidade || 0) * (item.valor_unitario || 0));
-        html += "</div>";
-    }
+    html += itensHtml;
     html += "</div>";
     
     // DADOS DO PROPONENTE
@@ -164,7 +210,7 @@ function gerarHtmlRecibo(orc) {
     // ASSINATURAS
     html += "<div class=\"recibo-assinaturas\">";
     html += "<div><div class=\"linha\"></div><strong>Recebedor</strong><br><span style=\"font-size:0.6rem;\">" + ORCAMENTO_CONFIG.proponente.nome + "</span></div>";
-    html += "<div><div class=\"linha\"></div><strong>Cliente</strong><br><span style=\"font-size:0.6rem;\">" + (orc.cliente || "___________________") + "</span></div>";
+    html += "<div><div class=\"linha\"></div><strong>Cliente</strong><br><span style=\"font-size:0.6rem;\">" + orcCliente + "</span></div>";
     html += "</div>";
     
     // DISPOSITIVO LEGAL
@@ -181,30 +227,119 @@ function gerarHtmlRecibo(orc) {
     html += "<p>Documento gerado em " + formatarDataHora(new Date().toISOString()) + "</p>";
     html += "</div>";
     
-    // BOTÕES DO RECIBO - CORRIGIDOS
+    // ========================================
+    // BOTÕES DO RECIBO - COM FUNÇÕES EMBUTIDAS
+    // ========================================
     html += "<div class=\"text-center no-print\" style=\"margin-top:15px; text-align:center;\">";
     html += "<button class=\"btn-win98\" onclick=\"window.print()\"><i class=\"fas fa-print\"></i> Imprimir</button> ";
-    html += "<button class=\"btn-win98\" onclick=\"window.enviarReciboWhatsApp('" + orc.id + "')\"><i class=\"fab fa-whatsapp\"></i> WhatsApp</button> ";
-    html += "<button class=\"btn-win98\" onclick=\"window.gerarReciboPDF('" + orc.id + "')\"><i class=\"fas fa-file-pdf\"></i> PDF</button> ";
+    html += "<button class=\"btn-win98\" onclick=\"enviarReciboWhatsApp('" + orcId + "')\"><i class=\"fab fa-whatsapp\"></i> WhatsApp</button> ";
+    html += "<button class=\"btn-win98\" onclick=\"gerarReciboPDF('" + orcId + "')\"><i class=\"fas fa-file-pdf\"></i> PDF</button> ";
     html += "<button class=\"btn-win98\" onclick=\"window.close()\">Fechar</button>";
     html += "</div>";
     
-    // SCRIPT PARA AS FUNÇÕES DO RECIBO
+    // ========================================
+    // SCRIPT COMPLETO EMBUTIDO NO RECIBO
+    // ========================================
     html += "<script>";
-    html += "window.enviarReciboWhatsApp = function(id) {";
-    html += "  if (typeof window.enviarWhatsAppRecibo === 'function') {";
-    html += "    window.enviarWhatsAppRecibo(id);";
-    html += "  } else {";
-    html += "    alert('Função WhatsApp em carregamento. Tente novamente.');";
+    html += "var ORCAMENTO_CONFIG = " + JSON.stringify(ORCAMENTO_CONFIG) + ";";
+    html += "var ORC_ID = '" + orcId + "';";
+    html += "var ORC_NUMERO = '" + orcNumero + "';";
+    html += "var ORC_CLIENTE = '" + orcCliente.replace(/'/g, "\\'") + "';";
+    html += "var ORC_TOTAL = " + orcTotal + ";";
+    html += "var ORC_DATA = '" + orcData + "';";
+    html += "var ORC_CNPJ = '" + (orcCnpj || "") + "';";
+    html += "var ORC_ENDERECO = '" + (orcEndereco || "").replace(/'/g, "\\'") + "';";
+    html += "var ORC_ITENS = " + JSON.stringify(orc.itens) + ";";
+    html += "var EMPRESA_NOME = '" + ORCAMENTO_CONFIG.empresa.nome + "';";
+    html += "var EMPRESA_CNPJ = '" + ORCAMENTO_CONFIG.empresa.cnpj + "';";
+    html += "var EMPRESA_TELEFONE = '" + ORCAMENTO_CONFIG.empresa.telefone + "';";
+    html += "var EMPRESA_WHATSAPP = '" + ORCAMENTO_CONFIG.empresa.whatsapp + "';";
+    html += "var PROPONENTE_NOME = '" + ORCAMENTO_CONFIG.proponente.nome + "';";
+    html += "var PROPONENTE_PIX = '" + ORCAMENTO_CONFIG.proponente.pix + "';";
+    
+    // Função para converter valor por extenso (embutida)
+    html += "function converterValorPorExtenso(valor) {";
+    html += "  if (!valor || valor === 0) return 'Zero reais';";
+    html += "  var unidades = ['', 'um', 'dois', 'três', 'quatro', 'cinco', 'seis', 'sete', 'oito', 'nove'];";
+    html += "  var especiais = ['dez', 'onze', 'doze', 'treze', 'catorze', 'quinze', 'dezesseis', 'dezessete', 'dezoito', 'dezenove'];";
+    html += "  var dezenas = ['', '', 'vinte', 'trinta', 'quarenta', 'cinquenta', 'sessenta', 'setenta', 'oitenta', 'noventa'];";
+    html += "  var centenas = ['', 'cento', 'duzentos', 'trezentos', 'quatrocentos', 'quinhentos', 'seiscentos', 'setecentos', 'oitocentos', 'novecentos'];";
+    html += "  function numeroPorExtenso(num) {";
+    html += "    if (num === 0) return 'zero';";
+    html += "    if (num === 100) return 'cem';";
+    html += "    if (num >= 1000) {";
+    html += "      var milhares = Math.floor(num / 1000);";
+    html += "      var resto = num % 1000;";
+    html += "      var ext = milhares === 1 ? 'mil' : numeroPorExtenso(milhares) + ' mil';";
+    html += "      if (resto > 0) ext += ' e ' + numeroPorExtenso(resto);";
+    html += "      return ext;";
+    html += "    }";
+    html += "    if (num >= 100) {";
+    html += "      var centena = Math.floor(num / 100);";
+    html += "      var resto = num % 100;";
+    html += "      if (centena === 1 && resto === 0) return 'cem';";
+    html += "      var ext = centenas[centena];";
+    html += "      if (resto > 0) ext += ' e ' + numeroPorExtenso(resto);";
+    html += "      return ext;";
+    html += "    }";
+    html += "    if (num >= 20) {";
+    html += "      var dezena = Math.floor(num / 10);";
+    html += "      var unidade = num % 10;";
+    html += "      var ext = dezenas[dezena];";
+    html += "      if (unidade > 0) ext += ' e ' + unidades[unidade];";
+    html += "      return ext;";
+    html += "    }";
+    html += "    if (num >= 10) return especiais[num - 10];";
+    html += "    return unidades[num];";
     html += "  }";
-    html += "};";
-    html += "window.gerarReciboPDF = function(id) {";
-    html += "  if (typeof window.gerarPDFRecibo === 'function') {";
-    html += "    window.gerarPDFRecibo(id);";
-    html += "  } else {";
-    html += "    alert('Função PDF em carregamento. Tente novamente.');";
+    html += "  var partes = valor.toFixed(2).split('.');";
+    html += "  var reais = parseInt(partes[0]);";
+    html += "  var centavos = parseInt(partes[1]);";
+    html += "  var extenso = '';";
+    html += "  if (reais > 0) extenso = numeroPorExtenso(reais) + ' reais';";
+    html += "  if (centavos > 0) { if (extenso) extenso += ' e '; extenso += numeroPorExtenso(centavos) + ' centavos'; }";
+    html += "  return extenso.charAt(0).toUpperCase() + extenso.slice(1);";
+    html += "}";
+    
+    // Função formatarMoeda (embutida)
+    html += "function formatarMoedaLocal(valor) {";
+    html += "  if (!valor && valor !== 0) return 'R$ 0,00';";
+    html += "  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor);";
+    html += "}";
+    
+    // Função formatarData (embutida)
+    html += "function formatarDataLocal(data) {";
+    html += "  if (!data) return '';";
+    html += "  try { var d = new Date(data); return d.toLocaleDateString('pt-BR'); } catch(e) { return data; }";
+    html += "}";
+    
+    // Função gerarReciboPDF (embutida)
+    html += "function gerarReciboPDF(id) {";
+    html += "  alert('Função PDF: Utilize Imprimir e salve como PDF.');";
+    html += "}";
+    
+    // ========================================
+    // FUNÇÃO ENVIAR WHATSAPP DO RECIBO (EMBUTIDA)
+    // ========================================
+    html += "function enviarReciboWhatsApp(id) {";
+    html += "  var telefone = EMPRESA_WHATSAPP;";
+    html += "  var mensagem = '*' + EMPRESA_NOME + '*\\n';";
+    html += "  mensagem += 'NOTA DE RECIBO: ' + ORC_NUMERO + '\\n';";
+    html += "  mensagem += 'Data: ' + formatarDataLocal(ORC_DATA) + '\\n';";
+    html += "  mensagem += 'Cliente: ' + ORC_CLIENTE + '\\n';";
+    html += "  mensagem += 'Valor: ' + formatarMoedaLocal(ORC_TOTAL) + '\\n';";
+    html += "  mensagem += 'Por Extenso: ' + converterValorPorExtenso(ORC_TOTAL) + '\\n';";
+    html += "  mensagem += '\\n*ITENS:*\\n';";
+    html += "  for (var i = 0; i < ORC_ITENS.length; i++) {";
+    html += "    var item = ORC_ITENS[i];";
+    html += "    mensagem += (i+1) + '. ' + (item.descricao || 'Item') + ' - ' + (item.quantidade || 1) + 'x ' + formatarMoedaLocal(item.valor_unitario || 0) + ' = ' + formatarMoedaLocal((item.quantidade || 0) * (item.valor_unitario || 0)) + '\\n';";
     html += "  }";
-    html += "};";
+    html += "  mensagem += '\\n*PIX:* ' + PROPONENTE_PIX;";
+    html += "  mensagem += '\\n\\n*Assistência Técnica Independente*';";
+    html += "  mensagem += '\\n' + EMPRESA_TELEFONE;";
+    html += "  var url = 'https://wa.me/' + telefone + '?text=' + encodeURIComponent(mensagem);";
+    html += "  window.open(url, '_blank');";
+    html += "}";
     html += "</script>";
     
     html += "</div>";
@@ -213,190 +348,7 @@ function gerarHtmlRecibo(orc) {
 }
 
 // ============================================================
-// FUNÇÃO PARA GERAR PDF DO RECIBO
-// ============================================================
-
-function gerarPDFRecibo(id) {
-    var orc = null;
-    for (var i = 0; i < window.orcamentos.length; i++) {
-        if (window.orcamentos[i].id === id) {
-            orc = window.orcamentos[i];
-            break;
-        }
-    }
-    if (!orc) {
-        mostrarNotificacao("❌ Orçamento não encontrado!", "error");
-        return;
-    }
-    
-    if (typeof html2pdf === "undefined") {
-        mostrarNotificacao("📥 Carregando bibliotecas...", "info");
-        var scripts = [
-            "https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js",
-            "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js",
-            "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"
-        ];
-        var loaded = 0;
-        function carregarScriptPDFRecibo(url) {
-            var script = document.createElement("script");
-            script.src = url;
-            script.onload = function() { loaded++; if (loaded === scripts.length) { gerarPDFRecibo(id); } };
-            script.onerror = function() { mostrarNotificacao("❌ Erro ao carregar bibliotecas!", "error"); };
-            document.head.appendChild(script);
-        }
-        for (var i = 0; i < scripts.length; i++) { carregarScriptPDFRecibo(scripts[i]); }
-        return;
-    }
-    
-    mostrarNotificacao("📄 Gerando PDF do Recibo...", "info");
-    try {
-        var conteudo = gerarHtmlRecibo(orc);
-        var container = document.createElement("div");
-        container.innerHTML = conteudo;
-        container.style.padding = "20px";
-        container.style.background = "#ffffff";
-        container.style.width = "100%";
-        container.style.maxWidth = "800px";
-        container.style.margin = "0 auto";
-        container.style.fontFamily = "'Courier New', monospace";
-        container.style.fontSize = "12px";
-        
-        // Remover os botões do container para o PDF
-        var botoes = container.querySelectorAll(".no-print");
-        for (var i = 0; i < botoes.length; i++) {
-            botoes[i].style.display = "none";
-        }
-        
-        var opt = {
-            margin: [10, 10, 10, 10],
-            filename: "Recibo_" + (orc.numero || "ECD") + ".pdf",
-            image: { type: "jpeg", quality: 0.95 },
-            html2canvas: { scale: 2, useCORS: true, logging: false, backgroundColor: "#ffffff", allowTaint: true, width: 800, height: 1100, scrollY: 0 },
-            jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
-            pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
-        };
-        html2pdf().set(opt).from(container).save().then(function() {
-            mostrarNotificacao("✅ PDF do Recibo gerado com sucesso!", "success");
-        }).catch(function(error) {
-            mostrarNotificacao("❌ Erro ao gerar PDF do Recibo.", "error");
-        });
-    } catch (error) {
-        mostrarNotificacao("❌ Erro ao gerar PDF do Recibo.", "error");
-    }
-}
-
-// ============================================================
-// FUNÇÃO PARA WHATSAPP DO RECIBO COM IMAGEM
-// ============================================================
-
-function enviarWhatsAppRecibo(id) {
-    var orc = null;
-    for (var i = 0; i < window.orcamentos.length; i++) {
-        if (window.orcamentos[i].id === id) {
-            orc = window.orcamentos[i];
-            break;
-        }
-    }
-    if (!orc) {
-        mostrarNotificacao("❌ Orçamento não encontrado!", "error");
-        return;
-    }
-    
-    if (typeof html2canvas === "undefined") {
-        mostrarNotificacao("📥 Carregando biblioteca de imagem...", "info");
-        var script = document.createElement("script");
-        script.src = "https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js";
-        script.onload = function() { enviarWhatsAppRecibo(id); };
-        script.onerror = function() { enviarWhatsAppMensagem(orc); };
-        document.head.appendChild(script);
-        return;
-    }
-    
-    mostrarNotificacao("📸 Gerando imagem do Recibo...", "info");
-    
-    try {
-        var conteudo = gerarHtmlRecibo(orc);
-        var container = document.createElement("div");
-        container.innerHTML = conteudo;
-        container.style.padding = "20px";
-        container.style.background = "#ffffff";
-        container.style.width = "100%";
-        container.style.maxWidth = "800px";
-        container.style.margin = "0 auto";
-        container.style.fontFamily = "'Courier New', monospace";
-        container.style.fontSize = "12px";
-        container.style.boxSizing = "border-box";
-        container.style.position = "relative";
-        
-        // Remover botões da imagem
-        var botoes = container.querySelectorAll(".no-print");
-        for (var i = 0; i < botoes.length; i++) {
-            botoes[i].style.display = "none";
-        }
-        
-        var imagens = container.querySelectorAll("img");
-        for (var i = 0; i < imagens.length; i++) {
-            imagens[i].crossOrigin = "anonymous";
-            imagens[i].setAttribute("crossOrigin", "anonymous");
-        }
-        
-        container.style.position = "absolute";
-        container.style.left = "-9999px";
-        container.style.top = "0";
-        document.body.appendChild(container);
-        
-        var options = {
-            scale: 2,
-            useCORS: true,
-            allowTaint: true,
-            logging: false,
-            backgroundColor: "#ffffff",
-            width: 800,
-            height: container.scrollHeight + 40,
-            scrollY: 0,
-            scrollX: 0,
-            windowWidth: 800,
-            onclone: function(clonedDoc, element) {
-                var imgs = element.querySelectorAll("img");
-                for (var i = 0; i < imgs.length; i++) {
-                    imgs[i].crossOrigin = "anonymous";
-                }
-            }
-        };
-        
-        html2canvas(container, options)
-            .then(function(canvas) {
-                if (container.parentNode) {
-                    document.body.removeChild(container);
-                }
-                var imageDataUrl = canvas.toDataURL("image/png");
-                var link = document.createElement("a");
-                link.href = imageDataUrl;
-                link.download = "Recibo_" + (orc.numero || "ECD") + ".png";
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                mostrarNotificacao("✅ Imagem do Recibo baixada!", "success");
-                enviarWhatsAppMensagem(orc);
-            })
-            .catch(function(error) {
-                console.error("Erro ao gerar imagem:", error);
-                if (container.parentNode) {
-                    document.body.removeChild(container);
-                }
-                mostrarNotificacao("⚠️ Erro ao gerar imagem. Enviando mensagem...", "warning");
-                enviarWhatsAppMensagem(orc);
-            });
-            
-    } catch (error) {
-        console.error("Erro:", error);
-        mostrarNotificacao("❌ Erro ao gerar imagem. Enviando mensagem...", "error");
-        enviarWhatsAppMensagem(orc);
-    }
-}
-
-// ============================================================
-// FUNÇÃO CONVERTER VALOR POR EXTENSO
+// FUNÇÃO CONVERTER VALOR POR EXTENSO (global)
 // ============================================================
 
 function converterValorPorExtenso(valor) {
@@ -572,10 +524,10 @@ function carregarOrcamentos() {
 }
 
 // ============================================================
-// FUNÇÕES DE FORMATAÇÃO
+// FUNÇÕES DE FORMATAÇÃO (globais)
 // ============================================================
 
-function formatarMoeda(valor) {
+function formatarMoedaGlobal(valor) {
     if (!valor && valor !== 0) return "R$ 0,00";
     return new Intl.NumberFormat("pt-BR", {
         style: "currency",
@@ -583,7 +535,7 @@ function formatarMoeda(valor) {
     }).format(valor);
 }
 
-function formatarData(data) {
+function formatarDataGlobal(data) {
     if (!data) return "";
     try {
         var d = new Date(data);
@@ -593,7 +545,7 @@ function formatarData(data) {
     }
 }
 
-function formatarDataHora(data) {
+function formatarDataHoraGlobal(data) {
     if (!data) return "";
     try {
         var d = new Date(data);
@@ -726,7 +678,7 @@ function configurarEventosItens() {
         valores[i].addEventListener("blur", function() {
             var idx = parseInt(this.dataset.index);
             if (!isNaN(idx) && window.orcamentoItens[idx]) {
-                this.value = formatarMoeda(window.orcamentoItens[idx].valor_unitario).replace("R$ ", "");
+                this.value = formatarMoedaGlobal(window.orcamentoItens[idx].valor_unitario).replace("R$ ", "");
             }
         });
     }
@@ -756,7 +708,7 @@ function recalcularTotais() {
         var valor = parseFloat(valorStr.replace(/[^\d,]/g, "").replace(",", ".")) || 0;
         var subtotal = quantidade * valor;
         var subtotalCell = row.querySelector(".item-subtotal");
-        if (subtotalCell) subtotalCell.textContent = formatarMoeda(subtotal);
+        if (subtotalCell) subtotalCell.textContent = formatarMoedaGlobal(subtotal);
         if (window.orcamentoItens[i]) {
             window.orcamentoItens[i] = { descricao: descricao, unidade: unidade, quantidade: quantidade, valor_unitario: valor };
         }
@@ -764,7 +716,7 @@ function recalcularTotais() {
     }
     
     var subtotalEl = document.getElementById("orcamentoSubtotal");
-    if (subtotalEl) subtotalEl.textContent = formatarMoeda(subtotalGeral);
+    if (subtotalEl) subtotalEl.textContent = formatarMoedaGlobal(subtotalGeral);
     
     var descontoInput = document.getElementById("orcamentoDesconto");
     var desconto = 0;
@@ -774,13 +726,13 @@ function recalcularTotais() {
     }
     var total = subtotalGeral - desconto;
     var totalEl = document.getElementById("orcamentoTotal");
-    if (totalEl) totalEl.textContent = formatarMoeda(total);
+    if (totalEl) totalEl.textContent = formatarMoedaGlobal(total);
     var totalHidden = document.getElementById("orcamentoTotalHidden");
     if (totalHidden) totalHidden.value = total;
 }
 
 // ============================================================
-// FUNÇÕES DO FORMULÁRIO
+// FUNÇÕES DO FORMULÁRIO (simplificadas)
 // ============================================================
 
 function resetOrcamentoForm() {
@@ -844,7 +796,7 @@ function carregarOrcamentoParaEdicao(id) {
     document.getElementById("orcamentoPrazo").value = orcamento.prazo || "";
     document.getElementById("orcamentoObservacoes").value = orcamento.observacoes || "";
     document.getElementById("orcamentoStatus").value = orcamento.status || "Pendente";
-    document.getElementById("orcamentoDesconto").value = orcamento.desconto ? formatarMoeda(orcamento.desconto).replace("R$ ", "") : "0,00";
+    document.getElementById("orcamentoDesconto").value = orcamento.desconto ? formatarMoedaGlobal(orcamento.desconto).replace("R$ ", "") : "0,00";
     window.orcamentoItens = [];
     if (orcamento.itens) {
         for (var j = 0; j < orcamento.itens.length; j++) {
@@ -867,8 +819,8 @@ function carregarOrcamentoParaEdicao(id) {
             html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px;\"><input type=\"text\" class=\"item-descricao\" value=\"" + (item.descricao || "") + "\" data-index=\"" + k + "\" style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; width:100%; background:#f0f0f0; font-family:'Courier New',monospace; font-size:0.7rem; color:#000000; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.08);\"></td>";
             html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px;\"><input type=\"text\" class=\"item-unidade\" value=\"" + (item.unidade || "UN") + "\" data-index=\"" + k + "\" style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; width:38px; background:#f0f0f0; font-family:'Courier New',monospace; font-size:0.7rem; color:#000000; text-align:center; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.08);\"></td>";
             html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px;\"><input type=\"number\" class=\"item-quantidade\" value=\"" + (item.quantidade || 1) + "\" min=\"1\" data-index=\"" + k + "\" style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; width:38px; background:#f0f0f0; font-family:'Courier New',monospace; font-size:0.7rem; color:#000000; text-align:center; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.08);\"></td>";
-            html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px;\"><input type=\"text\" class=\"item-valor\" value=\"" + (formatarMoeda(item.valor_unitario || 0).replace("R$ ", "")) + "\" data-index=\"" + k + "\" style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; width:75px; background:#f0f0f0; font-family:'Courier New',monospace; font-size:0.7rem; color:#000000; text-align:right; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.08);\"></td>";
-            html += "<td class=\"item-subtotal\" data-index=\"" + k + "\" style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 6px; text-align:right; background:#ece9d8; font-family:'Courier New',monospace; font-size:0.7rem; font-weight:700;\">" + formatarMoeda((item.quantidade || 0) * (item.valor_unitario || 0)) + "</td>";
+            html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px;\"><input type=\"text\" class=\"item-valor\" value=\"" + (formatarMoedaGlobal(item.valor_unitario || 0).replace("R$ ", "")) + "\" data-index=\"" + k + "\" style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; width:75px; background:#f0f0f0; font-family:'Courier New',monospace; font-size:0.7rem; color:#000000; text-align:right; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.08);\"></td>";
+            html += "<td class=\"item-subtotal\" data-index=\"" + k + "\" style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 6px; text-align:right; background:#ece9d8; font-family:'Courier New',monospace; font-size:0.7rem; font-weight:700;\">" + formatarMoedaGlobal((item.quantidade || 0) * (item.valor_unitario || 0)) + "</td>";
             html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; text-align:center; background:#d4d0c8;\"><button type=\"button\" class=\"remover-item\" data-index=\"" + k + "\" style=\"background:#f39c12; color:#ffffff; border:2px solid #e67e22; border-top-color:#f1c40f; border-left-color:#f1c40f; padding:0 6px; cursor:pointer; font-size:0.6rem; font-family:'Courier New',monospace; font-weight:700; border-radius:0px;\" title=\"Remover item\"><i class=\"fas fa-trash\" style=\"color:#ffffff;\"></i></button></td>";
             linha.innerHTML = html;
             tbody.appendChild(linha);
@@ -1040,18 +992,18 @@ function listarOrcamentos() {
         html += "<tr style=\"border-bottom:1px solid #808080;\">";
         html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px;\"><strong>" + (orc.numero || "N/A") + "</strong></td>";
         html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px;\">" + (orc.cliente || "Sem cliente") + "</td>";
-        html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px;\">" + formatarData(orc.data) + "</td>";
+        html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px;\">" + formatarDataGlobal(orc.data) + "</td>";
         html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px;\"><span style=\"background:" + statusColor + "; color:#fff; padding:1px 8px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; font-size:0.6rem; font-weight:700;\">" + (orc.status || "Pendente") + "</span></td>";
-        html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:right;\"><strong>" + formatarMoeda(orc.total || 0) + "</strong></td>";
+        html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:right;\"><strong>" + formatarMoedaGlobal(orc.total || 0) + "</strong></td>";
         html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:center;\">";
-        // Botões agrupados (Visualizar, Editar, Duplicar, Recibo)
+        // Botões agrupados
         html += "<span style=\"display:inline-flex; gap:2px;\">";
         html += "<button class=\"btn-win98-sm\" onclick=\"window.verOrcamento('" + orc.id + "')\" title=\"Visualizar\" style=\"padding:0 4px; font-size:0.65rem; background:#d4d0c8; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; cursor:pointer; font-family:'Courier New',monospace;\"><i class=\"fas fa-eye\"></i></button> ";
         html += "<button class=\"btn-win98-sm\" onclick=\"window.carregarOrcamentoParaEdicao('" + orc.id + "')\" title=\"Editar\" style=\"padding:0 4px; font-size:0.65rem; background:#d4d0c8; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; cursor:pointer; font-family:'Courier New',monospace;\"><i class=\"fas fa-edit\"></i></button> ";
         html += "<button class=\"btn-win98-sm\" onclick=\"window.duplicarOrcamento('" + orc.id + "')\" title=\"Duplicar\" style=\"padding:0 4px; font-size:0.65rem; background:#d4d0c8; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; cursor:pointer; font-family:'Courier New',monospace;\"><i class=\"fas fa-copy\"></i></button> ";
         html += "<button class=\"btn-win98-sm\" onclick=\"window.gerarRecibo('" + orc.id + "')\" title=\"Gerar Recibo\" style=\"padding:0 4px; font-size:0.65rem; background:#d4d0c8; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; cursor:pointer; font-family:'Courier New',monospace;\"><i class=\"fas fa-file-invoice\"></i></button>";
         html += "</span>";
-        // Botão Excluir ISOLADO (com espaço e separador)
+        // Botão Excluir ISOLADO
         html += "<span style=\"display:inline-flex; margin-left:8px; padding-left:8px; border-left:1px solid #808080;\">";
         html += "<button class=\"btn-win98-sm btn-win98-danger\" onclick=\"window.excluirOrcamento('" + orc.id + "')\" title=\"Excluir\" style=\"padding:0 4px; font-size:0.65rem; background:#e74c3c; color:#ffffff; border:2px solid #c0392b; border-top-color:#e74c3c; border-left-color:#e74c3c; cursor:pointer; font-family:'Courier New',monospace;\"><i class=\"fas fa-trash\"></i></button>";
         html += "</span>";
@@ -1117,15 +1069,13 @@ function gerarHtmlOrcamento(orc) {
     var html = "";
     html += "<div style=\"font-family:'Courier New',monospace; font-size:0.75rem; color:#000000;\">";
     
-    // ========================================
     // TÍTULO "NOTA DE ORÇAMENTO" - SEM EMOJI
-    // ========================================
     html += "<div style=\"text-align:center; padding:8px 0; margin-bottom:10px; background:#0a2e4d; color:#ffffff; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080;\">";
     html += "<h2 style=\"margin:0; font-family:'Courier New',monospace; font-weight:700; font-size:1.2rem; letter-spacing:3px;\">NOTA DE ORÇAMENTO</h2>";
-    html += "<div style=\"font-size:0.65rem; opacity:0.8;\">" + (orc.numero || "N/A") + " | " + formatarData(orc.data) + "</div>";
+    html += "<div style=\"font-size:0.65rem; opacity:0.8;\">" + (orc.numero || "N/A") + " | " + formatarDataGlobal(orc.data) + "</div>";
     html += "</div>";
     
-    // CABEÇALHO COM LOGO E DADOS DA EMPRESA
+    // CABEÇALHO COM LOGO
     html += "<div style=\"display:flex; align-items:center; gap:12px; padding:6px 10px; margin-bottom:8px; background:#f0f0f0; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; box-shadow: inset 1px 1px 4px rgba(0,0,0,0.1);\">";
     html += "<div style=\"flex-shrink:0;\"><img src=\"" + ORCAMENTO_CONFIG.empresa.logo + "\" alt=\"ECD Eletrônica\" style=\"max-height:50px; width:auto; border:1px solid #808080; padding:3px; background:#ffffff;\"></div>";
     html += "<div style=\"flex:1;\"><strong style=\"font-size:0.9rem; color:#0a2e4d;\">" + ORCAMENTO_CONFIG.empresa.nome + "</strong><br>";
@@ -1134,7 +1084,7 @@ function gerarHtmlOrcamento(orc) {
     html += "<br>Site: " + ORCAMENTO_CONFIG.empresa.site + "</div>";
     html += "</div>";
     
-    // DADOS DO PROPONENTE (FIXOS)
+    // DADOS DO PROPONENTE
     html += "<div style=\"background:#d4d0c8; padding:4px 10px; margin-bottom:6px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; box-shadow: inset 1px 1px 4px rgba(0,0,0,0.1);\">";
     html += "<div style=\"display:grid; grid-template-columns:1fr 1fr; gap:4px; font-size:0.65rem;\">";
     html += "<div><strong>PROPONENTE:</strong> " + ORCAMENTO_CONFIG.proponente.nome + "</div>";
@@ -1151,8 +1101,8 @@ function gerarHtmlOrcamento(orc) {
     html += "<div><strong>CLIENTE:</strong> " + (orc.cliente || "Não informado") + "</div>";
     html += "<div style=\"text-align:right;\"><strong>CNPJ/CPF:</strong> " + (orc.cnpj || "Não informado") + "</div>";
     html += "<div style=\"grid-column:1/3;\"><strong>ENDEREÇO:</strong> " + (orc.endereco || "Não informado") + "</div>";
-    html += "<div><strong>DATA:</strong> " + formatarData(orc.data) + "</div>";
-    html += "<div style=\"text-align:right;\"><strong>PRAZO:</strong> " + formatarData(orc.prazo) + "</div>";
+    html += "<div><strong>DATA:</strong> " + formatarDataGlobal(orc.data) + "</div>";
+    html += "<div style=\"text-align:right;\"><strong>PRAZO:</strong> " + formatarDataGlobal(orc.prazo) + "</div>";
     html += "<div><strong>STATUS:</strong> <span style=\"background:" + statusColor + "; color:#fff; padding:0 8px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; font-weight:700; font-size:0.6rem;\">" + (orc.status || "Pendente") + "</span></div>";
     html += "</div></div>";
     
@@ -1176,18 +1126,18 @@ function gerarHtmlOrcamento(orc) {
         html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px;\">" + (item.descricao || "") + "</td>";
         html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:center;\">" + (item.unidade || "UN") + "</td>";
         html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:center;\">" + (item.quantidade || 1) + "</td>";
-        html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:right;\">" + formatarMoeda(item.valor_unitario || 0) + "</td>";
-        html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:right;\">" + formatarMoeda(subtotal) + "</td>";
+        html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:right;\">" + formatarMoedaGlobal(item.valor_unitario || 0) + "</td>";
+        html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:right;\">" + formatarMoedaGlobal(subtotal) + "</td>";
         html += "</tr>";
     }
     
     html += "</tbody><tfoot>";
     html += "<tr><td colspan=\"5\" style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:right; background:#f0f0f0;\"><strong>Subtotal</strong></td>";
-    html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:right; background:#f0f0f0;\"><strong>" + formatarMoeda(orc.subtotal || 0) + "</strong></td></tr>";
+    html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:right; background:#f0f0f0;\"><strong>" + formatarMoedaGlobal(orc.subtotal || 0) + "</strong></td></tr>";
     html += "<tr><td colspan=\"5\" style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:right; background:#f0f0f0;\"><strong>Desconto</strong></td>";
-    html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:right; background:#f0f0f0;\"><strong>" + formatarMoeda(orc.desconto || 0) + "</strong></td></tr>";
+    html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:right; background:#f0f0f0;\"><strong>" + formatarMoedaGlobal(orc.desconto || 0) + "</strong></td></tr>";
     html += "<tr style=\"background:#d4e6f1;\"><td colspan=\"5\" style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:right; font-weight:700; font-size:0.8rem;\"><strong>TOTAL GERAL</strong></td>";
-    html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:right; font-weight:700; font-size:0.8rem;\"><strong>" + formatarMoeda(orc.total || 0) + "</strong></td></tr>";
+    html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:right; font-weight:700; font-size:0.8rem;\"><strong>" + formatarMoedaGlobal(orc.total || 0) + "</strong></td></tr>";
     html += "</tfoot></table></div>";
     
     // Observações
@@ -1197,12 +1147,8 @@ function gerarHtmlOrcamento(orc) {
         html += "</div>";
     }
     
-    // ========================================
-    // QR CODE PIX E DADOS PARA PAGAMENTO
-    // ========================================
+    // QR CODE PIX
     html += "<div style=\"display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px;\">";
-    
-    // Coluna 1: QR Code PIX
     html += "<div style=\"background:#d4d0c8; padding:6px 10px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; box-shadow: inset 1px 1px 4px rgba(0,0,0,0.1); text-align:center;\">";
     html += "<strong style=\"display:block; margin-bottom:4px; font-size:0.7rem;\">PIX para Pagamento</strong>";
     html += "<div style=\"background:#ffffff; padding:6px; display:inline-block; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080;\">";
@@ -1210,8 +1156,6 @@ function gerarHtmlOrcamento(orc) {
     html += "</div>";
     html += "<div style=\"margin-top:4px; font-size:0.6rem; font-weight:700;\">Chave PIX: " + ORCAMENTO_CONFIG.banco.pix + "</div>";
     html += "</div>";
-    
-    // Coluna 2: Dados para Pagamento
     html += "<div style=\"background:#d4d0c8; padding:6px 10px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; box-shadow: inset 1px 1px 4px rgba(0,0,0,0.1);\">";
     html += "<strong style=\"display:block; margin-bottom:4px; font-size:0.7rem;\">Dados para Pagamento</strong>";
     html += "<div style=\"font-size:0.6rem; line-height:1.5;\">";
@@ -1222,15 +1166,15 @@ function gerarHtmlOrcamento(orc) {
     html += "<strong>CNPJ:</strong> " + ORCAMENTO_CONFIG.empresa.cnpj + "<br>";
     html += "<hr style=\"border-color:#808080; margin:4px 0;\">";
     html += "<div style=\"background:#ffffff; padding:3px 6px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; text-align:center;\">";
-    html += "<strong>Valor: " + formatarMoeda(orc.total || 0) + "</strong>";
+    html += "<strong>Valor: " + formatarMoedaGlobal(orc.total || 0) + "</strong>";
     html += "</div>";
     html += "</div></div></div>";
     
-    // Rodapé com dados fixos
+    // Rodapé
     html += "<div style=\"text-align:center; margin-top:8px; padding-top:6px; border-top:2px solid #808080; font-size:0.5rem; color:#404040; font-family:'Courier New',monospace;\">";
     html += "<p style=\"margin:1px 0;\">" + ORCAMENTO_CONFIG.empresa.nome + " - Assistência Técnica Independente</p>";
     html += "<p style=\"margin:1px 0;\">CNPJ: " + ORCAMENTO_CONFIG.empresa.cnpj + " | Tel: " + ORCAMENTO_CONFIG.empresa.telefone + " | Site: " + ORCAMENTO_CONFIG.empresa.site + "</p>";
-    html += "<p style=\"margin:1px 0;\">Documento gerado em " + formatarDataHora(new Date().toISOString()) + "</p>";
+    html += "<p style=\"margin:1px 0;\">Documento gerado em " + formatarDataHoraGlobal(new Date().toISOString()) + "</p>";
     html += "</div></div>";
     
     return html;
@@ -1337,7 +1281,7 @@ function gerarPDFOrcamento(id) {
 }
 
 // ============================================================
-// WHATSAPP COM IMAGEM
+// WHATSAPP DO ORÇAMENTO
 // ============================================================
 
 function enviarWhatsAppOrcamento(id) {
@@ -1444,9 +1388,9 @@ function enviarWhatsAppMensagem(orc) {
     var telefone = ORCAMENTO_CONFIG.empresa.whatsapp;
     var mensagem = "*" + ORCAMENTO_CONFIG.empresa.nome + "*\n";
     mensagem += "Orçamento: " + (orc.numero || "N/A") + "\n";
-    mensagem += "Data: " + formatarData(orc.data) + "\n";
+    mensagem += "Data: " + formatarDataGlobal(orc.data) + "\n";
     mensagem += "Cliente: " + (orc.cliente || "Não informado") + "\n";
-    mensagem += "Total: " + formatarMoeda(orc.total || 0) + "\n";
+    mensagem += "Total: " + formatarMoedaGlobal(orc.total || 0) + "\n";
     mensagem += "\n*Pagamento via PIX:* " + ORCAMENTO_CONFIG.banco.pix;
     mensagem += "\n*Site:* " + ORCAMENTO_CONFIG.empresa.site;
     mensagem += "\n\n*Assistência Técnica Independente*";
@@ -1459,7 +1403,7 @@ function enviarWhatsAppMensagem(orc) {
 }
 
 // ============================================================
-// FUNÇÕES DE INTERFACE - COM ÍCONE ADMIN E TÍTULO CENTRALIZADO
+// FUNÇÕES DE INTERFACE
 // ============================================================
 
 function switchOrcamentoTab(tab) {
@@ -1702,8 +1646,6 @@ window.duplicarOrcamento = duplicarOrcamento;
 window.mostrarNotificacao = mostrarNotificacao;
 window.fecharModalWin98 = fecharModalWin98;
 window.gerarRecibo = gerarRecibo;
-window.gerarPDFRecibo = gerarPDFRecibo;
-window.enviarWhatsAppRecibo = enviarWhatsAppRecibo;
 
 // ============================================================
 // INICIALIZAR
@@ -1715,4 +1657,4 @@ if (document.readyState === "loading") {
     initializeOrcamento();
 }
 
-console.log("✅ orcamento.js v2.8 carregado - PDF/WhatsApp Recibo corrigidos, ícone Admin, senha e213!");
+console.log("✅ orcamento.js v2.9 carregado - WHATSAPP DO RECIBO CORRIGIDO!");
