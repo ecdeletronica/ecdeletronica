@@ -8,9 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
-    <!-- Font Awesome (mantido) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <!-- Lucide Icons (que funcionava) -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         /* ============================================
@@ -267,10 +265,10 @@
         }
 
         /* ============================================
-                   TICKER / PLACAR ROLANTE - LUCIDE
+                   TICKER / PLACAR ROLANTE - FUNDO PRETO
                    ============================================ */
         .ticker-container {
-            background: var(--primary);
+            background: #1a1a1a;
             padding: 12px 0;
             overflow: hidden;
             position: relative;
@@ -289,11 +287,11 @@
         }
         .ticker-container::before {
             left: 0;
-            background: linear-gradient(to right, var(--primary), transparent);
+            background: linear-gradient(to right, #1a1a1a, transparent);
         }
         .ticker-container::after {
             right: 0;
-            background: linear-gradient(to left, var(--primary), transparent);
+            background: linear-gradient(to left, #1a1a1a, transparent);
         }
 
         .ticker-track {
@@ -336,11 +334,11 @@
         }
 
         /* ============================================
-                   HERO
+                   HERO - REBAIXADO
                    ============================================ */
         .hero {
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-            padding: 235px 0 80px;
+            padding: 250px 0 80px;
             color: var(--white);
         }
         .hero .container {
@@ -883,7 +881,7 @@
                 min-width: 24px;
             }
             .hero {
-                padding: 210px 0 60px;
+                padding: 220px 0 60px;
             }
         }
         @media (max-width: 768px) {
@@ -908,7 +906,7 @@
                 display: flex;
             }
             .hero {
-                padding: 200px 0 60px;
+                padding: 210px 0 60px;
             }
             .hero h1 {
                 font-size: 2rem;
@@ -1054,7 +1052,7 @@
                 font-size: 0.8rem;
             }
             .hero {
-                padding: 190px 0 40px;
+                padding: 200px 0 40px;
             }
         }
     </style>
@@ -1097,7 +1095,7 @@
             </div>
         </header>
 
-        <!-- TICKER / PLACAR ROLANTE - COM LUCIDE (FUNCIONAVA) -->
+        <!-- TICKER / PLACAR ROLANTE - FUNDO PRETO -->
         <div class="ticker-container">
             <div class="ticker-track">
                 <div class="ticker-item">
@@ -1171,7 +1169,7 @@
     </div>
 
     <!-- ==========================================
-    HERO
+    HERO - REBAIXADO
     ========================================== -->
     <section class="hero">
         <div class="container">
