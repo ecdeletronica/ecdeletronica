@@ -258,7 +258,7 @@
         }
 
         /* ============================================
-                   TICKER / PLACAR ROLANTE HORIZONTAL
+                   TICKER / PLACAR ROLANTE HORIZONTAL - CORRIGIDO
                    ============================================ */
         .ticker-container {
             background: var(--primary);
@@ -266,7 +266,8 @@
             border-bottom: 3px solid var(--secondary);
             overflow: hidden;
             position: relative;
-            margin-top: 120px;
+            margin-top: 150px; /* AUMENTADO para ficar abaixo do cabeçalho */
+            z-index: 1;
         }
         .ticker-container::before,
         .ticker-container::after {
@@ -326,11 +327,11 @@
         }
 
         /* ============================================
-                   HERO
+                   HERO - COM padding-top ajustado
                    ============================================ */
         .hero {
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-            padding: 60px 0 80px;
+            padding: 50px 0 80px;
             color: var(--white);
         }
         .hero .container {
@@ -864,7 +865,7 @@
                 padding: 14px 16px;
             }
             .ticker-container {
-                margin-top: 100px;
+                margin-top: 130px;
             }
             .ticker-item {
                 font-size: 0.85rem;
@@ -960,7 +961,7 @@
                 padding: 12px 14px;
             }
             .ticker-container {
-                margin-top: 90px;
+                margin-top: 110px;
                 padding: 10px 0;
             }
             .ticker-item {
@@ -1025,7 +1026,7 @@
                 padding: 10px 12px;
             }
             .ticker-container {
-                margin-top: 80px;
+                margin-top: 100px;
                 padding: 8px 0;
             }
             .ticker-item {
