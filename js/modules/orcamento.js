@@ -1,6 +1,6 @@
 // js/modules/orcamento.js - Sistema de Orçamento para ECD Eletrônica
-// ✅ Versão ESTÁVEL v2.6 - COM TÍTULO, BOTÃO RECIBO E RECIBO PROFISSIONAL
-console.log('✅ orcamento.js carregado - Versão ESTÁVEL v2.6');
+// ✅ Versão ESTÁVEL v2.7 - NÚMERO COM DIA, RECIBO COM BOTÕES, EXCLUIR ISOLADO
+console.log('✅ orcamento.js carregado - Versão ESTÁVEL v2.7');
 
 // ============================================================
 // CONFIGURAÇÕES
@@ -50,7 +50,7 @@ function gerarNumeroOrcamento() {
     var dia = String(agora.getDate()).padStart(2, '0');
     var ultimo = window.orcamentos.length || 0;
     var sequencial = String(ultimo + 1).padStart(4, '0');
-    return "ECD-" + ano + mes + dia + "-" + sequencial;
+    return "ECD-" + ano + "-" + dia + "-" + sequencial;
 }
 
 // ============================================================
@@ -77,24 +77,28 @@ function gerarRecibo(id) {
         return;
     }
     var doc = printWindow.document;
-    doc.write("<!DOCTYPE html><html><head><title>Recibo " + (orc.numero || "") + "</title>");
+    doc.write("<!DOCTYPE html><html><head><title>NOTA DE RECIBO " + (orc.numero || "") + "</title>");
     doc.write("<link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css\">");
-    doc.write("<style>body { padding: 30px; font-family: 'Courier New', monospace; background: #f0f0f0; } ");
-    doc.write(".recibo-container { max-width: 700px; margin: 0 auto; background: #ffffff; padding: 30px; border: 2px solid #000000; box-shadow: 0 4px 20px rgba(0,0,0,0.1); } ");
-    doc.write(".recibo-header { text-align: center; border-bottom: 2px solid #000000; padding-bottom: 15px; margin-bottom: 20px; } ");
-    doc.write(".recibo-header h1 { font-size: 1.8rem; margin: 0; color: #0a2e4d; text-transform: uppercase; letter-spacing: 3px; } ");
-    doc.write(".recibo-header .numero { font-size: 0.9rem; color: #666; margin-top: 5px; } ");
-    doc.write(".recibo-corpo { padding: 10px 0; } ");
-    doc.write(".recibo-linha { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px dashed #ccc; } ");
+    doc.write("<style>body { padding: 20px; font-family: 'Courier New', monospace; background: #f0f0f0; } ");
+    doc.write(".recibo-container { max-width: 700px; margin: 0 auto; background: #ffffff; padding: 25px; border: 2px solid #000000; box-shadow: 0 4px 20px rgba(0,0,0,0.1); } ");
+    doc.write(".recibo-header { text-align: center; border-bottom: 2px solid #000000; padding-bottom: 12px; margin-bottom: 15px; } ");
+    doc.write(".recibo-header h1 { font-size: 1.6rem; margin: 0; color: #0a2e4d; text-transform: uppercase; letter-spacing: 3px; } ");
+    doc.write(".recibo-header .numero { font-size: 0.85rem; color: #666; margin-top: 4px; } ");
+    doc.write(".recibo-corpo { padding: 8px 0; } ");
+    doc.write(".recibo-linha { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px dashed #ccc; } ");
     doc.write(".recibo-linha .label { font-weight: 700; color: #0a2e4d; } ");
     doc.write(".recibo-linha .valor { font-weight: 600; } ");
-    doc.write(".recibo-total { font-size: 1.2rem; background: #0a2e4d; color: #fff; padding: 10px 15px; text-align: center; margin: 15px 0; } ");
-    doc.write(".recibo-footer { margin-top: 20px; padding-top: 15px; border-top: 2px solid #000000; font-size: 0.7rem; text-align: center; color: #666; } ");
-    doc.write(".recibo-assinaturas { display: flex; justify-content: space-between; margin-top: 30px; padding-top: 10px; } ");
+    doc.write(".recibo-total { font-size: 1.1rem; background: #0a2e4d; color: #fff; padding: 8px 15px; text-align: center; margin: 12px 0; } ");
+    doc.write(".recibo-footer { margin-top: 15px; padding-top: 12px; border-top: 2px solid #000000; font-size: 0.65rem; text-align: center; color: #666; } ");
+    doc.write(".recibo-assinaturas { display: flex; justify-content: space-between; margin-top: 25px; padding-top: 8px; } ");
     doc.write(".recibo-assinaturas div { text-align: center; width: 45%; } ");
-    doc.write(".recibo-assinaturas .linha { border-top: 1px solid #000000; width: 80%; margin: 30px auto 5px; } ");
-    doc.write(".recibo-legal { font-size: 0.65rem; color: #555; margin-top: 15px; text-align: justify; } ");
-    doc.write("@media print { body { background: #ffffff; } .recibo-container { box-shadow: none; } }");
+    doc.write(".recibo-assinaturas .linha { border-top: 1px solid #000000; width: 80%; margin: 25px auto 5px; } ");
+    doc.write(".recibo-legal { font-size: 0.6rem; color: #555; margin-top: 12px; text-align: justify; } ");
+    doc.write(".btn-win98 { background: #d4d0c8; color: #000000; border: 2px solid #404040; border-top-color: #808080; border-left-color: #808080; padding: 4px 14px; cursor: pointer; font-family: 'Courier New', monospace; font-weight: 700; font-size: 0.75rem; } ");
+    doc.write(".btn-win98:hover { background: #ece9d8; } ");
+    doc.write(".btn-win98:active { border-top-color: #404040; border-left-color: #404040; border-bottom-color: #808080; border-right-color: #808080; transform: translateY(1px); } ");
+    doc.write(".no-print { display: inline-block; } ");
+    doc.write("@media print { body { background: #ffffff; } .recibo-container { box-shadow: none; } .no-print { display: none !important; } }");
     doc.write("</style>");
     doc.write("</head><body>" + conteudo + "</body></html>");
     doc.close();
@@ -107,16 +111,16 @@ function gerarHtmlRecibo(orc) {
     var html = "";
     html += "<div class=\"recibo-container\">";
     
-    // CABEÇALHO
+    // CABEÇALHO - SEM EMOJI
     html += "<div class=\"recibo-header\">";
-    html += "<h1>📄 RECIBO</h1>";
+    html += "<h1>NOTA DE RECIBO</h1>";
     html += "<div class=\"numero\"><strong>Nº:</strong> " + (orc.numero || "N/A") + " | <strong>Data:</strong> " + formatarData(orc.data) + "</div>";
-    html += "<div style=\"font-size:0.8rem; color:#666;\">" + ORCAMENTO_CONFIG.empresa.nome + " - CNPJ: " + ORCAMENTO_CONFIG.empresa.cnpj + "</div>";
+    html += "<div style=\"font-size:0.75rem; color:#666;\">" + ORCAMENTO_CONFIG.empresa.nome + " - CNPJ: " + ORCAMENTO_CONFIG.empresa.cnpj + "</div>";
     html += "</div>";
     
     // CORPO DO RECIBO
     html += "<div class=\"recibo-corpo\">";
-    html += "<p style=\"text-align:center; font-size:0.9rem; margin-bottom:10px;\"><strong>RECEBEMOS DE:</strong></p>";
+    html += "<p style=\"text-align:center; font-size:0.85rem; margin-bottom:8px;\"><strong>RECEBEMOS DE:</strong></p>";
     
     // DADOS DO CLIENTE
     html += "<div class=\"recibo-linha\"><span class=\"label\">CLIENTE:</span><span class=\"valor\">" + (orc.cliente || "Não informado") + "</span></div>";
@@ -127,23 +131,23 @@ function gerarHtmlRecibo(orc) {
         html += "<div class=\"recibo-linha\"><span class=\"label\">ENDEREÇO:</span><span class=\"valor\">" + orc.endereco + "</span></div>";
     }
     
-    html += "<div style=\"height:10px;\"></div>";
+    html += "<div style=\"height:8px;\"></div>";
     
     // VALOR
     html += "<div class=\"recibo-total\">";
     html += "VALOR RECEBIDO: <strong>" + formatarMoeda(orc.total || 0) + "</strong>";
     html += "</div>";
     
-    html += "<div style=\"text-align:center; font-size:0.8rem; margin:5px 0 15px;\">";
+    html += "<div style=\"text-align:center; font-size:0.75rem; margin:4px 0 12px;\">";
     html += "<strong>Por Extenso:</strong> " + valorPorExtenso;
     html += "</div>";
     
     // DESCRIÇÃO DOS SERVIÇOS
-    html += "<div style=\"margin:10px 0; padding:8px; background:#f5f5f5; border:1px solid #ddd;\">";
-    html += "<p style=\"font-weight:700; margin-bottom:5px;\">REFERENTE A:</p>";
+    html += "<div style=\"margin:8px 0; padding:6px; background:#f5f5f5; border:1px solid #ddd;\">";
+    html += "<p style=\"font-weight:700; margin-bottom:4px; font-size:0.7rem;\">REFERENTE A:</p>";
     for (var i = 0; i < orc.itens.length; i++) {
         var item = orc.itens[i];
-        html += "<div style=\"font-size:0.75rem; padding:2px 0; border-bottom:1px dotted #eee;\">";
+        html += "<div style=\"font-size:0.7rem; padding:2px 0; border-bottom:1px dotted #eee;\">";
         html += (i + 1) + ". " + (item.descricao || "Item") + " - " + (item.quantidade || 1) + "x " + formatarMoeda(item.valor_unitario || 0);
         html += " = " + formatarMoeda((item.quantidade || 0) * (item.valor_unitario || 0));
         html += "</div>";
@@ -151,9 +155,9 @@ function gerarHtmlRecibo(orc) {
     html += "</div>";
     
     // DADOS DO PROPONENTE
-    html += "<div style=\"margin:10px 0; padding:8px; background:#f0f4f8; border:1px solid #d4d0c8;\">";
-    html += "<p style=\"font-weight:700; margin-bottom:3px;\">DADOS DO PRESTADOR:</p>";
-    html += "<div style=\"font-size:0.7rem;\">";
+    html += "<div style=\"margin:8px 0; padding:6px; background:#f0f4f8; border:1px solid #d4d0c8;\">";
+    html += "<p style=\"font-weight:700; margin-bottom:3px; font-size:0.7rem;\">DADOS DO PRESTADOR:</p>";
+    html += "<div style=\"font-size:0.65rem;\">";
     html += "<strong>PROPONENTE:</strong> " + ORCAMENTO_CONFIG.proponente.nome + "<br>";
     html += "<strong>CNPJ:</strong> " + ORCAMENTO_CONFIG.proponente.cnpj + "<br>";
     html += "<strong>ENDEREÇO:</strong> " + ORCAMENTO_CONFIG.proponente.endereco + "<br>";
@@ -162,15 +166,15 @@ function gerarHtmlRecibo(orc) {
     
     // ASSINATURAS
     html += "<div class=\"recibo-assinaturas\">";
-    html += "<div><div class=\"linha\"></div><strong>Recebedor</strong><br><span style=\"font-size:0.65rem;\">" + ORCAMENTO_CONFIG.proponente.nome + "</span></div>";
-    html += "<div><div class=\"linha\"></div><strong>Cliente</strong><br><span style=\"font-size:0.65rem;\">" + (orc.cliente || "___________________") + "</span></div>";
+    html += "<div><div class=\"linha\"></div><strong>Recebedor</strong><br><span style=\"font-size:0.6rem;\">" + ORCAMENTO_CONFIG.proponente.nome + "</span></div>";
+    html += "<div><div class=\"linha\"></div><strong>Cliente</strong><br><span style=\"font-size:0.6rem;\">" + (orc.cliente || "___________________") + "</span></div>";
     html += "</div>";
     
     // DISPOSITIVO LEGAL
     html += "<div class=\"recibo-legal\">";
     html += "<p><strong>DISPOSITIVO LEGAL:</strong></p>";
     html += "<p>O presente recibo tem validade como documento de quitação de prestação de serviços, nos termos do Art. 320 do Código Civil Brasileiro (Lei nº 10.406/2002), e do Art. 6º, inciso III, da Lei nº 8.078/1990 (Código de Defesa do Consumidor), que garantem a transparência e a formalização das relações de consumo e prestação de serviços.</p>";
-    html += "<p style=\"margin-top:5px;\">Este documento comprova o pagamento integral do serviço descrito, liberando ambas as partes das obrigações referentes ao objeto contratado.</p>";
+    html += "<p style=\"margin-top:4px;\">Este documento comprova o pagamento integral do serviço descrito, liberando ambas as partes das obrigações referentes ao objeto contratado.</p>";
     html += "</div>";
     
     // RODAPÉ
@@ -179,6 +183,32 @@ function gerarHtmlRecibo(orc) {
     html += "<p>CNPJ: " + ORCAMENTO_CONFIG.empresa.cnpj + " | Tel: " + ORCAMENTO_CONFIG.empresa.telefone + " | Site: " + ORCAMENTO_CONFIG.empresa.site + "</p>";
     html += "<p>Documento gerado em " + formatarDataHora(new Date().toISOString()) + "</p>";
     html += "</div>";
+    
+    // BOTÕES DO RECIBO
+    html += "<div class=\"text-center no-print\" style=\"margin-top:15px; text-align:center;\">";
+    html += "<button class=\"btn-win98\" onclick=\"window.print()\"><i class=\"fas fa-print\"></i> Imprimir</button> ";
+    html += "<button class=\"btn-win98\" onclick=\"window.enviarReciboWhatsApp()\"><i class=\"fab fa-whatsapp\"></i> WhatsApp</button> ";
+    html += "<button class=\"btn-win98\" onclick=\"window.gerarReciboPDF()\"><i class=\"fas fa-file-pdf\"></i> PDF</button> ";
+    html += "<button class=\"btn-win98\" onclick=\"window.close()\">Fechar</button>";
+    html += "</div>";
+    
+    // SCRIPT PARA AS FUNÇÕES DO RECIBO
+    html += "<script>";
+    html += "window.enviarReciboWhatsApp = function() {";
+    html += "  var telefone = '" + ORCAMENTO_CONFIG.empresa.whatsapp + "';";
+    html += "  var mensagem = '*" + ORCAMENTO_CONFIG.empresa.nome + "*\\n';";
+    html += "  mensagem += 'NOTA DE RECIBO: " + (orc.numero || "N/A") + "\\n';";
+    html += "  mensagem += 'Cliente: " + (orc.cliente || "Não informado") + "\\n';";
+    html += "  mensagem += 'Valor: " + formatarMoeda(orc.total || 0) + "\\n';";
+    html += "  mensagem += 'PIX: " + ORCAMENTO_CONFIG.banco.pix + "\\n';";
+    html += "  mensagem += '\\n*Assistência Técnica Independente*';";
+    html += "  var url = 'https://wa.me/' + telefone + '?text=' + encodeURIComponent(mensagem);";
+    html += "  window.open(url, '_blank');";
+    html += "};";
+    html += "window.gerarReciboPDF = function() {";
+    html += "  alert('Função PDF em desenvolvimento. Utilize Imprimir e salve como PDF.');";
+    html += "};";
+    html += "</script>";
     
     html += "</div>";
     
@@ -787,7 +817,7 @@ function salvarOrcamento() {
 }
 
 // ============================================================
-// FUNÇÕES DE LISTAGEM
+// FUNÇÕES DE LISTAGEM - COM EXCLUIR ISOLADO
 // ============================================================
 
 function listarOrcamentos() {
@@ -830,11 +860,17 @@ function listarOrcamentos() {
         html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px;\"><span style=\"background:" + statusColor + "; color:#fff; padding:1px 8px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; font-size:0.6rem; font-weight:700;\">" + (orc.status || "Pendente") + "</span></td>";
         html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:right;\"><strong>" + formatarMoeda(orc.total || 0) + "</strong></td>";
         html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:center;\">";
+        // Botões agrupados (Visualizar, Editar, Duplicar)
+        html += "<span style=\"display:inline-flex; gap:2px;\">";
         html += "<button class=\"btn-win98-sm\" onclick=\"window.verOrcamento('" + orc.id + "')\" title=\"Visualizar\" style=\"padding:0 4px; font-size:0.65rem; background:#d4d0c8; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; cursor:pointer; font-family:'Courier New',monospace;\"><i class=\"fas fa-eye\"></i></button> ";
         html += "<button class=\"btn-win98-sm\" onclick=\"window.carregarOrcamentoParaEdicao('" + orc.id + "')\" title=\"Editar\" style=\"padding:0 4px; font-size:0.65rem; background:#d4d0c8; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; cursor:pointer; font-family:'Courier New',monospace;\"><i class=\"fas fa-edit\"></i></button> ";
         html += "<button class=\"btn-win98-sm\" onclick=\"window.duplicarOrcamento('" + orc.id + "')\" title=\"Duplicar\" style=\"padding:0 4px; font-size:0.65rem; background:#d4d0c8; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; cursor:pointer; font-family:'Courier New',monospace;\"><i class=\"fas fa-copy\"></i></button> ";
-        html += "<button class=\"btn-win98-sm btn-win98-danger\" onclick=\"window.excluirOrcamento('" + orc.id + "')\" title=\"Excluir\" style=\"padding:0 4px; font-size:0.65rem; background:#d4d0c8; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; cursor:pointer; font-family:'Courier New',monospace;\"><i class=\"fas fa-trash\"></i></button> ";
         html += "<button class=\"btn-win98-sm\" onclick=\"window.gerarRecibo('" + orc.id + "')\" title=\"Gerar Recibo\" style=\"padding:0 4px; font-size:0.65rem; background:#d4d0c8; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; cursor:pointer; font-family:'Courier New',monospace;\"><i class=\"fas fa-file-invoice\"></i></button>";
+        html += "</span>";
+        // Botão Excluir ISOLADO (com espaço e separador)
+        html += "<span style=\"display:inline-flex; margin-left:8px; padding-left:8px; border-left:1px solid #808080;\">";
+        html += "<button class=\"btn-win98-sm btn-win98-danger\" onclick=\"window.excluirOrcamento('" + orc.id + "')\" title=\"Excluir\" style=\"padding:0 4px; font-size:0.65rem; background:#e74c3c; color:#ffffff; border:2px solid #c0392b; border-top-color:#e74c3c; border-left-color:#e74c3c; cursor:pointer; font-family:'Courier New',monospace;\"><i class=\"fas fa-trash\"></i></button>";
+        html += "</span>";
         html += "</td></tr>";
     }
     
@@ -847,7 +883,7 @@ function listarOrcamentos() {
 }
 
 // ============================================================
-// FUNÇÕES DE VISUALIZAÇÃO - COM TÍTULO "NOTA DE ORÇAMENTO"
+// FUNÇÕES DE VISUALIZAÇÃO - COM TÍTULO "NOTA DE ORÇAMENTO" SEM EMOJI
 // ============================================================
 
 function verOrcamento(id) {
@@ -898,10 +934,10 @@ function gerarHtmlOrcamento(orc) {
     html += "<div style=\"font-family:'Courier New',monospace; font-size:0.75rem; color:#000000;\">";
     
     // ========================================
-    // TÍTULO "NOTA DE ORÇAMENTO"
+    // TÍTULO "NOTA DE ORÇAMENTO" - SEM EMOJI
     // ========================================
     html += "<div style=\"text-align:center; padding:8px 0; margin-bottom:10px; background:#0a2e4d; color:#ffffff; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080;\">";
-    html += "<h2 style=\"margin:0; font-family:'Courier New',monospace; font-weight:700; font-size:1.2rem; letter-spacing:3px;\">📄 NOTA DE ORÇAMENTO</h2>";
+    html += "<h2 style=\"margin:0; font-family:'Courier New',monospace; font-weight:700; font-size:1.2rem; letter-spacing:3px;\">NOTA DE ORÇAMENTO</h2>";
     html += "<div style=\"font-size:0.65rem; opacity:0.8;\">" + (orc.numero || "N/A") + " | " + formatarData(orc.data) + "</div>";
     html += "</div>";
     
@@ -1493,4 +1529,4 @@ if (document.readyState === "loading") {
     initializeOrcamento();
 }
 
-console.log("✅ orcamento.js v2.6 carregado - COM TÍTULO, BOTÃO RECIBO E RECIBO PROFISSIONAL!");
+console.log("✅ orcamento.js v2.7 carregado - NÚMERO COM DIA, RECIBO COM BOTÕES, EXCLUIR ISOLADO!");
