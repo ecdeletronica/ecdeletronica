@@ -94,18 +94,18 @@
         }
 
         /* ============================================
-                   HEADER - DOBRADO COM TEXTOS AJUSTADOS
+                   HEADER - ESTILO WEB TEC-TEC ADAPTADO
                    ============================================ */
         header {
-            background: rgba(255,255,255,0.95);
-            backdrop-filter: blur(16px);
-            box-shadow: 0 4px 30px rgba(0,0,0,0.08);
+            background: rgba(255,255,255,0.92);
+            backdrop-filter: blur(12px);
+            box-shadow: var(--shadow-sm);
             position: fixed;
             width: 100%;
             top: 0;
             z-index: 1000;
-            border-bottom: 3px solid var(--secondary);
-            padding: 20px 0;
+            border-bottom: 2px solid rgba(230, 126, 34, 0.15);
+            padding: 12px 0;
         }
         header .container {
             display: flex;
@@ -119,26 +119,38 @@
         .logo-area {
             display: flex;
             align-items: center;
-            gap: 2rem;
+            gap: 1.5rem;
         }
 
-        .logo-image {
-            width: 192px;
+        /* LOGO COM MOLDURA - ESTILO WEB TEC-TEC */
+        .logo-wrapper {
+            background: rgba(255,255,255,0.8);
+            padding: 6px;
+            border-radius: 16px;
+            box-shadow: 0 6px 15px rgba(10, 46, 77, 0.15);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid rgba(230, 126, 34, 0.2);
+        }
+        .logo-wrapper:hover {
+            transform: scale(1.03);
+            box-shadow: 0 8px 25px rgba(230, 126, 34, 0.2);
+            border-color: var(--secondary);
+        }
+        .logo-wrapper img {
+            width: 96px;
             height: auto;
-            max-height: 192px;
-            border-radius: 24px;
+            max-height: 96px;
+            border-radius: 12px;
             object-fit: contain;
             background: white;
-            padding: 12px;
-            box-shadow: 0 8px 25px rgba(10, 46, 77, 0.2);
-            transition: transform 0.4s ease;
-        }
-        .logo-image:hover {
-            transform: scale(1.05);
+            display: block;
         }
 
         .logo-text h1 {
-            font-size: 2.4rem;
+            font-size: 2rem;
             line-height: 1.2;
             color: var(--primary);
             font-weight: 800;
@@ -148,7 +160,7 @@
             color: var(--secondary);
         }
         .logo-text .slogan {
-            font-size: 1rem;
+            font-size: 0.8rem;
             color: var(--gray-600);
             font-weight: 400;
             letter-spacing: 0.3px;
@@ -156,29 +168,30 @@
             margin-top: -2px;
         }
 
+        /* QR CODE NO HEADER - ESTILO WEB TEC-TEC */
         .qrcode-header {
             display: flex;
             align-items: center;
-            gap: 1rem;
-            background: rgba(230, 126, 34, 0.08);
-            padding: 0.8rem 1.8rem;
+            gap: 0.8rem;
+            background: rgba(230, 126, 34, 0.06);
+            padding: 0.5rem 1.2rem;
             border-radius: 100px;
-            border: 2px solid rgba(230, 126, 34, 0.2);
-            transition: all 0.4s ease;
+            border: 1px solid rgba(230, 126, 34, 0.15);
+            transition: all 0.3s ease;
             text-decoration: none;
         }
         .qrcode-header:hover {
-            background: rgba(230, 126, 34, 0.15);
-            transform: scale(1.03);
-            box-shadow: 0 8px 30px rgba(230, 126, 34, 0.15);
+            background: rgba(230, 126, 34, 0.1);
+            transform: scale(1.02);
+            box-shadow: var(--shadow-sm);
             border-color: var(--secondary);
         }
         .qrcode-header img {
-            width: 64px;
-            height: 64px;
-            border-radius: 14px;
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
             background: white;
-            padding: 5px;
+            padding: 4px;
             object-fit: contain;
         }
         .qrcode-header .qr-text {
@@ -187,23 +200,22 @@
             line-height: 1.2;
         }
         .qrcode-header .qr-text span {
-            font-size: 1.1rem;
-            font-weight: 700;
+            font-size: 0.9rem;
+            font-weight: 600;
             color: var(--primary);
         }
         .qrcode-header .qr-text span i {
             color: var(--secondary);
-            margin-right: 6px;
+            margin-right: 4px;
         }
         .qrcode-header .qr-text small {
             color: var(--gray-600);
-            font-size: 0.8rem;
-            font-weight: 400;
+            font-size: 0.7rem;
         }
 
         .nav-links {
             display: flex;
-            gap: 40px;
+            gap: 32px;
             list-style: none;
             align-items: center;
         }
@@ -212,7 +224,7 @@
             text-decoration: none;
             font-weight: 600;
             transition: 0.3s;
-            font-size: 1.1rem;
+            font-size: 0.95rem;
         }
         .nav-links a:hover {
             color: var(--primary);
@@ -220,10 +232,9 @@
         .nav-cta {
             background: var(--secondary);
             color: var(--white) !important;
-            padding: 12px 32px;
+            padding: 10px 28px;
             border-radius: 50px;
             font-weight: 700;
-            font-size: 1.1rem !important;
         }
         .nav-cta:hover {
             background: var(--accent);
@@ -233,25 +244,25 @@
         .menu-toggle {
             display: none;
             flex-direction: column;
-            gap: 6px;
+            gap: 5px;
             background: none;
             border: none;
             cursor: pointer;
         }
         .menu-toggle span {
-            width: 36px;
-            height: 4px;
+            width: 28px;
+            height: 3px;
             background: var(--primary);
             border-radius: 4px;
             transition: 0.3s;
         }
 
         /* ============================================
-                   HERO - LOGO DO HERO MAIOR
+                   HERO - LOGO COM MOLDURA
                    ============================================ */
         .hero {
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-            padding: 200px 0 100px;
+            padding: 160px 0 80px;
             color: var(--white);
         }
         .hero .container {
@@ -261,7 +272,7 @@
             align-items: center;
         }
         .hero h1 {
-            font-size: 3.5rem;
+            font-size: 3rem;
             font-weight: 800;
             line-height: 1.1;
         }
@@ -269,7 +280,7 @@
             color: var(--secondary);
         }
         .hero p {
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             color: rgba(255,255,255,0.8);
             margin: 24px 0 32px;
         }
@@ -285,6 +296,8 @@
             font-size: 0.9rem;
             backdrop-filter: blur(4px);
         }
+
+        /* MOLDURA DA LOGO NO HERO - ESTILO WEB TEC-TEC */
         .hero-card {
             background: rgba(255,255,255,0.05);
             border-radius: var(--radius);
@@ -292,24 +305,24 @@
             backdrop-filter: blur(4px);
             text-align: center;
         }
-        .hero-card .logo-frame-big {
+        .hero-card .logo-wrapper-hero {
             background: rgba(255,255,255,0.06);
-            padding: 16px; /* AUMENTADO de 12px para 16px */
-            border-radius: 20px; /* AUMENTADO de 16px para 20px */
+            padding: 12px;
+            border-radius: 20px;
             border: 3px solid rgba(230, 126, 34, 0.25);
-            box-shadow: 0 0 50px rgba(230, 126, 34, 0.08), inset 0 0 50px rgba(230, 126, 34, 0.03);
+            box-shadow: 0 0 40px rgba(230, 126, 34, 0.08), inset 0 0 40px rgba(230, 126, 34, 0.03);
             transition: all 0.4s ease;
             display: inline-block;
             margin-bottom: 16px;
         }
-        .hero-card .logo-frame-big:hover {
+        .hero-card .logo-wrapper-hero:hover {
             border-color: var(--secondary);
-            box-shadow: 0 0 60px rgba(230, 126, 34, 0.25), inset 0 0 60px rgba(230, 126, 34, 0.05);
+            box-shadow: 0 0 50px rgba(230, 126, 34, 0.2), inset 0 0 50px rgba(230, 126, 34, 0.05);
             transform: scale(1.03);
         }
-        .hero-card .logo-frame-big img {
-            max-width: 320px; /* AUMENTADO de 220px para 320px */
-            max-height: 200px; /* AUMENTADO de 140px para 200px */
+        .hero-card .logo-wrapper-hero img {
+            max-width: 220px;
+            max-height: 140px;
             width: auto;
             height: auto;
             border-radius: 12px;
@@ -318,7 +331,6 @@
         .hero-card h3 {
             margin: 8px 0 4px;
             color: var(--white);
-            font-size: 1.3rem;
         }
         .hero-card p {
             color: rgba(255,255,255,0.7);
@@ -329,7 +341,6 @@
             font-weight: 700;
             color: var(--white);
             margin-top: 4px;
-            font-size: 1.1rem;
         }
 
         /* ============================================
@@ -502,7 +513,7 @@
         }
 
         /* ============================================
-                   FOOTER
+                   FOOTER - COM QR CODE
                    ============================================ */
         footer {
             background: var(--primary);
@@ -516,20 +527,19 @@
             align-items: center;
             gap: 12px;
         }
-        .footer-logo .logo-frame-footer {
+        .footer-logo .logo-wrapper-footer {
             background: rgba(255,255,255,0.06);
             padding: 5px;
-            border-radius: 8px;
+            border-radius: 12px;
             border: 2px solid rgba(255,255,255,0.08);
             display: inline-flex;
             align-items: center;
             justify-content: center;
         }
-        .footer-logo .logo-frame-footer img {
+        .footer-logo .logo-wrapper-footer img {
             height: 32px;
             width: auto;
-            border-radius: 4px;
-            /-filter: brightness(0) invert(1);
+            border-radius: 6px;
             display: block;
         }
         .footer-logo .logo-text {
@@ -655,45 +665,6 @@
         /* ============================================
                    RESPONSIVIDADE
                    ============================================ */
-        @media (max-width: 1200px) {
-            .logo-image {
-                width: 140px;
-                max-height: 140px;
-            }
-            .logo-text h1 {
-                font-size: 2rem;
-            }
-            .logo-text .slogan {
-                font-size: 0.85rem;
-            }
-            .qrcode-header {
-                padding: 0.7rem 1.5rem;
-            }
-            .qrcode-header img {
-                width: 56px;
-                height: 56px;
-            }
-            .qrcode-header .qr-text span {
-                font-size: 1rem;
-            }
-            .qrcode-header .qr-text small {
-                font-size: 0.75rem;
-            }
-            .nav-links {
-                gap: 30px;
-            }
-            .nav-links a {
-                font-size: 1rem;
-            }
-            .nav-cta {
-                padding: 10px 28px;
-                font-size: 1rem !important;
-            }
-            .hero-card .logo-frame-big img {
-                max-width: 260px;
-                max-height: 160px;
-            }
-        }
         @media (max-width: 992px) {
             .hero .container,
             .about .container,
@@ -710,19 +681,16 @@
             .qrcode-header {
                 display: none;
             }
-            .logo-image {
-                width: 120px;
-                max-height: 120px;
+            .logo-wrapper img {
+                width: 72px;
+                max-height: 72px;
             }
             .logo-text h1 {
-                font-size: 1.8rem;
+                font-size: 1.6rem;
             }
-            .logo-text .slogan {
-                font-size: 0.8rem;
-            }
-            .hero-card .logo-frame-big img {
-                max-width: 220px;
-                max-height: 140px;
+            .hero-card .logo-wrapper-hero img {
+                max-width: 180px;
+                max-height: 110px;
             }
         }
         @media (max-width: 768px) {
@@ -747,27 +715,23 @@
                 display: flex;
             }
             .hero {
-                padding: 180px 0 60px;
+                padding: 140px 0 60px;
             }
             .hero h1 {
-                font-size: 2.2rem;
+                font-size: 2rem;
             }
             .section-title {
                 font-size: 1.8rem;
             }
-            .hero-card .logo-frame-big img {
-                max-width: 200px;
-                max-height: 130px;
-            }
             .logo-text h1 {
-                font-size: 1.4rem;
+                font-size: 1.3rem;
             }
             .logo-text .slogan {
-                font-size: 0.65rem;
+                font-size: 0.6rem;
             }
-            .logo-image {
-                width: 90px;
-                max-height: 90px;
+            .logo-wrapper img {
+                width: 56px;
+                max-height: 56px;
             }
             .contact-form {
                 padding: 24px;
@@ -781,16 +745,17 @@
                 height: 100px;
             }
             header {
-                padding: 14px 0;
+                padding: 10px 0;
             }
-            .hero-card h3 {
-                font-size: 1.1rem;
+            .hero-card .logo-wrapper-hero img {
+                max-width: 150px;
+                max-height: 90px;
             }
         }
         @media (max-width: 480px) {
-            .hero-card .logo-frame-big img {
-                max-width: 160px;
-                max-height: 100px;
+            .hero-card .logo-wrapper-hero img {
+                max-width: 130px;
+                max-height: 80px;
             }
             .logo-text h1 {
                 font-size: 1.1rem;
@@ -798,9 +763,9 @@
             .logo-text .slogan {
                 font-size: 0.5rem;
             }
-            .logo-image {
-                width: 70px;
-                max-height: 70px;
+            .logo-wrapper img {
+                width: 44px;
+                max-height: 44px;
             }
             .hero h1 {
                 font-size: 1.6rem;
@@ -816,33 +781,28 @@
                 font-size: 0.75rem;
                 padding: 0.3rem 1rem;
             }
-            .hero p {
-                font-size: 1rem;
-            }
-            .hero-card h3 {
-                font-size: 1rem;
-            }
-            .hero-card .phone {
-                font-size: 0.95rem;
-            }
         }
     </style>
 </head>
 <body>
 
     <!-- ==========================================
-    HEADER
+    HEADER - COM MOLDURA WEB TEC-TEC ADAPTADA
     ========================================== -->
     <header>
         <div class="container">
             <div class="logo-area">
-                <img src="assets/images/logo-ecd.jpg" alt="ECD Eletrônica" class="logo-image">
+                <!-- MOLDURA DA LOGO - ESTILO WEB TEC-TEC -->
+                <span class="logo-wrapper">
+                    <img src="assets/images/logo-ecd.jpg" alt="ECD Eletrônica">
+                </span>
                 <div class="logo-text">
                     <h1>ECD <span>Eletrônica</span></h1>
                     <span class="slogan">Conserto e Manutenção em placas</span>
                 </div>
             </div>
 
+            <!-- QR CODE NO HEADER -->
             <a href="https://ecdeletronica.github.io" target="_blank" class="qrcode-header">
                 <img src="assets/images/qr-code.png" alt="QR Code ECD Eletrônica">
                 <div class="qr-text">
@@ -863,7 +823,7 @@
     </header>
 
     <!-- ==========================================
-    HERO - LOGO MAIOR ACIMA DO SR. CLAYTON
+    HERO
     ========================================== -->
     <section class="hero">
         <div class="container">
@@ -882,7 +842,7 @@
                 </div>
             </div>
             <div class="hero-card">
-                <span class="logo-frame-big">
+                <span class="logo-wrapper-hero">
                     <img src="assets/images/logo-ecd.jpg" alt="ECD Eletrônica">
                 </span>
                 <h3>Sr. Clayton</h3>
@@ -973,7 +933,7 @@
     <footer>
         <div class="container">
             <div class="footer-logo">
-                <span class="logo-frame-footer">
+                <span class="logo-wrapper-footer">
                     <img src="assets/images/logo-ecd.jpg" alt="ECD Eletrônica">
                 </span>
                 <span class="logo-text">
