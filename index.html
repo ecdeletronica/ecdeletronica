@@ -97,7 +97,7 @@
                    ============================================ */
         header {
             background: var(--primary);
-            padding: 16px 0;
+            padding: 12px 0;
             position: fixed;
             width: 100%;
             top: 0;
@@ -112,10 +112,30 @@
         .logo {
             display: flex;
             align-items: center;
+            gap: 12px;
+            text-decoration: none;
         }
         .logo img {
-            height: 45px;
+            height: 40px;
             width: auto;
+        }
+        .logo-text {
+            color: var(--white);
+            font-weight: 800;
+            font-size: 1.2rem;
+            letter-spacing: -0.5px;
+            line-height: 1.1;
+        }
+        .logo-text span {
+            color: var(--secondary);
+        }
+        .logo-slogan {
+            display: block;
+            font-size: 0.6rem;
+            font-weight: 400;
+            color: rgba(255,255,255,0.6);
+            letter-spacing: 0.5px;
+            margin-top: -2px;
         }
         .nav-links {
             display: flex;
@@ -161,8 +181,7 @@
                    ============================================ */
         .hero {
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-            padding: 160px 0 100px;
-            margin-top: 0;
+            padding: 140px 0 80px;
             color: var(--white);
         }
         .hero .container {
@@ -204,8 +223,8 @@
             text-align: center;
         }
         .hero-card img {
-            max-width: 220px;
-            max-height: 140px;
+            max-width: 200px;
+            max-height: 120px;
             width: auto;
             height: auto;
             border-radius: 8px;
@@ -223,6 +242,7 @@
         .hero-card .phone {
             font-weight: 700;
             color: var(--white);
+            margin-top: 4px;
         }
 
         /* ============================================
@@ -230,6 +250,7 @@
                    ============================================ */
         .services {
             padding: 80px 0;
+            background: var(--white);
         }
         .services .section-header {
             text-align: center;
@@ -243,7 +264,7 @@
         .service-card {
             background: var(--white);
             border-radius: var(--radius);
-            padding: 32px;
+            padding: 32px 24px;
             text-align: center;
             box-shadow: var(--shadow);
             border: 1px solid var(--gray-200);
@@ -298,7 +319,7 @@
         .about-card {
             background: var(--primary);
             color: var(--white);
-            padding: 48px;
+            padding: 48px 32px;
             border-radius: var(--radius);
             text-align: center;
         }
@@ -322,6 +343,7 @@
                    ============================================ */
         .contact {
             padding: 80px 0;
+            background: var(--white);
         }
         .contact .container {
             display: grid;
@@ -362,6 +384,7 @@
             padding: 40px;
             border-radius: var(--radius);
             box-shadow: var(--shadow);
+            border: 1px solid var(--gray-200);
         }
         .contact-form h3 {
             color: var(--primary);
@@ -400,10 +423,22 @@
             padding: 40px 0 20px;
             text-align: center;
         }
-        footer .footer-logo img {
+        .footer-logo {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+        }
+        .footer-logo img {
             height: 35px;
             width: auto;
             filter: brightness(0) invert(1);
+        }
+        .footer-logo .logo-text {
+            font-size: 1.1rem;
+        }
+        .footer-logo .logo-slogan {
+            font-size: 0.55rem;
         }
         footer .social {
             display: flex;
@@ -418,6 +453,10 @@
         }
         footer .social a:hover {
             color: var(--secondary);
+        }
+        footer .copy {
+            font-size: 0.85rem;
+            margin-top: 16px;
         }
 
         /* ============================================
@@ -448,12 +487,16 @@
                 width: 100%;
                 padding: 24px;
                 text-align: center;
+                gap: 16px;
             }
             .nav-links.open {
                 display: flex;
             }
             .menu-toggle {
                 display: flex;
+            }
+            .hero {
+                padding: 120px 0 60px;
             }
             .hero h1 {
                 font-size: 2rem;
@@ -465,14 +508,35 @@
                 max-width: 160px;
                 max-height: 100px;
             }
-        }
-        @media (max-width: 480px) {
-            .hero-card img {
-                max-width: 140px;
-                max-height: 80px;
+            .logo-text {
+                font-size: 1rem;
+            }
+            .logo-slogan {
+                font-size: 0.5rem;
+            }
+            .logo img {
+                height: 32px;
             }
             .contact-form {
                 padding: 24px;
+            }
+        }
+        @media (max-width: 480px) {
+            .hero-card img {
+                max-width: 130px;
+                max-height: 80px;
+            }
+            .logo-text {
+                font-size: 0.85rem;
+            }
+            .logo-slogan {
+                font-size: 0.45rem;
+            }
+            .logo img {
+                height: 28px;
+            }
+            .hero h1 {
+                font-size: 1.6rem;
             }
         }
     </style>
@@ -484,15 +548,13 @@
     ========================================== -->
     <header>
         <div class="container">
-            <div class="logo" style="display:flex; align-items:center; gap:12px;">
-                <img src="assets/images/logo-ecd.jpg" alt="ECD Eletrônica" style="height:40px; width:auto;">
-                <span style="color:var(--white); font-weight:800; font-size:1.2rem; letter-spacing:-0.5px;">
-                    ECD <span style="color:var(--secondary);">Eletrônica</span>
-                    <span style="display:block; font-size:0.6rem; font-weight:400; color:rgba(255,255,255,0.6); letter-spacing:0.5px; margin-top:-2px;">
-                        Conserto e Manutenção em placas
-                    </span>
+            <a href="#" class="logo">
+                <img src="assets/images/logo-ecd.jpg" alt="ECD Eletrônica">
+                <span class="logo-text">
+                    ECD <span>Eletrônica</span>
+                    <span class="logo-slogan">Conserto e Manutenção em placas</span>
                 </span>
-            </div>
+            </a>
             <button class="menu-toggle" id="menuToggle">
                 <span></span><span></span><span></span>
             </button>
@@ -503,6 +565,7 @@
             </ul>
         </div>
     </header>
+
     <!-- ==========================================
     HERO
     ========================================== -->
@@ -613,13 +676,17 @@
         <div class="container">
             <div class="footer-logo">
                 <img src="assets/images/logo-ecd.jpg" alt="ECD Eletrônica">
+                <span class="logo-text">
+                    ECD <span>Eletrônica</span>
+                    <span class="logo-slogan">Conserto e Manutenção em placas</span>
+                </span>
             </div>
             <div class="social">
                 <a href="#"><i class="fab fa-instagram"></i></a>
                 <a href="#"><i class="fab fa-whatsapp"></i></a>
                 <a href="#"><i class="fas fa-envelope"></i></a>
             </div>
-            <p style="margin-top:16px;">© 2026 ECD Eletrônica. Todos os direitos reservados.</p>
+            <p class="copy">© 2026 ECD Eletrônica. Todos os direitos reservados.</p>
         </div>
     </footer>
 
@@ -641,7 +708,7 @@
             }
 
             const links = document.querySelectorAll('.nav-links a');
-            links.forEach(link => {
+            links.forEach(function(link) {
                 link.addEventListener('click', function() {
                     if (navLinks && navLinks.classList.contains('open')) {
                         navLinks.classList.remove('open');
