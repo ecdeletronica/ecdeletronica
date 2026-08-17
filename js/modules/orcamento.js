@@ -1,8 +1,7 @@
 // js/modules/orcamento.js - Sistema de Orçamento para ECD Eletrônica
-// ✅ Versão ESTÁVEL v1.7 - CÓDIGO COMPLETO E CORRIGIDO
-// ✅ SEM template strings (backticks) para evitar erros de sintaxe
+// ✅ Versão ESTÁVEL v1.8 - COM FORMATAÇÃO CPF/CNPJ E EXPORTAÇÃO
 
-console.log('✅ orcamento.js carregado - Versão ESTÁVEL v1.7');
+console.log('✅ orcamento.js carregado - Versão ESTÁVEL v1.8');
 
 // ============================================================
 // CONFIGURAÇÕES
@@ -20,8 +19,77 @@ var ORCAMENTO_CONFIG = {
         pix: "82988998040",
         telefone: "(82) 9.9946-8040",
         whatsapp: "5582999468040"
+    },
+    proponente: {
+        nome: "ELAYLTON CAVALCANTE DAMASCENO",
+        cnpj: "57.104.492/0001-82",
+        endereco: "R. Monsenhor Luiz Barbosa, nº 60, Bairro Prado, Maceió - AL",
+        cep: "57010-262",
+        email: "elaylton95@gmail.com",
+        pix: "82988998040"
     }
 };
+
+// ============================================================
+// FUNÇÃO DE FORMATAÇÃO CPF/CNPJ
+// ============================================================
+
+function formatarCpfCnpj(valor) {
+    if (!valor) return '';
+    var numeros = valor.replace(/\D/g, '');
+    if (numeros.length <= 11) {
+        // CPF: 000.000.000-00
+        return numeros.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+    } else {
+        // CNPJ: 00.000.000/0000-00
+        return numeros.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
+    }
+}
+
+function configurarFormatacaoCpfCnpj() {
+    var input = document.getElementById('orcamentoCnpj');
+    if (!input) return;
+    
+    input.addEventListener('input', function() {
+        var valor = this.value.replace(/\D/g, '');
+        if (valor.length === 0) {
+            this.value = '';
+            return;
+        }
+        if (valor.length <= 11) {
+            // CPF
+            if (valor.length <= 3) {
+                this.value = valor;
+            } else if (valor.length <= 6) {
+                this.value = valor.substring(0, 3) + '.' + valor.substring(3);
+            } else if (valor.length <= 9) {
+                this.value = valor.substring(0, 3) + '.' + valor.substring(3, 6) + '.' + valor.substring(6);
+            } else {
+                this.value = valor.substring(0, 3) + '.' + valor.substring(3, 6) + '.' + valor.substring(6, 9) + '-' + valor.substring(9, 11);
+            }
+        } else {
+            // CNPJ
+            if (valor.length <= 2) {
+                this.value = valor;
+            } else if (valor.length <= 5) {
+                this.value = valor.substring(0, 2) + '.' + valor.substring(2);
+            } else if (valor.length <= 8) {
+                this.value = valor.substring(0, 2) + '.' + valor.substring(2, 5) + '.' + valor.substring(5);
+            } else if (valor.length <= 12) {
+                this.value = valor.substring(0, 2) + '.' + valor.substring(2, 5) + '.' + valor.substring(5, 8) + '/' + valor.substring(8);
+            } else {
+                this.value = valor.substring(0, 2) + '.' + valor.substring(2, 5) + '.' + valor.substring(5, 8) + '/' + valor.substring(8, 12) + '-' + valor.substring(12, 14);
+            }
+        }
+    });
+    
+    input.addEventListener('blur', function() {
+        var valor = this.value.replace(/\D/g, '');
+        if (valor.length > 0) {
+            this.value = formatarCpfCnpj(valor);
+        }
+    });
+}
 
 // ============================================================
 // ESTADO GLOBAL
@@ -559,7 +627,7 @@ function listarOrcamentos() {
 }
 
 // ============================================================
-// FUNÇÕES DE VISUALIZAÇÃO
+// FUNÇÕES DE VISUALIZAÇÃO - COM DADOS DO PROPONENTE
 // ============================================================
 
 function verOrcamento(id) {
@@ -576,7 +644,7 @@ function verOrcamento(id) {
     }
     
     var modalHtml = '<div class="modal-win98" id="orcamentoModal" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:10001; display:flex; align-items:center; justify-content:center; padding:20px;">';
-    modalHtml = modalHtml + '<div class="modal-win98-content" style="max-width:800px; width:95%; background:#ece9d8; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; box-shadow: 4px 4px 20px rgba(0,0,0,0.3);">';
+    modalHtml = modalHtml + '<div class="modal-win98-content" style="max-width:850px; width:95%; background:#ece9d8; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; box-shadow: 4px 4px 20px rgba(0,0,0,0.3);">';
     modalHtml = modalHtml + '<div class="modal-win98-header" style="background:#000080; color:#ffffff; padding:4px 10px; display:flex; justify-content:space-between; align-items:center; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080;">';
     modalHtml = modalHtml + '<span class="modal-win98-title" style="font-family:\'Courier New\',monospace; font-weight:700; font-size:0.85rem;"><i class="fas fa-file-invoice"></i> Orçamento ' + (orc.numero || '') + '</span>';
     modalHtml = modalHtml + '<button class="modal-win98-close" onclick="window.fecharModalWin98(\'orcamentoModal\')" style="background:#c0c0c0; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:0 8px; cursor:pointer; font-size:1rem; font-weight:700; font-family:\'Courier New\',monospace;">×</button>';
@@ -585,8 +653,8 @@ function verOrcamento(id) {
     modalHtml = modalHtml + gerarHtmlOrcamento(orc);
     modalHtml = modalHtml + '</div>';
     modalHtml = modalHtml + '<div class="modal-win98-footer" style="background:#d4d0c8; padding:6px 10px; text-align:right; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080;">';
-    modalHtml = modalHtml + '<button class="btn-win98" onclick="window.enviarWhatsAppOrcamento(\'' + orc.id + '\')" style="font-size:0.75rem; padding:3px 12px; background:#d4d0c8; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; cursor:pointer; font-family:\'Courier New\',monospace; font-weight:700;"><i class="fab fa-whatsapp"></i> WhatsApp</button> ';
     modalHtml = modalHtml + '<button class="btn-win98" onclick="window.imprimirOrcamento(\'' + orc.id + '\')" style="font-size:0.75rem; padding:3px 12px; background:#d4d0c8; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; cursor:pointer; font-family:\'Courier New\',monospace; font-weight:700;"><i class="fas fa-print"></i> Imprimir</button> ';
+    modalHtml = modalHtml + '<button class="btn-win98" onclick="window.enviarWhatsAppOrcamento(\'' + orc.id + '\')" style="font-size:0.75rem; padding:3px 12px; background:#d4d0c8; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; cursor:pointer; font-family:\'Courier New\',monospace; font-weight:700;"><i class="fab fa-whatsapp"></i> WhatsApp</button> ';
     modalHtml = modalHtml + '<button class="btn-win98" onclick="window.gerarPDFOrcamento(\'' + orc.id + '\')" style="font-size:0.75rem; padding:3px 12px; background:#d4d0c8; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; cursor:pointer; font-family:\'Courier New\',monospace; font-weight:700;"><i class="fas fa-file-pdf"></i> PDF</button> ';
     modalHtml = modalHtml + '<button class="btn-win98" onclick="window.fecharModalWin98(\'orcamentoModal\')" style="font-size:0.75rem; padding:3px 12px; background:#d4d0c8; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; cursor:pointer; font-family:\'Courier New\',monospace; font-weight:700;">Fechar</button>';
     modalHtml = modalHtml + '</div></div></div>';
@@ -607,36 +675,36 @@ function gerarHtmlOrcamento(orc) {
     
     var html = '<div style="font-family:\'Courier New\',monospace; font-size:0.75rem; color:#000000;">';
     
-    // Cabeçalho da empresa e dados do orçamento
-    html = html + '<div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px; background:#d4d0c8; padding:10px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; box-shadow: inset 2px 2px 6px rgba(0,0,0,0.12);">';
-    html = html + '<div><strong>' + ORCAMENTO_CONFIG.empresa.nome + '</strong><br>';
-    html = html + 'CNPJ: ' + ORCAMENTO_CONFIG.empresa.cnpj + '<br>';
-    html = html + ORCAMENTO_CONFIG.empresa.endereco + '<br>';
-    html = html + 'CEP: ' + ORCAMENTO_CONFIG.empresa.cep + '<br>';
-    html = html + 'Email: ' + ORCAMENTO_CONFIG.empresa.email + '<br>';
-    html = html + 'PIX: ' + ORCAMENTO_CONFIG.empresa.pix + '</div>';
-    html = html + '<div style="text-align:right;"><h3 style="margin:0 0 6px 0; color:#000080; font-weight:700; font-size:0.9rem;">ORÇAMENTO</h3>';
-    html = html + '<p style="margin:1px 0;"><strong>Nº:</strong> ' + (orc.numero || 'N/A') + '</p>';
-    html = html + '<p style="margin:1px 0;"><strong>Data:</strong> ' + formatarData(orc.data) + '</p>';
-    html = html + '<p style="margin:1px 0;"><strong>Prazo:</strong> ' + formatarData(orc.prazo) + '</p>';
-    html = html + '<p style="margin:1px 0;"><span style="background:' + statusColor + '; color:#fff; padding:1px 10px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; font-weight:700; font-size:0.7rem;">' + (orc.status || 'Pendente') + '</span></p></div>';
-    html = html + '</div>';
+    // DADOS DO PROPONENTE (FIXOS)
+    html = html + '<div style="background:#d4d0c8; padding:8px 10px; margin-bottom:10px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; box-shadow: inset 1px 1px 4px rgba(0,0,0,0.1);">';
+    html = html + '<div style="display:grid; grid-template-columns:1fr 1fr; gap:6px;">';
+    html = html + '<div><strong>PROPONENTE:</strong> ' + ORCAMENTO_CONFIG.proponente.nome + '</div>';
+    html = html + '<div style="text-align:right;"><strong>CNPJ:</strong> ' + ORCAMENTO_CONFIG.proponente.cnpj + '</div>';
+    html = html + '<div style="grid-column:1/3;"><strong>END:</strong> ' + ORCAMENTO_CONFIG.proponente.endereco + '</div>';
+    html = html + '<div><strong>CEP:</strong> ' + ORCAMENTO_CONFIG.proponente.cep + '</div>';
+    html = html + '<div style="text-align:right;"><strong>E-MAIL:</strong> ' + ORCAMENTO_CONFIG.proponente.email + '</div>';
+    html = html + '<div style="grid-column:1/3;"><strong>PIX:</strong> ' + ORCAMENTO_CONFIG.proponente.pix + '</div>';
+    html = html + '</div></div>';
     
-    // Dados do cliente
-    html = html + '<div style="background:#d4d0c8; padding:10px; margin-bottom:10px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; box-shadow: inset 2px 2px 6px rgba(0,0,0,0.12);">';
-    html = html + '<strong>CLIENTE</strong><br>';
-    html = html + (orc.cliente || 'Não informado') + '<br>';
-    html = html + (orc.cnpj ? 'CNPJ: ' + orc.cnpj : '') + '<br>';
-    html = html + (orc.endereco || '');
-    html = html + '</div>';
+    // DADOS DO CLIENTE
+    html = html + '<div style="background:#d4d0c8; padding:8px 10px; margin-bottom:10px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; box-shadow: inset 1px 1px 4px rgba(0,0,0,0.1);">';
+    html = html + '<div style="display:grid; grid-template-columns:1fr 1fr; gap:6px;">';
+    html = html + '<div><strong>CLIENTE:</strong> ' + (orc.cliente || 'Não informado') + '</div>';
+    html = html + '<div style="text-align:right;"><strong>CNPJ/CPF:</strong> ' + (orc.cnpj || 'Não informado') + '</div>';
+    html = html + '<div style="grid-column:1/3;"><strong>ENDEREÇO:</strong> ' + (orc.endereco || 'Não informado') + '</div>';
+    html = html + '<div><strong>DATA:</strong> ' + formatarData(orc.data) + '</div>';
+    html = html + '<div style="text-align:right;"><strong>PRAZO:</strong> ' + formatarData(orc.prazo) + '</div>';
+    html = html + '<div><strong>STATUS:</strong> <span style="background:' + statusColor + '; color:#fff; padding:0 8px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; font-weight:700; font-size:0.65rem;">' + (orc.status || 'Pendente') + '</span></div>';
+    html = html + '<div style="text-align:right;"><strong>Nº:</strong> ' + (orc.numero || 'N/A') + '</div>';
+    html = html + '</div></div>';
     
     // Tabela de itens
     html = html + '<div style="overflow-x:auto; background:#d4d0c8; padding:3px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; box-shadow: inset 2px 2px 6px rgba(0,0,0,0.12);">';
     html = html + '<table style="width:100%; border-collapse:collapse; background:#ffffff; font-family:\'Courier New\',monospace; font-size:0.7rem;">';
     html = html + '<thead><tr style="background:#d4d0c8; border-bottom:2px solid #404040;">';
-    html = html + '<th style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:left; font-weight:700;">Item</th>';
+    html = html + '<th style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:center; font-weight:700;">Item</th>';
     html = html + '<th style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:left; font-weight:700;">Descrição</th>';
-    html = html + '<th style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:left; font-weight:700;">UN</th>';
+    html = html + '<th style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:center; font-weight:700;">UN</th>';
     html = html + '<th style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:center; font-weight:700;">Quant.</th>';
     html = html + '<th style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:right; font-weight:700;">Valor Unit.</th>';
     html = html + '<th style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:right; font-weight:700;">Subtotal</th>';
@@ -646,9 +714,9 @@ function gerarHtmlOrcamento(orc) {
         var item = orc.itens[i];
         var subtotal = (item.quantidade || 0) * (item.valor_unitario || 0);
         html = html + '<tr>';
-        html = html + '<td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px;">' + (i + 1) + '</td>';
+        html = html + '<td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:center;">' + (i + 1) + '</td>';
         html = html + '<td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px;">' + (item.descricao || '') + '</td>';
-        html = html + '<td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px;">' + (item.unidade || 'UN') + '</td>';
+        html = html + '<td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:center;">' + (item.unidade || 'UN') + '</td>';
         html = html + '<td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:center;">' + (item.quantidade || 1) + '</td>';
         html = html + '<td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:right;">' + formatarMoeda(item.valor_unitario || 0) + '</td>';
         html = html + '<td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:right;">' + formatarMoeda(subtotal) + '</td>';
@@ -666,14 +734,15 @@ function gerarHtmlOrcamento(orc) {
     
     // Observações
     if (orc.observacoes) {
-        html = html + '<div style="background:#d4d0c8; padding:10px; margin-top:10px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; box-shadow: inset 2px 2px 6px rgba(0,0,0,0.12);">';
+        html = html + '<div style="background:#d4d0c8; padding:8px 10px; margin-top:10px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; box-shadow: inset 1px 1px 4px rgba(0,0,0,0.1);">';
         html = html + '<strong>Observações:</strong><br>' + orc.observacoes;
         html = html + '</div>';
     }
     
-    // Rodapé
-    html = html + '<div style="text-align:center; margin-top:12px; font-size:0.6rem; color:#404040; font-family:\'Courier New\',monospace; font-weight:700;">';
+    // Rodapé com dados fixos do proponente
+    html = html + '<div style="text-align:center; margin-top:12px; padding-top:8px; border-top:2px solid #808080; font-size:0.6rem; color:#404040; font-family:\'Courier New\',monospace; font-weight:700;">';
     html = html + '<p style="margin:2px 0;">' + ORCAMENTO_CONFIG.empresa.nome + ' - Assistência Técnica Independente</p>';
+    html = html + '<p style="margin:2px 0;">CNPJ: ' + ORCAMENTO_CONFIG.empresa.cnpj + ' | Tel: ' + ORCAMENTO_CONFIG.empresa.telefone + ' | Email: ' + ORCAMENTO_CONFIG.empresa.email + '</p>';
     html = html + '<p style="margin:2px 0;">Documento gerado em ' + formatarDataHora(new Date().toISOString()) + '</p>';
     html = html + '</div></div>';
     
@@ -681,7 +750,7 @@ function gerarHtmlOrcamento(orc) {
 }
 
 // ============================================================
-// FUNÇÕES DE EXPORTAÇÃO
+// FUNÇÕES DE EXPORTAÇÃO (Imprimir, WhatsApp, PDF)
 // ============================================================
 
 function imprimirOrcamento(id) {
@@ -1016,6 +1085,9 @@ function initializeOrcamento() {
         };
     }
     
+    // Configurar formatação de CPF/CNPJ
+    configurarFormatacaoCpfCnpj();
+    
     setTimeout(function() {
         switchOrcamentoTab('list');
         listarOrcamentos();
@@ -1056,4 +1128,4 @@ if (document.readyState === 'loading') {
     initializeOrcamento();
 }
 
-console.log('✅ orcamento.js v1.7 carregado - CÓDIGO COMPLETO E CORRIGIDO!');
+console.log('✅ orcamento.js v1.8 carregado - Com formatação CPF/CNPJ e exportação!');
