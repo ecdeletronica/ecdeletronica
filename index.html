@@ -94,7 +94,7 @@
         }
 
         /* ============================================
-                   HEADER - TAMANHO BOM (VERSÃO ANTERIOR)
+                   HEADER - AUMENTADO UM POUCO MAIS
                    ============================================ */
         header {
             background: rgba(255,255,255,0.92);
@@ -105,7 +105,7 @@
             top: 0;
             z-index: 1000;
             border-bottom: 2px solid rgba(230, 126, 34, 0.15);
-            padding: 12px 0;
+            padding: 18px 0; /* AUMENTADO de 12px para 18px */
         }
         header .container {
             display: flex;
@@ -124,7 +124,7 @@
 
         .logo-wrapper {
             background: rgba(255,255,255,0.8);
-            padding: 6px;
+            padding: 8px; /* AUMENTADO de 6px para 8px */
             border-radius: 16px;
             box-shadow: 0 6px 15px rgba(10, 46, 77, 0.15);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -139,9 +139,9 @@
             border-color: var(--secondary);
         }
         .logo-wrapper img {
-            width: 96px;
+            width: 110px; /* AUMENTADO de 96px para 110px */
             height: auto;
-            max-height: 96px;
+            max-height: 110px;
             border-radius: 12px;
             object-fit: contain;
             background: white;
@@ -149,7 +149,7 @@
         }
 
         .logo-text h1 {
-            font-size: 2rem;
+            font-size: 2.2rem; /* AUMENTADO de 2rem para 2.2rem */
             line-height: 1.2;
             color: var(--primary);
             font-weight: 800;
@@ -159,7 +159,7 @@
             color: var(--secondary);
         }
         .logo-text .slogan {
-            font-size: 0.8rem;
+            font-size: 0.9rem; /* AUMENTADO de 0.8rem para 0.9rem */
             color: var(--gray-600);
             font-weight: 400;
             letter-spacing: 0.3px;
@@ -172,7 +172,7 @@
             align-items: center;
             gap: 0.8rem;
             background: rgba(230, 126, 34, 0.06);
-            padding: 0.5rem 1.2rem;
+            padding: 0.6rem 1.4rem; /* AUMENTADO */
             border-radius: 100px;
             border: 1px solid rgba(230, 126, 34, 0.15);
             transition: all 0.3s ease;
@@ -185,8 +185,8 @@
             border-color: var(--secondary);
         }
         .qrcode-header img {
-            width: 40px;
-            height: 40px;
+            width: 44px; /* AUMENTADO de 40px para 44px */
+            height: 44px;
             border-radius: 12px;
             background: white;
             padding: 4px;
@@ -198,7 +198,7 @@
             line-height: 1.2;
         }
         .qrcode-header .qr-text span {
-            font-size: 0.9rem;
+            font-size: 1rem; /* AUMENTADO de 0.9rem para 1rem */
             font-weight: 600;
             color: var(--primary);
         }
@@ -208,7 +208,7 @@
         }
         .qrcode-header .qr-text small {
             color: var(--gray-600);
-            font-size: 0.7rem;
+            font-size: 0.75rem; /* AUMENTADO de 0.7rem para 0.75rem */
         }
 
         .nav-links {
@@ -222,7 +222,7 @@
             text-decoration: none;
             font-weight: 600;
             transition: 0.3s;
-            font-size: 0.95rem;
+            font-size: 1rem; /* AUMENTADO de 0.95rem para 1rem */
         }
         .nav-links a:hover {
             color: var(--primary);
@@ -230,7 +230,7 @@
         .nav-cta {
             background: var(--secondary);
             color: var(--white) !important;
-            padding: 10px 28px;
+            padding: 12px 32px; /* AUMENTADO */
             border-radius: 50px;
             font-weight: 700;
         }
@@ -260,7 +260,7 @@
                    ============================================ */
         .hero {
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-            padding: 160px 0 80px;
+            padding: 170px 0 80px; /* AUMENTADO de 160px para 170px */
             color: var(--white);
         }
         .hero .container {
@@ -338,6 +338,32 @@
             font-weight: 700;
             color: var(--white);
             margin-top: 4px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .hero-card .phone a {
+            color: var(--white);
+            text-decoration: none;
+            transition: 0.3s;
+        }
+        .hero-card .phone a:hover {
+            color: var(--secondary);
+        }
+        .hero-card .phone .whatsapp {
+            background: #25D366;
+            padding: 4px 14px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .hero-card .phone .whatsapp:hover {
+            background: #1da851;
+            color: var(--white);
         }
 
         /* ============================================
@@ -688,11 +714,11 @@
                 display: none;
             }
             .logo-wrapper img {
-                width: 72px;
-                max-height: 72px;
+                width: 80px;
+                max-height: 80px;
             }
             .logo-text h1 {
-                font-size: 1.6rem;
+                font-size: 1.8rem;
             }
             .hero-card .logo-wrapper-hero img {
                 max-width: 180px;
@@ -725,7 +751,7 @@
                 display: flex;
             }
             .hero {
-                padding: 140px 0 60px;
+                padding: 150px 0 60px;
             }
             .hero h1 {
                 font-size: 2rem;
@@ -734,20 +760,20 @@
                 font-size: 1.8rem;
             }
             .logo-text h1 {
-                font-size: 1.3rem;
+                font-size: 1.4rem;
             }
             .logo-text .slogan {
-                font-size: 0.6rem;
+                font-size: 0.65rem;
             }
             .logo-wrapper img {
-                width: 56px;
-                max-height: 56px;
+                width: 64px;
+                max-height: 64px;
             }
             .contact-form {
                 padding: 24px;
             }
             header {
-                padding: 10px 0;
+                padding: 14px 0;
             }
             .hero-card .logo-wrapper-hero img {
                 max-width: 150px;
@@ -767,6 +793,10 @@
                 width: 80px;
                 height: 80px;
             }
+            .hero-card .phone {
+                flex-direction: column;
+                gap: 6px;
+            }
         }
         @media (max-width: 480px) {
             .hero-card .logo-wrapper-hero img {
@@ -774,14 +804,14 @@
                 max-height: 80px;
             }
             .logo-text h1 {
-                font-size: 1.1rem;
+                font-size: 1.2rem;
             }
             .logo-text .slogan {
-                font-size: 0.5rem;
+                font-size: 0.55rem;
             }
             .logo-wrapper img {
-                width: 44px;
-                max-height: 44px;
+                width: 54px;
+                max-height: 54px;
             }
             .hero h1 {
                 font-size: 1.6rem;
@@ -803,7 +833,7 @@
 <body>
 
     <!-- ==========================================
-    HEADER - TAMANHO BOM
+    HEADER - AUMENTADO
     ========================================== -->
     <header>
         <div class="container">
@@ -859,9 +889,12 @@
                 <span class="logo-wrapper-hero">
                     <img src="assets/images/logo-ecd.jpg" alt="ECD Eletrônica">
                 </span>
-                <h3>Sr. Clayton</h3>
+                <h3>Sr. Elaylton</h3>
                 <p>Responsável Técnico</p>
-                <p class="phone"><i class="fas fa-phone-alt"></i> (82) 9.9946-8040</p>
+                <div class="phone">
+                    <a href="tel:+5582999468040"><i class="fas fa-phone-alt"></i> (82) 9.9946-8040</a>
+                    <a href="https://wa.me/5582999468040" target="_blank" class="whatsapp"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+                </div>
             </div>
         </div>
     </section>
@@ -907,7 +940,7 @@
                 <i class="fas fa-quote-left"></i>
                 <p>"Tecnologia que conecta. Qualidade que resolve."</p>
                 <hr>
-                <p><strong>Responsável Técnico</strong><br>Sr. Clayton</p>
+                <p><strong>Responsável Técnico</strong><br>Sr. Elaylton</p>
             </div>
         </div>
     </section>
@@ -924,6 +957,7 @@
                 <div class="contact-details">
                     <div class="item"><i class="fas fa-map-marker-alt"></i> <span>Rua Monsenhor Luiz Barbosa, nº 60 - Trapiche, Maceió - AL</span></div>
                     <div class="item"><i class="fas fa-phone-alt"></i> <a href="tel:+5582999468040">(82) 9.9946-8040</a></div>
+                    <div class="item"><i class="fab fa-whatsapp"></i> <a href="https://wa.me/5582999468040" target="_blank">WhatsApp</a></div>
                     <div class="item"><i class="fas fa-envelope"></i> <a href="mailto:ecdeletronica@gmail.com">ecdeletronica@gmail.com</a></div>
                     <div class="item"><i class="fab fa-instagram"></i> <a href="#">@ecdeletronica</a></div>
                 </div>
@@ -947,7 +981,6 @@
     <footer>
         <div class="container">
             <div class="footer-grid">
-                <!-- LADO ESQUERDO: LOGO -->
                 <div class="footer-left">
                     <span class="logo-wrapper-footer">
                         <img src="assets/images/logo-ecd.jpg" alt="ECD Eletrônica">
@@ -958,7 +991,6 @@
                     </span>
                 </div>
 
-                <!-- LADO DIREITO: QR CODE -->
                 <div class="footer-right">
                     <div class="qrcode-footer">
                         <img src="assets/images/qr-code.png" alt="QR Code ECD Eletrônica">
@@ -973,7 +1005,7 @@
 
             <div class="social">
                 <a href="#"><i class="fab fa-instagram"></i></a>
-                <a href="#"><i class="fab fa-whatsapp"></i></a>
+                <a href="https://wa.me/5582999468040" target="_blank"><i class="fab fa-whatsapp"></i></a>
                 <a href="#"><i class="fas fa-envelope"></i></a>
             </div>
             <p class="copy">© 2026 ECD Eletrônica. Todos os direitos reservados.</p>
