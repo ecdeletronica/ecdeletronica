@@ -1,13 +1,10 @@
 // js/modules/orcamento.js - Sistema de Orçamento para ECD Eletrônica
-// ✅ Versão ESTÁVEL v2.7 - NÚMERO COM DIA, RECIBO COM BOTÕES, EXCLUIR ISOLADO
-console.log('✅ orcamento.js carregado - Versão ESTÁVEL v2.7');
-
+// ✅ Versão ESTÁVEL v2.8 - CORREÇÕES: PDF e WhatsApp do Recibo, ícone Admin, senha e213
 // ============================================================
-// CONFIGURAÇÕES
-// ============================================================
+console.log('✅ orcamento.js carregado - Versão ESTÁVEL v2.8');
 
 var ORCAMENTO_CONFIG = {
-    password: "ecd123",
+    password: "ecd60",
     storageKey: "ecd_orcamentos",
     empresa: {
         nome: "ECD Eletrônica",
@@ -184,29 +181,29 @@ function gerarHtmlRecibo(orc) {
     html += "<p>Documento gerado em " + formatarDataHora(new Date().toISOString()) + "</p>";
     html += "</div>";
     
-    // BOTÕES DO RECIBO
+    // BOTÕES DO RECIBO - CORRIGIDOS
     html += "<div class=\"text-center no-print\" style=\"margin-top:15px; text-align:center;\">";
     html += "<button class=\"btn-win98\" onclick=\"window.print()\"><i class=\"fas fa-print\"></i> Imprimir</button> ";
-    html += "<button class=\"btn-win98\" onclick=\"window.enviarReciboWhatsApp()\"><i class=\"fab fa-whatsapp\"></i> WhatsApp</button> ";
-    html += "<button class=\"btn-win98\" onclick=\"window.gerarReciboPDF()\"><i class=\"fas fa-file-pdf\"></i> PDF</button> ";
+    html += "<button class=\"btn-win98\" onclick=\"window.enviarReciboWhatsApp('" + orc.id + "')\"><i class=\"fab fa-whatsapp\"></i> WhatsApp</button> ";
+    html += "<button class=\"btn-win98\" onclick=\"window.gerarReciboPDF('" + orc.id + "')\"><i class=\"fas fa-file-pdf\"></i> PDF</button> ";
     html += "<button class=\"btn-win98\" onclick=\"window.close()\">Fechar</button>";
     html += "</div>";
     
     // SCRIPT PARA AS FUNÇÕES DO RECIBO
     html += "<script>";
-    html += "window.enviarReciboWhatsApp = function() {";
-    html += "  var telefone = '" + ORCAMENTO_CONFIG.empresa.whatsapp + "';";
-    html += "  var mensagem = '*" + ORCAMENTO_CONFIG.empresa.nome + "*\\n';";
-    html += "  mensagem += 'NOTA DE RECIBO: " + (orc.numero || "N/A") + "\\n';";
-    html += "  mensagem += 'Cliente: " + (orc.cliente || "Não informado") + "\\n';";
-    html += "  mensagem += 'Valor: " + formatarMoeda(orc.total || 0) + "\\n';";
-    html += "  mensagem += 'PIX: " + ORCAMENTO_CONFIG.banco.pix + "\\n';";
-    html += "  mensagem += '\\n*Assistência Técnica Independente*';";
-    html += "  var url = 'https://wa.me/' + telefone + '?text=' + encodeURIComponent(mensagem);";
-    html += "  window.open(url, '_blank');";
+    html += "window.enviarReciboWhatsApp = function(id) {";
+    html += "  if (typeof window.enviarWhatsAppRecibo === 'function') {";
+    html += "    window.enviarWhatsAppRecibo(id);";
+    html += "  } else {";
+    html += "    alert('Função WhatsApp em carregamento. Tente novamente.');";
+    html += "  }";
     html += "};";
-    html += "window.gerarReciboPDF = function() {";
-    html += "  alert('Função PDF em desenvolvimento. Utilize Imprimir e salve como PDF.');";
+    html += "window.gerarReciboPDF = function(id) {";
+    html += "  if (typeof window.gerarPDFRecibo === 'function') {";
+    html += "    window.gerarPDFRecibo(id);";
+    html += "  } else {";
+    html += "    alert('Função PDF em carregamento. Tente novamente.');";
+    html += "  }";
     html += "};";
     html += "</script>";
     
@@ -214,6 +211,193 @@ function gerarHtmlRecibo(orc) {
     
     return html;
 }
+
+// ============================================================
+// FUNÇÃO PARA GERAR PDF DO RECIBO
+// ============================================================
+
+function gerarPDFRecibo(id) {
+    var orc = null;
+    for (var i = 0; i < window.orcamentos.length; i++) {
+        if (window.orcamentos[i].id === id) {
+            orc = window.orcamentos[i];
+            break;
+        }
+    }
+    if (!orc) {
+        mostrarNotificacao("❌ Orçamento não encontrado!", "error");
+        return;
+    }
+    
+    if (typeof html2pdf === "undefined") {
+        mostrarNotificacao("📥 Carregando bibliotecas...", "info");
+        var scripts = [
+            "https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js",
+            "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js",
+            "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"
+        ];
+        var loaded = 0;
+        function carregarScriptPDFRecibo(url) {
+            var script = document.createElement("script");
+            script.src = url;
+            script.onload = function() { loaded++; if (loaded === scripts.length) { gerarPDFRecibo(id); } };
+            script.onerror = function() { mostrarNotificacao("❌ Erro ao carregar bibliotecas!", "error"); };
+            document.head.appendChild(script);
+        }
+        for (var i = 0; i < scripts.length; i++) { carregarScriptPDFRecibo(scripts[i]); }
+        return;
+    }
+    
+    mostrarNotificacao("📄 Gerando PDF do Recibo...", "info");
+    try {
+        var conteudo = gerarHtmlRecibo(orc);
+        var container = document.createElement("div");
+        container.innerHTML = conteudo;
+        container.style.padding = "20px";
+        container.style.background = "#ffffff";
+        container.style.width = "100%";
+        container.style.maxWidth = "800px";
+        container.style.margin = "0 auto";
+        container.style.fontFamily = "'Courier New', monospace";
+        container.style.fontSize = "12px";
+        
+        // Remover os botões do container para o PDF
+        var botoes = container.querySelectorAll(".no-print");
+        for (var i = 0; i < botoes.length; i++) {
+            botoes[i].style.display = "none";
+        }
+        
+        var opt = {
+            margin: [10, 10, 10, 10],
+            filename: "Recibo_" + (orc.numero || "ECD") + ".pdf",
+            image: { type: "jpeg", quality: 0.95 },
+            html2canvas: { scale: 2, useCORS: true, logging: false, backgroundColor: "#ffffff", allowTaint: true, width: 800, height: 1100, scrollY: 0 },
+            jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+            pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+        };
+        html2pdf().set(opt).from(container).save().then(function() {
+            mostrarNotificacao("✅ PDF do Recibo gerado com sucesso!", "success");
+        }).catch(function(error) {
+            mostrarNotificacao("❌ Erro ao gerar PDF do Recibo.", "error");
+        });
+    } catch (error) {
+        mostrarNotificacao("❌ Erro ao gerar PDF do Recibo.", "error");
+    }
+}
+
+// ============================================================
+// FUNÇÃO PARA WHATSAPP DO RECIBO COM IMAGEM
+// ============================================================
+
+function enviarWhatsAppRecibo(id) {
+    var orc = null;
+    for (var i = 0; i < window.orcamentos.length; i++) {
+        if (window.orcamentos[i].id === id) {
+            orc = window.orcamentos[i];
+            break;
+        }
+    }
+    if (!orc) {
+        mostrarNotificacao("❌ Orçamento não encontrado!", "error");
+        return;
+    }
+    
+    if (typeof html2canvas === "undefined") {
+        mostrarNotificacao("📥 Carregando biblioteca de imagem...", "info");
+        var script = document.createElement("script");
+        script.src = "https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js";
+        script.onload = function() { enviarWhatsAppRecibo(id); };
+        script.onerror = function() { enviarWhatsAppMensagem(orc); };
+        document.head.appendChild(script);
+        return;
+    }
+    
+    mostrarNotificacao("📸 Gerando imagem do Recibo...", "info");
+    
+    try {
+        var conteudo = gerarHtmlRecibo(orc);
+        var container = document.createElement("div");
+        container.innerHTML = conteudo;
+        container.style.padding = "20px";
+        container.style.background = "#ffffff";
+        container.style.width = "100%";
+        container.style.maxWidth = "800px";
+        container.style.margin = "0 auto";
+        container.style.fontFamily = "'Courier New', monospace";
+        container.style.fontSize = "12px";
+        container.style.boxSizing = "border-box";
+        container.style.position = "relative";
+        
+        // Remover botões da imagem
+        var botoes = container.querySelectorAll(".no-print");
+        for (var i = 0; i < botoes.length; i++) {
+            botoes[i].style.display = "none";
+        }
+        
+        var imagens = container.querySelectorAll("img");
+        for (var i = 0; i < imagens.length; i++) {
+            imagens[i].crossOrigin = "anonymous";
+            imagens[i].setAttribute("crossOrigin", "anonymous");
+        }
+        
+        container.style.position = "absolute";
+        container.style.left = "-9999px";
+        container.style.top = "0";
+        document.body.appendChild(container);
+        
+        var options = {
+            scale: 2,
+            useCORS: true,
+            allowTaint: true,
+            logging: false,
+            backgroundColor: "#ffffff",
+            width: 800,
+            height: container.scrollHeight + 40,
+            scrollY: 0,
+            scrollX: 0,
+            windowWidth: 800,
+            onclone: function(clonedDoc, element) {
+                var imgs = element.querySelectorAll("img");
+                for (var i = 0; i < imgs.length; i++) {
+                    imgs[i].crossOrigin = "anonymous";
+                }
+            }
+        };
+        
+        html2canvas(container, options)
+            .then(function(canvas) {
+                if (container.parentNode) {
+                    document.body.removeChild(container);
+                }
+                var imageDataUrl = canvas.toDataURL("image/png");
+                var link = document.createElement("a");
+                link.href = imageDataUrl;
+                link.download = "Recibo_" + (orc.numero || "ECD") + ".png";
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                mostrarNotificacao("✅ Imagem do Recibo baixada!", "success");
+                enviarWhatsAppMensagem(orc);
+            })
+            .catch(function(error) {
+                console.error("Erro ao gerar imagem:", error);
+                if (container.parentNode) {
+                    document.body.removeChild(container);
+                }
+                mostrarNotificacao("⚠️ Erro ao gerar imagem. Enviando mensagem...", "warning");
+                enviarWhatsAppMensagem(orc);
+            });
+            
+    } catch (error) {
+        console.error("Erro:", error);
+        mostrarNotificacao("❌ Erro ao gerar imagem. Enviando mensagem...", "error");
+        enviarWhatsAppMensagem(orc);
+    }
+}
+
+// ============================================================
+// FUNÇÃO CONVERTER VALOR POR EXTENSO
+// ============================================================
 
 function converterValorPorExtenso(valor) {
     if (!valor || valor === 0) return "Zero reais";
@@ -447,7 +631,7 @@ function adicionarItemLinha() {
     html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px;\"><input type=\"number\" class=\"item-quantidade\" value=\"1\" min=\"1\" data-index=\"" + index + "\" style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; width:38px; background:#f0f0f0; font-family:'Courier New',monospace; font-size:0.7rem; color:#000000; text-align:center; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.08);\"></td>";
     html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px;\"><input type=\"text\" class=\"item-valor\" value=\"0,00\" data-index=\"" + index + "\" style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; width:75px; background:#f0f0f0; font-family:'Courier New',monospace; font-size:0.7rem; color:#000000; text-align:right; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.08);\"></td>";
     html += "<td class=\"item-subtotal\" data-index=\"" + index + "\" style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 6px; text-align:right; background:#ece9d8; font-family:'Courier New',monospace; font-size:0.7rem; font-weight:700;\">R$ 0,00</td>";
-    html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; text-align:center; background:#d4d0c8;\"><button type=\"button\" class=\"remover-item\" data-index=\"" + index + "\" style=\"background:#d4d0c8; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:0 6px; cursor:pointer; font-size:0.6rem; font-family:'Courier New',monospace; font-weight:700;\"><i class=\"fas fa-trash\" style=\"color:#000000;\"></i></button></td>";
+    html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; text-align:center; background:#d4d0c8;\"><button type=\"button\" class=\"remover-item\" data-index=\"" + index + "\" style=\"background:#f39c12; color:#ffffff; border:2px solid #e67e22; border-top-color:#f1c40f; border-left-color:#f1c40f; padding:0 6px; cursor:pointer; font-size:0.6rem; font-family:'Courier New',monospace; font-weight:700; border-radius:0px;\" title=\"Remover item\"><i class=\"fas fa-trash\" style=\"color:#ffffff;\"></i></button></td>";
     
     linha.innerHTML = html;
     tbody.appendChild(linha);
@@ -685,7 +869,7 @@ function carregarOrcamentoParaEdicao(id) {
             html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px;\"><input type=\"number\" class=\"item-quantidade\" value=\"" + (item.quantidade || 1) + "\" min=\"1\" data-index=\"" + k + "\" style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; width:38px; background:#f0f0f0; font-family:'Courier New',monospace; font-size:0.7rem; color:#000000; text-align:center; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.08);\"></td>";
             html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px;\"><input type=\"text\" class=\"item-valor\" value=\"" + (formatarMoeda(item.valor_unitario || 0).replace("R$ ", "")) + "\" data-index=\"" + k + "\" style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; width:75px; background:#f0f0f0; font-family:'Courier New',monospace; font-size:0.7rem; color:#000000; text-align:right; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.08);\"></td>";
             html += "<td class=\"item-subtotal\" data-index=\"" + k + "\" style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 6px; text-align:right; background:#ece9d8; font-family:'Courier New',monospace; font-size:0.7rem; font-weight:700;\">" + formatarMoeda((item.quantidade || 0) * (item.valor_unitario || 0)) + "</td>";
-            html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; text-align:center; background:#d4d0c8;\"><button type=\"button\" class=\"remover-item\" data-index=\"" + k + "\" style=\"background:#d4d0c8; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:0 6px; cursor:pointer; font-size:0.6rem; font-family:'Courier New',monospace; font-weight:700;\"><i class=\"fas fa-trash\" style=\"color:#000000;\"></i></button></td>";
+            html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; text-align:center; background:#d4d0c8;\"><button type=\"button\" class=\"remover-item\" data-index=\"" + k + "\" style=\"background:#f39c12; color:#ffffff; border:2px solid #e67e22; border-top-color:#f1c40f; border-left-color:#f1c40f; padding:0 6px; cursor:pointer; font-size:0.6rem; font-family:'Courier New',monospace; font-weight:700; border-radius:0px;\" title=\"Remover item\"><i class=\"fas fa-trash\" style=\"color:#ffffff;\"></i></button></td>";
             linha.innerHTML = html;
             tbody.appendChild(linha);
         }
@@ -817,7 +1001,7 @@ function salvarOrcamento() {
 }
 
 // ============================================================
-// FUNÇÕES DE LISTAGEM - COM EXCLUIR ISOLADO
+// FUNÇÕES DE LISTAGEM
 // ============================================================
 
 function listarOrcamentos() {
@@ -860,7 +1044,7 @@ function listarOrcamentos() {
         html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px;\"><span style=\"background:" + statusColor + "; color:#fff; padding:1px 8px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; font-size:0.6rem; font-weight:700;\">" + (orc.status || "Pendente") + "</span></td>";
         html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:right;\"><strong>" + formatarMoeda(orc.total || 0) + "</strong></td>";
         html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:center;\">";
-        // Botões agrupados (Visualizar, Editar, Duplicar)
+        // Botões agrupados (Visualizar, Editar, Duplicar, Recibo)
         html += "<span style=\"display:inline-flex; gap:2px;\">";
         html += "<button class=\"btn-win98-sm\" onclick=\"window.verOrcamento('" + orc.id + "')\" title=\"Visualizar\" style=\"padding:0 4px; font-size:0.65rem; background:#d4d0c8; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; cursor:pointer; font-family:'Courier New',monospace;\"><i class=\"fas fa-eye\"></i></button> ";
         html += "<button class=\"btn-win98-sm\" onclick=\"window.carregarOrcamentoParaEdicao('" + orc.id + "')\" title=\"Editar\" style=\"padding:0 4px; font-size:0.65rem; background:#d4d0c8; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; cursor:pointer; font-family:'Courier New',monospace;\"><i class=\"fas fa-edit\"></i></button> ";
@@ -883,7 +1067,7 @@ function listarOrcamentos() {
 }
 
 // ============================================================
-// FUNÇÕES DE VISUALIZAÇÃO - COM TÍTULO "NOTA DE ORÇAMENTO" SEM EMOJI
+// FUNÇÕES DE VISUALIZAÇÃO
 // ============================================================
 
 function verOrcamento(id) {
@@ -1275,7 +1459,7 @@ function enviarWhatsAppMensagem(orc) {
 }
 
 // ============================================================
-// FUNÇÕES DE INTERFACE
+// FUNÇÕES DE INTERFACE - COM ÍCONE ADMIN E TÍTULO CENTRALIZADO
 // ============================================================
 
 function switchOrcamentoTab(tab) {
@@ -1518,6 +1702,8 @@ window.duplicarOrcamento = duplicarOrcamento;
 window.mostrarNotificacao = mostrarNotificacao;
 window.fecharModalWin98 = fecharModalWin98;
 window.gerarRecibo = gerarRecibo;
+window.gerarPDFRecibo = gerarPDFRecibo;
+window.enviarWhatsAppRecibo = enviarWhatsAppRecibo;
 
 // ============================================================
 // INICIALIZAR
@@ -1529,4 +1715,4 @@ if (document.readyState === "loading") {
     initializeOrcamento();
 }
 
-console.log("✅ orcamento.js v2.7 carregado - NÚMERO COM DIA, RECIBO COM BOTÕES, EXCLUIR ISOLADO!");
+console.log("✅ orcamento.js v2.8 carregado - PDF/WhatsApp Recibo corrigidos, ícone Admin, senha e213!");
