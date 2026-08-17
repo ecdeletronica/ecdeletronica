@@ -94,7 +94,7 @@
         }
 
         /* ============================================
-                   HEADER - TAMANHO ANTERIOR + MOLDURA GROSSA
+                   HEADER - TAMANHO BOM (VERSÃO ANTERIOR)
                    ============================================ */
         header {
             background: rgba(255,255,255,0.92);
@@ -122,7 +122,6 @@
             gap: 1.5rem;
         }
 
-        /* LOGO COM MOLDURA GROSSA - ESTILO WEB TEC-TEC */
         .logo-wrapper {
             background: rgba(255,255,255,0.8);
             padding: 6px;
@@ -132,7 +131,7 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            border: 4px solid rgba(230, 126, 34, 0.3); /* GROSSA: 4px */
+            border: 4px solid rgba(230, 126, 34, 0.3);
         }
         .logo-wrapper:hover {
             transform: scale(1.03);
@@ -168,7 +167,6 @@
             margin-top: -2px;
         }
 
-        /* QR CODE NO HEADER */
         .qrcode-header {
             display: flex;
             align-items: center;
@@ -258,7 +256,7 @@
         }
 
         /* ============================================
-                   HERO - MOLDURA GROSSA
+                   HERO
                    ============================================ */
         .hero {
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
@@ -308,7 +306,7 @@
             background: rgba(255,255,255,0.06);
             padding: 12px;
             border-radius: 20px;
-            border: 4px solid rgba(230, 126, 34, 0.25); /* GROSSA: 4px */
+            border: 4px solid rgba(230, 126, 34, 0.25);
             box-shadow: 0 0 40px rgba(230, 126, 34, 0.08), inset 0 0 40px rgba(230, 126, 34, 0.03);
             transition: all 0.4s ease;
             display: inline-block;
@@ -512,7 +510,7 @@
         }
 
         /* ============================================
-                   FOOTER
+                   FOOTER - LOGO E QR CODE LADO A LADO
                    ============================================ */
         footer {
             background: var(--primary);
@@ -520,13 +518,24 @@
             padding: 40px 0 20px;
             text-align: center;
         }
-        .footer-logo {
+
+        .footer-grid {
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 12px;
+            gap: 4rem;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
         }
-        .footer-logo .logo-wrapper-footer {
+
+        .footer-left {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .footer-left .logo-wrapper-footer {
             background: rgba(255,255,255,0.06);
             padding: 5px;
             border-radius: 12px;
@@ -535,22 +544,85 @@
             align-items: center;
             justify-content: center;
         }
-        .footer-logo .logo-wrapper-footer img {
-            height: 32px;
+        .footer-left .logo-wrapper-footer img {
+            height: 40px;
             width: auto;
             border-radius: 6px;
             display: block;
         }
-        .footer-logo .logo-text {
+        .footer-left .logo-text {
             color: var(--white);
             font-size: 1.1rem;
         }
-        .footer-logo .logo-text span {
+        .footer-left .logo-text span {
             color: var(--secondary);
         }
-        .footer-logo .logo-slogan {
+        .footer-left .logo-slogan {
             color: rgba(255,255,255,0.5);
             font-size: 0.55rem;
+        }
+
+        .footer-right .qrcode-footer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            background: rgba(255,255,255,0.06);
+            padding: 1.5rem 2rem;
+            border-radius: 2rem;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.06);
+            min-width: 200px;
+        }
+        .footer-right .qrcode-footer:hover {
+            background: rgba(255,255,255,0.1);
+            transform: translateY(-5px);
+            border-color: rgba(230, 126, 34, 0.2);
+        }
+        .footer-right .qrcode-footer img {
+            width: 100px;
+            height: 100px;
+            border-radius: 1.5rem;
+            background: white;
+            padding: 8px;
+            margin-bottom: 0.8rem;
+            transition: transform 0.3s;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+        .footer-right .qrcode-footer img:hover {
+            transform: scale(1.05);
+        }
+        .footer-right .qrcode-footer h4 {
+            color: white;
+            margin-bottom: 0.3rem;
+            font-size: 1rem;
+        }
+        .footer-right .qrcode-footer h4 i {
+            color: var(--secondary);
+            margin-right: 6px;
+        }
+        .footer-right .qrcode-footer p {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.8rem;
+        }
+        .footer-right .qrcode-footer .site-url {
+            background: rgba(255,255,255,0.08);
+            padding: 0.4rem 1.2rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-top: 0.4rem;
+            color: rgba(255,255,255,0.8);
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .footer-divider {
+            width: 100%;
+            max-width: 600px;
+            height: 1px;
+            background: rgba(255,255,255,0.06);
+            margin: 0 auto 1.5rem;
         }
 
         footer .social {
@@ -570,71 +642,6 @@
         footer .copy {
             font-size: 0.85rem;
             margin-top: 16px;
-        }
-
-        .qrcode-footer {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            background: rgba(255,255,255,0.06);
-            padding: 2rem 1.5rem;
-            border-radius: 2rem;
-            margin-top: 2rem;
-            transition: all 0.3s ease;
-            border: 1px solid rgba(255,255,255,0.06);
-            max-width: 320px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .qrcode-footer:hover {
-            background: rgba(255,255,255,0.1);
-            transform: translateY(-5px);
-            border-color: rgba(230, 126, 34, 0.2);
-        }
-
-        .qrcode-footer img {
-            width: 120px;
-            height: 120px;
-            border-radius: 1.5rem;
-            background: white;
-            padding: 10px;
-            margin-bottom: 1rem;
-            transition: transform 0.3s;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-        }
-
-        .qrcode-footer img:hover {
-            transform: scale(1.05);
-        }
-
-        .qrcode-footer h4 {
-            color: white;
-            margin-bottom: 0.5rem;
-            font-size: 1.1rem;
-        }
-
-        .qrcode-footer h4 i {
-            color: var(--secondary);
-            margin-right: 8px;
-        }
-
-        .qrcode-footer p {
-            color: rgba(255,255,255,0.7);
-            font-size: 0.85rem;
-        }
-
-        .qrcode-footer .site-url {
-            background: rgba(255,255,255,0.08);
-            padding: 0.5rem 1.5rem;
-            border-radius: 50px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            margin-top: 0.5rem;
-            color: rgba(255,255,255,0.8);
-            border: 1px solid rgba(255,255,255,0.05);
         }
 
         .developer-credits {
@@ -691,6 +698,10 @@
                 max-width: 180px;
                 max-height: 110px;
             }
+            .footer-grid {
+                flex-direction: column;
+                gap: 2rem;
+            }
         }
         @media (max-width: 768px) {
             .nav-links {
@@ -735,20 +746,26 @@
             .contact-form {
                 padding: 24px;
             }
-            .qrcode-footer {
-                max-width: 100%;
-                padding: 1.5rem 1rem;
-            }
-            .qrcode-footer img {
-                width: 100px;
-                height: 100px;
-            }
             header {
                 padding: 10px 0;
             }
             .hero-card .logo-wrapper-hero img {
                 max-width: 150px;
                 max-height: 90px;
+            }
+            .footer-grid {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+            .footer-right .qrcode-footer {
+                padding: 1.2rem 1.2rem;
+                min-width: unset;
+                width: 100%;
+                max-width: 280px;
+            }
+            .footer-right .qrcode-footer img {
+                width: 80px;
+                height: 80px;
             }
         }
         @media (max-width: 480px) {
@@ -769,16 +786,16 @@
             .hero h1 {
                 font-size: 1.6rem;
             }
-            .qrcode-footer img {
-                width: 80px;
-                height: 80px;
+            .footer-right .qrcode-footer img {
+                width: 70px;
+                height: 70px;
             }
-            .qrcode-footer h4 {
-                font-size: 0.95rem;
+            .footer-right .qrcode-footer h4 {
+                font-size: 0.85rem;
             }
-            .qrcode-footer .site-url {
-                font-size: 0.75rem;
-                padding: 0.3rem 1rem;
+            .footer-right .qrcode-footer .site-url {
+                font-size: 0.7rem;
+                padding: 0.3rem 0.8rem;
             }
         }
     </style>
@@ -786,12 +803,11 @@
 <body>
 
     <!-- ==========================================
-    HEADER - TAMANHO ANTERIOR + MOLDURA GROSSA
+    HEADER - TAMANHO BOM
     ========================================== -->
     <header>
         <div class="container">
             <div class="logo-area">
-                <!-- MOLDURA GROSSA (4px) -->
                 <span class="logo-wrapper">
                     <img src="assets/images/logo-ecd.jpg" alt="ECD Eletrônica">
                 </span>
@@ -801,7 +817,6 @@
                 </div>
             </div>
 
-            <!-- QR CODE NO HEADER -->
             <a href="https://ecdeletronica.github.io" target="_blank" class="qrcode-header">
                 <img src="assets/images/qr-code.png" alt="QR Code ECD Eletrônica">
                 <div class="qr-text">
@@ -927,26 +942,34 @@
     </section>
 
     <!-- ==========================================
-    FOOTER
+    FOOTER - LOGO E QR CODE LADO A LADO
     ========================================== -->
     <footer>
         <div class="container">
-            <div class="footer-logo">
-                <span class="logo-wrapper-footer">
-                    <img src="assets/images/logo-ecd.jpg" alt="ECD Eletrônica">
-                </span>
-                <span class="logo-text">
-                    ECD <span>Eletrônica</span>
-                    <span class="logo-slogan">Conserto e Manutenção em placas</span>
-                </span>
+            <div class="footer-grid">
+                <!-- LADO ESQUERDO: LOGO -->
+                <div class="footer-left">
+                    <span class="logo-wrapper-footer">
+                        <img src="assets/images/logo-ecd.jpg" alt="ECD Eletrônica">
+                    </span>
+                    <span class="logo-text">
+                        ECD <span>Eletrônica</span>
+                        <span class="logo-slogan">Conserto e Manutenção em placas</span>
+                    </span>
+                </div>
+
+                <!-- LADO DIREITO: QR CODE -->
+                <div class="footer-right">
+                    <div class="qrcode-footer">
+                        <img src="assets/images/qr-code.png" alt="QR Code ECD Eletrônica">
+                        <h4><i class="fa-regular fa-qrcode"></i> Acesse pelo celular</h4>
+                        <p>Escaneie o QR Code e visite nosso site</p>
+                        <div class="site-url">ecdeletronica.github.io</div>
+                    </div>
+                </div>
             </div>
 
-            <div class="qrcode-footer">
-                <img src="assets/images/qr-code.png" alt="QR Code ECD Eletrônica">
-                <h4><i class="fa-regular fa-qrcode"></i> Acesse pelo celular</h4>
-                <p>Escaneie o QR Code e visite nosso site</p>
-                <div class="site-url">ecdeletronica.github.io</div>
-            </div>
+            <div class="footer-divider"></div>
 
             <div class="social">
                 <a href="#"><i class="fab fa-instagram"></i></a>
