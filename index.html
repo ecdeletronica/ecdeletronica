@@ -1530,165 +1530,131 @@
     </button>
 
     <!-- ==========================================
-    PAINEL DE ORÇAMENTOS
+    PAINEL DE ORÇAMENTOS - COMPACTO E CENTRALIZADO
     ========================================== -->
-    <div id="orcamentoPanel">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-12">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h2><i class="fas fa-file-invoice"></i> Painel de Orçamentos</h2>
-                        <button class="btn btn-secondary" onclick="toggleOrcamentoPanel()">
-                            <i class="fas fa-times"></i> Fechar
-                        </button>
-                    </div>
-
-                    <!-- Tabs -->
-                    <ul class="nav nav-tabs">
-                        <li class="nav-item">
-                            <button class="nav-link orcamento-tab active" data-tab="list" onclick="switchOrcamentoTab('list')">
-                                <i class="fas fa-list"></i> Listar
-                            </button>
-                        </li>
-                        <li class="nav-item">
-                            <button class="nav-link orcamento-tab" data-tab="form" onclick="switchOrcamentoTab('form')">
-                                <i class="fas fa-plus"></i> Novo
-                            </button>
-                        </li>
-                    </ul>
-
-                    <!-- Tab Listar -->
-                    <div id="orcamentoListContent" class="orcamento-tab-content active mt-3">
-                        <div id="orcamentoListContainer">
-                            <div class="text-center py-5">
-                                <i class="fas fa-file-invoice" style="font-size:3rem; color:#ccc;"></i>
-                                <p class="mt-3 text-muted">Carregando orçamentos...</p>
+    <div id="orcamentoPanel" style="display:none; max-width:850px; margin:20px auto; padding:0; background:#ece9d8; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; box-shadow: 3px 3px 15px rgba(0,0,0,0.2);">
+        <div style="padding:8px 14px; background:#000080; color:#ffffff; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; display:flex; justify-content:space-between; align-items:center;">
+            <h3 style="margin:0; font-family:'Courier New',monospace; font-size:0.9rem; font-weight:700;"><i class="fas fa-file-invoice"></i> Painel de Orçamentos</h3>
+            <button onclick="toggleOrcamentoPanel()" style="background:#c0c0c0; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:0 10px; cursor:pointer; font-size:1rem; font-weight:700; font-family:'Courier New',monospace;">×</button>
+        </div>
+        
+        <div style="padding:6px 10px; background:#ece9d8; border-left:2px solid #404040; border-right:2px solid #404040;">
+            <!-- Tabs -->
+            <div style="display:flex; gap:0; margin-bottom:-1px; background:#ece9d8; border-top:2px solid #ffffff; border-left:1px solid #ffffff; border-right:1px solid #808080;">
+                <button class="orcamento-tab active" data-tab="list" onclick="switchOrcamentoTab('list')" style="position:relative; padding:4px 14px 5px 14px; background:#ece9d8; border:none; cursor:pointer; font-weight:700; font-size:0.7rem; font-family:'Courier New',monospace; color:#000000; margin-right:-2px; z-index:1; border-left:1px solid #ffffff; border-top:1px solid #ffffff; border-right:1px solid #808080; border-bottom:none; min-width:70px; text-align:center;">
+                    <i class="fas fa-list" style="margin-right:4px; font-size:0.7rem; color:#555555;"></i> Listar
+                </button>
+                <button class="orcamento-tab" data-tab="form" onclick="switchOrcamentoTab('form')" style="position:relative; padding:4px 14px 5px 14px; background:#ece9d8; border:none; cursor:pointer; font-weight:700; font-size:0.7rem; font-family:'Courier New',monospace; color:#000000; margin-right:-2px; z-index:1; border-left:1px solid #ffffff; border-top:1px solid #ffffff; border-right:1px solid #808080; border-bottom:none; min-width:70px; text-align:center;">
+                    <i class="fas fa-plus" style="margin-right:4px; font-size:0.7rem; color:#555555;"></i> Novo
+                </button>
+            </div>
+            
+            <!-- Conteúdo -->
+            <div style="background:#ece9d8; border:1px solid #808080; border-top:none; padding:6px; box-shadow: inset 0 1px 0 0 rgba(255,255,255,0.8);">
+                
+                <!-- Tab Listar -->
+                <div id="orcamentoListContent" class="orcamento-tab-content active" style="display:block;">
+                    <div id="orcamentoListContainer"></div>
+                </div>
+                
+                <!-- Tab Formulário -->
+                <div id="orcamentoFormContent" class="orcamento-tab-content" style="display:none;">
+                    <div style="background:#ffffff; border:1px solid #d4d0c8; padding:6px;">
+                        <form id="orcamentoForm">
+                            <!-- Dados do Cliente -->
+                            <div style="display:grid; grid-template-columns:1fr 1fr; gap:3px; margin-bottom:4px;">
+                                <div style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; background:#ece9d8; padding:3px 5px;">
+                                    <label style="display:block; font-weight:700; font-size:0.6rem; font-family:'Courier New',monospace; text-transform:uppercase; letter-spacing:0.5px;">Cliente *</label>
+                                    <input type="text" id="orcamentoCliente" placeholder="Nome do cliente" style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; width:100%; background:#f0f0f0; font-family:'Courier New',monospace; font-size:0.7rem; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.08);">
+                                </div>
+                                <div style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; background:#ece9d8; padding:3px 5px;">
+                                    <label style="display:block; font-weight:700; font-size:0.6rem; font-family:'Courier New',monospace; text-transform:uppercase; letter-spacing:0.5px;">CNPJ/CPF</label>
+                                    <input type="text" id="orcamentoCnpj" placeholder="CNPJ/CPF" style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; width:100%; background:#f0f0f0; font-family:'Courier New',monospace; font-size:0.7rem; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.08);">
+                                </div>
                             </div>
-                        </div>
-                    </div>
-
-                    <!-- Tab Formulário -->
-                    <div id="orcamentoFormContent" class="orcamento-tab-content mt-3">
-                        <div class="card">
-                            <div class="card-header">
-                                <h5 id="orcamentoFormTitle" style="margin:0;"><i class="fas fa-edit"></i> Novo Orçamento</h5>
+                            
+                            <div style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; background:#ece9d8; padding:3px 5px; margin-bottom:4px;">
+                                <label style="display:block; font-weight:700; font-size:0.6rem; font-family:'Courier New',monospace; text-transform:uppercase; letter-spacing:0.5px;">Endereço</label>
+                                <input type="text" id="orcamentoEndereco" placeholder="Endereço completo" style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; width:100%; background:#f0f0f0; font-family:'Courier New',monospace; font-size:0.7rem; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.08);">
                             </div>
-                            <div class="card-body">
-                                <form id="orcamentoForm">
-
-                                    <!-- Dados do Cliente -->
-                                    <div class="row">
-                                        <div class="col-md-6 mb-3">
-                                            <label for="orcamentoCliente" class="form-label">Cliente *</label>
-                                            <input type="text" id="orcamentoCliente" class="form-control" placeholder="Nome do cliente" required>
-                                        </div>
-                                        <div class="col-md-6 mb-3">
-                                            <label for="orcamentoCnpj" class="form-label">CNPJ/CPF</label>
-                                            <input type="text" id="orcamentoCnpj" class="form-control" placeholder="CNPJ/CPF do cliente">
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-md-12 mb-3">
-                                            <label for="orcamentoEndereco" class="form-label">Endereço</label>
-                                            <input type="text" id="orcamentoEndereco" class="form-control" placeholder="Endereço completo">
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-md-4 mb-3">
-                                            <label for="orcamentoData" class="form-label">Data</label>
-                                            <input type="date" id="orcamentoData" class="form-control">
-                                        </div>
-                                        <div class="col-md-4 mb-3">
-                                            <label for="orcamentoPrazo" class="form-label">Prazo</label>
-                                            <input type="date" id="orcamentoPrazo" class="form-control">
-                                        </div>
-                                        <div class="col-md-4 mb-3">
-                                            <label for="orcamentoStatus" class="form-label">Status</label>
-                                            <select id="orcamentoStatus" class="form-control">
-                                                <option value="Pendente">Pendente</option>
-                                                <option value="Aprovado">Aprovado</option>
-                                                <option value="Cancelado">Cancelado</option>
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <!-- Itens -->
-                                    <div class="mt-4">
-                                        <h6><i class="fas fa-list"></i> Itens do Orçamento</h6>
-                                        <div class="table-responsive">
-                                            <table class="table table-bordered">
-                                                <thead class="table-light">
-                                                    <tr>
-                                                        <th style="width:40px;">#</th>
-                                                        <th>Descrição</th>
-                                                        <th style="width:80px;">UN</th>
-                                                        <th style="width:80px;">Quant.</th>
-                                                        <th style="width:120px;">Valor Unit.</th>
-                                                        <th style="width:120px;">Subtotal</th>
-                                                        <th style="width:40px;"></th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="orcamentoItemsBody">
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                        <button type="button" id="orcamentoAddItemBtn" class="btn btn-sm btn-outline-primary">
-                                            <i class="fas fa-plus"></i> Adicionar Item
-                                        </button>
-                                    </div>
-
-                                    <!-- Totais -->
-                                    <div class="mt-4">
-                                        <div class="row">
-                                            <div class="col-md-6 offset-md-6">
-                                                <div class="table-responsive">
-                                                    <table class="table table-bordered">
-                                                        <tr>
-                                                            <td><strong>Subtotal</strong></td>
-                                                            <td class="text-end" id="orcamentoSubtotal">R$ 0,00</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td><strong>Desconto</strong></td>
-                                                            <td class="text-end">
-                                                                <input type="text" id="orcamentoDesconto" class="form-control form-control-sm" placeholder="0,00" style="width:120px; display:inline-block;" oninput="recalcularTotais()">
-                                                            </td>
-                                                        </tr>
-                                                        <tr class="table-success">
-                                                            <td><strong>TOTAL GERAL</strong></td>
-                                                            <td class="text-end" id="orcamentoTotal">R$ 0,00</td>
-                                                        </tr>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
+                            
+                            <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:3px; margin-bottom:4px;">
+                                <div style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; background:#ece9d8; padding:3px 5px;">
+                                    <label style="display:block; font-weight:700; font-size:0.6rem; font-family:'Courier New',monospace; text-transform:uppercase; letter-spacing:0.5px;">Data</label>
+                                    <input type="date" id="orcamentoData" style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; width:100%; background:#f0f0f0; font-family:'Courier New',monospace; font-size:0.7rem; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.08);">
+                                </div>
+                                <div style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; background:#ece9d8; padding:3px 5px;">
+                                    <label style="display:block; font-weight:700; font-size:0.6rem; font-family:'Courier New',monospace; text-transform:uppercase; letter-spacing:0.5px;">Prazo</label>
+                                    <input type="date" id="orcamentoPrazo" style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; width:100%; background:#f0f0f0; font-family:'Courier New',monospace; font-size:0.7rem; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.08);">
+                                </div>
+                                <div style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; background:#ece9d8; padding:3px 5px;">
+                                    <label style="display:block; font-weight:700; font-size:0.6rem; font-family:'Courier New',monospace; text-transform:uppercase; letter-spacing:0.5px;">Status</label>
+                                    <select id="orcamentoStatus" style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; width:100%; background:#f0f0f0; font-family:'Courier New',monospace; font-size:0.7rem; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.08);">
+                                        <option value="Pendente">Pendente</option>
+                                        <option value="Aprovado">Aprovado</option>
+                                        <option value="Cancelado">Cancelado</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <!-- Itens -->
+                            <div style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; background:#ece9d8; padding:4px 5px; margin-bottom:4px;">
+                                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:3px;">
+                                    <span style="font-weight:700; font-size:0.65rem; font-family:'Courier New',monospace; text-transform:uppercase;"><i class="fas fa-list"></i> Itens</span>
+                                    <button type="button" id="orcamentoAddItemBtn" style="background:#d4d0c8; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:1px 10px; cursor:pointer; font-size:0.6rem; font-family:'Courier New',monospace; font-weight:700;">
+                                        <i class="fas fa-plus"></i> Adicionar
+                                    </button>
+                                </div>
+                                <div style="overflow-x:auto; background:#d4d0c8; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px;">
+                                    <table style="width:100%; border-collapse:collapse; background:#ffffff; font-family:'Courier New',monospace; font-size:0.65rem;">
+                                        <thead>
+                                            <tr style="background:#d4d0c8; border-bottom:2px solid #404040;">
+                                                <th style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; text-align:center;">#</th>
+                                                <th style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; text-align:left;">Descrição</th>
+                                                <th style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; text-align:center;">UN</th>
+                                                <th style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; text-align:center;">Quant.</th>
+                                                <th style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; text-align:right;">Valor Unit.</th>
+                                                <th style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; text-align:right;">Subtotal</th>
+                                                <th style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; text-align:center;"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="orcamentoItemsBody"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            
+                            <!-- Totais -->
+                            <div style="display:grid; grid-template-columns:2fr 1fr; gap:3px; margin-bottom:4px;">
+                                <div style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; background:#ece9d8; padding:3px 5px;">
+                                    <label style="display:block; font-weight:700; font-size:0.6rem; font-family:'Courier New',monospace; text-transform:uppercase; letter-spacing:0.5px;">Observações</label>
+                                    <textarea id="orcamentoObservacoes" rows="2" placeholder="Observações adicionais..." style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; width:100%; background:#f0f0f0; font-family:'Courier New',monospace; font-size:0.7rem; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.08); resize:vertical; min-height:40px;"></textarea>
+                                </div>
+                                <div style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; background:#ece9d8; padding:3px 5px;">
+                                    <table style="width:100%; border-collapse:collapse; font-family:'Courier New',monospace; font-size:0.65rem;">
+                                        <tr><td style="border:none; padding:1px 2px;"><strong>Subtotal</strong></td><td style="border:none; padding:1px 2px; text-align:right;" id="orcamentoSubtotal">R$ 0,00</td></tr>
+                                        <tr><td style="border:none; padding:1px 2px;"><strong>Desconto</strong></td><td style="border:none; padding:1px 2px; text-align:right;"><input type="text" id="orcamentoDesconto" placeholder="0,00" style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:1px 4px; width:70px; background:#f0f0f0; font-family:'Courier New',monospace; font-size:0.65rem; text-align:right; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.08);" oninput="recalcularTotais()"></td></tr>
+                                        <tr style="background:#d4e6f1;"><td style="border:none; padding:1px 2px;"><strong>TOTAL</strong></td><td style="border:none; padding:1px 2px; text-align:right; font-weight:700; font-size:0.75rem;" id="orcamentoTotal">R$ 0,00</td></tr>
+                                    </table>
                                     <input type="hidden" id="orcamentoTotalHidden">
-
-                                    <div class="mb-3">
-                                        <label for="orcamentoObservacoes" class="form-label">Observações</label>
-                                        <textarea id="orcamentoObservacoes" class="form-control" rows="3" placeholder="Observações adicionais..."></textarea>
-                                    </div>
-
-                                    <div class="d-flex gap-2">
-                                        <button type="submit" id="orcamentoSubmitBtn" class="btn btn-success">
-                                            <i class="fas fa-plus"></i> Criar Orçamento
-                                        </button>
-                                        <button type="button" id="orcamentoCancelBtn" class="btn btn-secondary" style="display:none;">
-                                            <i class="fas fa-times"></i> Cancelar
-                                        </button>
-                                    </div>
-                                </form>
+                                </div>
                             </div>
-                        </div>
+                            
+                            <div style="display:flex; gap:4px; margin-top:4px;">
+                                <button type="submit" id="orcamentoSubmitBtn" style="background:#27ae60; color:#ffffff; border:2px solid #2ecc71; border-top-color:#2ecc71; border-left-color:#2ecc71; padding:4px 16px; cursor:pointer; font-family:'Courier New',monospace; font-weight:700; font-size:0.7rem; text-transform:uppercase;">
+                                    <i class="fas fa-plus"></i> Criar
+                                </button>
+                                <button type="button" id="orcamentoCancelBtn" style="background:#ece9d8; color:#000000; border:2px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:4px 16px; cursor:pointer; font-family:'Courier New',monospace; font-weight:700; font-size:0.7rem; display:none;">
+                                    <i class="fas fa-times"></i> Cancelar
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
+                
             </div>
         </div>
     </div>
-
+    
     <!-- ==========================================
     SCRIPTS
     ========================================== -->
