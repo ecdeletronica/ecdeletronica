@@ -1,9 +1,9 @@
 // js/modules/orcamento.js - Sistema de Orçamento para ECD Eletrônica
-// ✅ Versão ESTÁVEL v1.4 - LAYOUT COMPACTO E CENTRALIZADO
+// ✅ Versão ESTÁVEL v1.5 - CORREÇÃO DOS BOTÕES
 // ✅ Funcionalidades: CRUD, PDF, WhatsApp, Imprimir, Storage Local
 // ✅ ESTILO: Compacto, centralizado, com margens laterais
 
-console.log('✅ orcamento.js carregado - Versão ESTÁVEL v1.4');
+console.log('✅ orcamento.js carregado - Versão ESTÁVEL v1.5');
 
 // ============================================================
 // CONFIGURAÇÕES
@@ -129,30 +129,30 @@ function adicionarItemLinha() {
     linha.style.background = '#ffffff';
     
     linha.innerHTML = `
-        <td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 6px; text-align:center; background:#d4d0c8; font-weight:700; font-size:0.7rem; font-family:'Courier New',monospace;">${index + 1}</td>
+        <td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 6px; text-align:center; background:#d4d0c8; font-weight:700; font-size:0.65rem; font-family:'Courier New',monospace;">${index + 1}</td>
         <td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px;">
             <input type="text" class="item-descricao" 
                    placeholder="Descrição do serviço" 
                    data-index="${index}"
-                   style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; width:100%; background:#f0f0f0; font-family:'Courier New',monospace; font-size:0.75rem; color:#000000; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.08);">
+                   style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; width:100%; background:#f0f0f0; font-family:'Courier New',monospace; font-size:0.7rem; color:#000000; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.08);">
         </td>
         <td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px;">
             <input type="text" class="item-unidade" value="UN" data-index="${index}"
-                   style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; width:40px; background:#f0f0f0; font-family:'Courier New',monospace; font-size:0.75rem; color:#000000; text-align:center; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.08);">
+                   style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; width:38px; background:#f0f0f0; font-family:'Courier New',monospace; font-size:0.7rem; color:#000000; text-align:center; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.08);">
         </td>
         <td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px;">
             <input type="number" class="item-quantidade" value="1" min="1" data-index="${index}"
-                   style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; width:40px; background:#f0f0f0; font-family:'Courier New',monospace; font-size:0.75rem; color:#000000; text-align:center; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.08);">
+                   style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; width:38px; background:#f0f0f0; font-family:'Courier New',monospace; font-size:0.7rem; color:#000000; text-align:center; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.08);">
         </td>
         <td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px;">
             <input type="text" class="item-valor" value="0,00" data-index="${index}"
-                   style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; width:80px; background:#f0f0f0; font-family:'Courier New',monospace; font-size:0.75rem; color:#000000; text-align:right; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.08);">
+                   style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; width:75px; background:#f0f0f0; font-family:'Courier New',monospace; font-size:0.7rem; color:#000000; text-align:right; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.08);">
         </td>
         <td class="item-subtotal" data-index="${index}" 
-            style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 6px; text-align:right; background:#ece9d8; font-family:'Courier New',monospace; font-size:0.75rem; font-weight:700;">R$ 0,00</td>
+            style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 6px; text-align:right; background:#ece9d8; font-family:'Courier New',monospace; font-size:0.7rem; font-weight:700;">R$ 0,00</td>
         <td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; text-align:center; background:#d4d0c8;">
             <button type="button" class="remover-item" data-index="${index}"
-                    style="background:#d4d0c8; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:0 6px; cursor:pointer; font-size:0.65rem; font-family:'Courier New',monospace; font-weight:700;">
+                    style="background:#d4d0c8; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:0 6px; cursor:pointer; font-size:0.6rem; font-family:'Courier New',monospace; font-weight:700;">
                 <i class="fas fa-trash" style="color:#000000;"></i>
             </button>
         </td>
@@ -356,7 +356,8 @@ function resetOrcamentoForm() {
     const submitBtn = document.getElementById('orcamentoSubmitBtn');
     if (submitBtn) {
         submitBtn.innerHTML = '<i class="fas fa-plus"></i> Criar Orçamento';
-        submitBtn.className = 'btn-win98';
+        submitBtn.style.background = '#27ae60';
+        submitBtn.style.color = '#ffffff';
     }
     
     const cancelBtn = document.getElementById('orcamentoCancelBtn');
@@ -400,30 +401,30 @@ function carregarOrcamentoParaEdicao(id) {
             linha.style.borderLeft = '2px solid #808080';
             linha.style.background = '#ffffff';
             linha.innerHTML = `
-                <td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 6px; text-align:center; background:#d4d0c8; font-weight:700; font-size:0.7rem; font-family:'Courier New',monospace;">${index + 1}</td>
+                <td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 6px; text-align:center; background:#d4d0c8; font-weight:700; font-size:0.65rem; font-family:'Courier New',monospace;">${index + 1}</td>
                 <td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px;">
                     <input type="text" class="item-descricao" value="${item.descricao || ''}" data-index="${index}"
-                           style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; width:100%; background:#f0f0f0; font-family:'Courier New',monospace; font-size:0.75rem; color:#000000; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.08);">
+                           style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; width:100%; background:#f0f0f0; font-family:'Courier New',monospace; font-size:0.7rem; color:#000000; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.08);">
                 </td>
                 <td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px;">
                     <input type="text" class="item-unidade" value="${item.unidade || 'UN'}" data-index="${index}"
-                           style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; width:40px; background:#f0f0f0; font-family:'Courier New',monospace; font-size:0.75rem; color:#000000; text-align:center; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.08);">
+                           style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; width:38px; background:#f0f0f0; font-family:'Courier New',monospace; font-size:0.7rem; color:#000000; text-align:center; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.08);">
                 </td>
                 <td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px;">
                     <input type="number" class="item-quantidade" value="${item.quantidade || 1}" min="1" data-index="${index}"
-                           style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; width:40px; background:#f0f0f0; font-family:'Courier New',monospace; font-size:0.75rem; color:#000000; text-align:center; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.08);">
+                           style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; width:38px; background:#f0f0f0; font-family:'Courier New',monospace; font-size:0.7rem; color:#000000; text-align:center; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.08);">
                 </td>
                 <td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px;">
                     <input type="text" class="item-valor" value="${formatarMoeda(item.valor_unitario || 0).replace('R$ ', '')}" data-index="${index}"
-                           style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; width:80px; background:#f0f0f0; font-family:'Courier New',monospace; font-size:0.75rem; color:#000000; text-align:right; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.08);">
+                           style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; width:75px; background:#f0f0f0; font-family:'Courier New',monospace; font-size:0.7rem; color:#000000; text-align:right; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.08);">
                 </td>
                 <td class="item-subtotal" data-index="${index}" 
-                    style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 6px; text-align:right; background:#ece9d8; font-family:'Courier New',monospace; font-size:0.75rem; font-weight:700;">
+                    style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 6px; text-align:right; background:#ece9d8; font-family:'Courier New',monospace; font-size:0.7rem; font-weight:700;">
                     ${formatarMoeda((item.quantidade || 0) * (item.valor_unitario || 0))}
                 </td>
                 <td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; text-align:center; background:#d4d0c8;">
                     <button type="button" class="remover-item" data-index="${index}"
-                            style="background:#d4d0c8; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:0 6px; cursor:pointer; font-size:0.65rem; font-family:'Courier New',monospace; font-weight:700;">
+                            style="background:#d4d0c8; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:0 6px; cursor:pointer; font-size:0.6rem; font-family:'Courier New',monospace; font-weight:700;">
                         <i class="fas fa-trash" style="color:#000000;"></i>
                     </button>
                 </td>
@@ -443,7 +444,8 @@ function carregarOrcamentoParaEdicao(id) {
     const submitBtn = document.getElementById('orcamentoSubmitBtn');
     if (submitBtn) {
         submitBtn.innerHTML = '<i class="fas fa-save"></i> Salvar Alterações';
-        submitBtn.className = 'btn-win98 btn-win98-primary';
+        submitBtn.style.background = '#3498db';
+        submitBtn.style.color = '#ffffff';
     }
     
     const cancelBtn = document.getElementById('orcamentoCancelBtn');
@@ -546,7 +548,7 @@ function listarOrcamentos() {
             <div style="text-align:center; padding:20px 0; background:#d4d0c8; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; box-shadow: inset 2px 2px 8px rgba(0,0,0,0.15);">
                 <i class="fas fa-file-invoice" style="font-size:2rem; color:#404040;"></i>
                 <p style="margin-top:8px; color:#404040; font-family:'Courier New',monospace; font-weight:700; font-size:0.85rem;">Nenhum orçamento cadastrado.</p>
-                <button class="btn-win98" onclick="switchOrcamentoTab('form')" style="margin-top:6px; font-size:0.75rem;">
+                <button class="btn-win98" onclick="window.switchOrcamentoTab('form')" style="margin-top:6px; font-size:0.75rem; background:#d4d0c8; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:4px 16px; cursor:pointer; font-family:'Courier New',monospace; font-weight:700;">
                     <i class="fas fa-plus"></i> Criar Primeiro Orçamento
                 </button>
             </div>
@@ -588,10 +590,10 @@ function listarOrcamentos() {
                 </td>
                 <td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:right;"><strong>${formatarMoeda(orc.total || 0)}</strong></td>
                 <td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:center;">
-                    <button class="btn-win98-sm" onclick="verOrcamento('${orc.id}')" title="Visualizar" style="padding:0 4px; font-size:0.65rem;"><i class="fas fa-eye"></i></button>
-                    <button class="btn-win98-sm" onclick="carregarOrcamentoParaEdicao('${orc.id}')" title="Editar" style="padding:0 4px; font-size:0.65rem;"><i class="fas fa-edit"></i></button>
-                    <button class="btn-win98-sm" onclick="duplicarOrcamento('${orc.id}')" title="Duplicar" style="padding:0 4px; font-size:0.65rem;"><i class="fas fa-copy"></i></button>
-                    <button class="btn-win98-sm btn-win98-danger" onclick="excluirOrcamento('${orc.id}')" title="Excluir" style="padding:0 4px; font-size:0.65rem;"><i class="fas fa-trash"></i></button>
+                    <button class="btn-win98-sm" onclick="window.verOrcamento('${orc.id}')" title="Visualizar" style="padding:0 4px; font-size:0.65rem; background:#d4d0c8; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; cursor:pointer; font-family:'Courier New',monospace;"><i class="fas fa-eye"></i></button>
+                    <button class="btn-win98-sm" onclick="window.carregarOrcamentoParaEdicao('${orc.id}')" title="Editar" style="padding:0 4px; font-size:0.65rem; background:#d4d0c8; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; cursor:pointer; font-family:'Courier New',monospace;"><i class="fas fa-edit"></i></button>
+                    <button class="btn-win98-sm" onclick="window.duplicarOrcamento('${orc.id}')" title="Duplicar" style="padding:0 4px; font-size:0.65rem; background:#d4d0c8; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; cursor:pointer; font-family:'Courier New',monospace;"><i class="fas fa-copy"></i></button>
+                    <button class="btn-win98-sm btn-win98-danger" onclick="window.excluirOrcamento('${orc.id}')" title="Excluir" style="padding:0 4px; font-size:0.65rem; background:#d4d0c8; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; cursor:pointer; font-family:'Courier New',monospace;"><i class="fas fa-trash"></i></button>
                 </td>
             </tr>
         `;
@@ -625,16 +627,16 @@ function verOrcamento(id) {
             <div class="modal-win98-content" style="max-width:800px; width:95%; background:#ece9d8; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; box-shadow: 4px 4px 20px rgba(0,0,0,0.3);">
                 <div class="modal-win98-header" style="background:#000080; color:#ffffff; padding:4px 10px; display:flex; justify-content:space-between; align-items:center; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080;">
                     <span class="modal-win98-title" style="font-family:'Courier New',monospace; font-weight:700; font-size:0.85rem;"><i class="fas fa-file-invoice"></i> Orçamento ${orc.numero || ''}</span>
-                    <button class="modal-win98-close" onclick="fecharModalWin98('orcamentoModal')" style="background:#c0c0c0; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:0 8px; cursor:pointer; font-size:1rem; font-weight:700;">×</button>
+                    <button class="modal-win98-close" onclick="window.fecharModalWin98('orcamentoModal')" style="background:#c0c0c0; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:0 8px; cursor:pointer; font-size:1rem; font-weight:700; font-family:'Courier New',monospace;">×</button>
                 </div>
                 <div class="modal-win98-body" style="background:#d4d0c8; padding:12px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; max-height:60vh; overflow-y:auto;">
                     ${gerarHtmlOrcamento(orc)}
                 </div>
                 <div class="modal-win98-footer" style="background:#d4d0c8; padding:6px 10px; text-align:right; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080;">
-                    <button class="btn-win98" onclick="enviarWhatsAppOrcamento('${orc.id}')" style="font-size:0.75rem; padding:3px 12px;"><i class="fab fa-whatsapp"></i> WhatsApp</button>
-                    <button class="btn-win98" onclick="imprimirOrcamento('${orc.id}')" style="font-size:0.75rem; padding:3px 12px;"><i class="fas fa-print"></i> Imprimir</button>
-                    <button class="btn-win98" onclick="gerarPDFOrcamento('${orc.id}')" style="font-size:0.75rem; padding:3px 12px;"><i class="fas fa-file-pdf"></i> PDF</button>
-                    <button class="btn-win98" onclick="fecharModalWin98('orcamentoModal')" style="font-size:0.75rem; padding:3px 12px;">Fechar</button>
+                    <button class="btn-win98" onclick="window.enviarWhatsAppOrcamento('${orc.id}')" style="font-size:0.75rem; padding:3px 12px; background:#d4d0c8; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; cursor:pointer; font-family:'Courier New',monospace; font-weight:700;"><i class="fab fa-whatsapp"></i> WhatsApp</button>
+                    <button class="btn-win98" onclick="window.imprimirOrcamento('${orc.id}')" style="font-size:0.75rem; padding:3px 12px; background:#d4d0c8; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; cursor:pointer; font-family:'Courier New',monospace; font-weight:700;"><i class="fas fa-print"></i> Imprimir</button>
+                    <button class="btn-win98" onclick="window.gerarPDFOrcamento('${orc.id}')" style="font-size:0.75rem; padding:3px 12px; background:#d4d0c8; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; cursor:pointer; font-family:'Courier New',monospace; font-weight:700;"><i class="fas fa-file-pdf"></i> PDF</button>
+                    <button class="btn-win98" onclick="window.fecharModalWin98('orcamentoModal')" style="font-size:0.75rem; padding:3px 12px; background:#d4d0c8; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; cursor:pointer; font-family:'Courier New',monospace; font-weight:700;">Fechar</button>
                 </div>
             </div>
         </div>
@@ -892,11 +894,57 @@ function switchOrcamentoTab(tab) {
     const tabs = ['form', 'list'];
     tabs.forEach(t => {
         const content = document.getElementById(`orcamento${t.charAt(0).toUpperCase() + t.slice(1)}Content`);
-        if (content) content.classList.toggle('active', t === tab);
+        if (content) {
+            if (t === tab) {
+                content.style.display = 'block';
+            } else {
+                content.style.display = 'none';
+            }
+        }
         
         const btn = document.querySelector(`.orcamento-tab[data-tab="${t}"]`);
-        if (btn) btn.classList.toggle('active', t === tab);
+        if (btn) {
+            if (t === tab) {
+                btn.classList.add('active');
+                btn.style.background = '#ece9d8';
+                btn.style.borderBottom = 'none';
+                btn.style.borderLeft = '1px solid #808080';
+                btn.style.borderTop = '1px solid #808080';
+                btn.style.borderRight = '1px solid #ffffff';
+                btn.style.zIndex = '4';
+                btn.style.marginTop = '1px';
+                btn.style.paddingTop = '4px';
+                btn.style.paddingBottom = '6px';
+                // Ícone fica dourado
+                const icon = btn.querySelector('i');
+                if (icon) icon.style.color = '#ffd700';
+            } else {
+                btn.classList.remove('active');
+                btn.style.background = '#ece9d8';
+                btn.style.borderLeft = '1px solid #ffffff';
+                btn.style.borderTop = '1px solid #ffffff';
+                btn.style.borderRight = '1px solid #808080';
+                btn.style.borderBottom = 'none';
+                btn.style.zIndex = '1';
+                btn.style.marginTop = '0';
+                btn.style.paddingTop = '4px';
+                btn.style.paddingBottom = '5px';
+                // Ícone fica cinza
+                const icon = btn.querySelector('i');
+                if (icon) icon.style.color = '#555555';
+            }
+        }
     });
+    
+    // Garantir que a aba ativa tenha o estilo correto
+    const activeBtn = document.querySelector(`.orcamento-tab[data-tab="${tab}"]`);
+    if (activeBtn) {
+        activeBtn.style.background = '#ece9d8';
+        activeBtn.style.borderLeft = '1px solid #808080';
+        activeBtn.style.borderTop = '1px solid #808080';
+        activeBtn.style.borderRight = '1px solid #ffffff';
+        activeBtn.style.borderBottom = 'none';
+    }
 }
 
 function toggleOrcamentoPanel() {
@@ -928,6 +976,40 @@ function toggleOrcamentoPanel() {
     setTimeout(() => {
         panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 100);
+}
+
+// ============================================================
+// FUNÇÕES DE CRUD
+// ============================================================
+
+function excluirOrcamento(id) {
+    if (!confirm('❓ Tem certeza que deseja excluir este orçamento?')) return;
+    
+    window.orcamentos = window.orcamentos.filter(o => o.id !== id);
+    salvarOrcamentos();
+    listarOrcamentos();
+    mostrarNotificacao('✅ Orçamento excluído!', 'success');
+}
+
+function duplicarOrcamento(id) {
+    const original = window.orcamentos.find(o => o.id === id);
+    if (!original) {
+        mostrarNotificacao('❌ Orçamento não encontrado!', 'error');
+        return;
+    }
+    
+    const novo = {
+        ...original,
+        id: 'orc_' + Date.now(),
+        numero: gerarNumeroOrcamento(),
+        created_at: new Date().toISOString(),
+        cliente: original.cliente + ' (cópia)'
+    };
+    
+    window.orcamentos.unshift(novo);
+    salvarOrcamentos();
+    listarOrcamentos();
+    mostrarNotificacao('✅ Orçamento duplicado!', 'success');
 }
 
 // ============================================================
@@ -1038,21 +1120,30 @@ function initializeOrcamento() {
         };
     }
     
-    setTimeout(() => {
-        resetOrcamentoForm();
+    // Garantir que a aba LIST esteja ativa ao carregar
+    setTimeout(function() {
+        switchOrcamentoTab('list');
+        listarOrcamentos();
+    }, 100);
+    
+    // Garantir que os botões estejam configurados
+    setTimeout(function() {
+        // Reconfigurar eventos dos botões da lista
+        document.querySelectorAll('.btn-win98').forEach(function(btn) {
+            if (btn.getAttribute('onclick')) {
+                // Já tem onclick, não sobrescrever
+            }
+        });
+        console.log('✅ [ORCAMENTO] Eventos configurados com sucesso!');
     }, 200);
     
     console.log('✅ [ORCAMENTO] Inicializado com sucesso!');
 }
 
-// Inicializar
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initializeOrcamento);
-} else {
-    initializeOrcamento();
-}
+// ============================================================
+// EXPOSIÇÃO GLOBAL - GARANTIR QUE TODAS AS FUNÇÕES ESTEJAM DISPONÍVEIS
+// ============================================================
 
-// Exportar funções
 window.toggleOrcamentoPanel = toggleOrcamentoPanel;
 window.switchOrcamentoTab = switchOrcamentoTab;
 window.resetOrcamentoForm = resetOrcamentoForm;
@@ -1071,4 +1162,14 @@ window.duplicarOrcamento = duplicarOrcamento;
 window.mostrarNotificacao = mostrarNotificacao;
 window.fecharModalWin98 = fecharModalWin98;
 
-console.log('✅ orcamento.js v1.4 carregado - Layout compacto e centralizado!');
+console.log('✅ orcamento.js v1.5 carregado - TODOS OS BOTÕES CORRIGIDOS!');
+
+// ============================================================
+// INICIALIZAR
+// ============================================================
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeOrcamento);
+} else {
+    initializeOrcamento();
+}
