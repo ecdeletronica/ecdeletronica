@@ -1,15 +1,15 @@
 // js/modules/orcamento.js - Sistema de Orçamento para ECD Eletrônica
-// ✅ Versão ESTÁVEL v1.0
+// ✅ Versão ESTÁVEL v1.1 - LAYOUT WINDOWS 98
 // ✅ Funcionalidades: CRUD, PDF, WhatsApp, Imprimir, Storage Local
 
-console.log('✅ orcamento.js carregado - Versão ESTÁVEL v1.0');
+console.log('✅ orcamento.js carregado - Versão ESTÁVEL v1.1 (Windows 98)');
 
 // ============================================================
 // CONFIGURAÇÕES
 // ============================================================
 
 const ORCAMENTO_CONFIG = {
-    password: "ecd123", // Senha para acessar o painel
+    password: "ecd123",
     storageKey: "ecd_orcamentos",
     empresa: {
         nome: "ECD Eletrônica",
@@ -122,32 +122,36 @@ function adicionarItemLinha() {
     const linha = document.createElement('tr');
     const index = window.orcamentoItens.length;
     
+    linha.style.border = '1px solid #808080';
+    linha.style.borderTop = '1px solid #ffffff';
+    linha.style.borderLeft = '1px solid #ffffff';
+    
     linha.innerHTML = `
-        <td>${index + 1}</td>
-        <td>
-            <input type="text" class="form-control form-control-sm item-descricao" 
-                   placeholder="Ex: Placa de Lavadora Samsung" 
-                   data-index="${index}">
+        <td style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:2px 4px; text-align:center; background:#f0f0f0;">${index + 1}</td>
+        <td style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:2px 4px;">
+            <input type="text" class="item-descricao" 
+                   placeholder="Descrição do serviço" 
+                   data-index="${index}"
+                   style="border:1px solid #808080; border-top-color:#404040; border-left-color:#404040; padding:2px 4px; width:100%; background:#ffffff; font-family:'Courier New',monospace; font-size:0.85rem;">
         </td>
-        <td>
-            <input type="text" class="form-control form-control-sm item-unidade" 
-                   placeholder="UN" value="UN" 
-                   data-index="${index}" style="width:80px;">
+        <td style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:2px 4px;">
+            <input type="text" class="item-unidade" value="UN" data-index="${index}"
+                   style="border:1px solid #808080; border-top-color:#404040; border-left-color:#404040; padding:2px 4px; width:60px; background:#ffffff; font-family:'Courier New',monospace; font-size:0.85rem;">
         </td>
-        <td>
-            <input type="number" class="form-control form-control-sm item-quantidade" 
-                   placeholder="1" value="1" min="1" 
-                   data-index="${index}" style="width:80px;">
+        <td style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:2px 4px;">
+            <input type="number" class="item-quantidade" value="1" min="1" data-index="${index}"
+                   style="border:1px solid #808080; border-top-color:#404040; border-left-color:#404040; padding:2px 4px; width:60px; background:#ffffff; font-family:'Courier New',monospace; font-size:0.85rem;">
         </td>
-        <td>
-            <input type="text" class="form-control form-control-sm item-valor" 
-                   placeholder="0,00" value="0,00" 
-                   data-index="${index}" style="width:120px;">
+        <td style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:2px 4px;">
+            <input type="text" class="item-valor" value="0,00" data-index="${index}"
+                   style="border:1px solid #808080; border-top-color:#404040; border-left-color:#404040; padding:2px 4px; width:100px; background:#ffffff; font-family:'Courier New',monospace; font-size:0.85rem;">
         </td>
-        <td class="item-subtotal text-end" data-index="${index}">R$ 0,00</td>
-        <td>
-            <button type="button" class="btn btn-sm btn-danger remover-item" data-index="${index}">
-                <i class="fas fa-trash"></i>
+        <td class="item-subtotal" data-index="${index}" 
+            style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:2px 4px; text-align:right; background:#f0f0f0; font-family:'Courier New',monospace; font-size:0.85rem;">R$ 0,00</td>
+        <td style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:2px 4px; text-align:center; background:#f0f0f0;">
+            <button type="button" class="remover-item" data-index="${index}"
+                    style="background:#ece9d8; color:#000000; border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:1px 6px; cursor:pointer; font-size:0.75rem;">
+                <i class="fas fa-trash" style="color:#000000;"></i>
             </button>
         </td>
     `;
@@ -155,10 +159,7 @@ function adicionarItemLinha() {
     tbody.appendChild(linha);
     window.orcamentoItens.push({ descricao: '', unidade: 'UN', quantidade: 1, valor_unitario: 0 });
     
-    // Atualizar índices
     atualizarIndicesItens();
-    
-    // Configurar eventos
     configurarEventosItens();
     recalcularTotais();
 }
@@ -213,7 +214,6 @@ function configurarEventosItens() {
     const tbody = document.getElementById('orcamentoItemsBody');
     if (!tbody) return;
     
-    // Eventos para inputs
     tbody.querySelectorAll('.item-descricao').forEach(input => {
         input.oninput = function() {
             const idx = parseInt(this.dataset.index);
@@ -252,7 +252,6 @@ function configurarEventosItens() {
             }
         };
         
-        // Máscara de moeda
         input.addEventListener('blur', function() {
             const idx = parseInt(this.dataset.index);
             if (!isNaN(idx) && window.orcamentoItens[idx]) {
@@ -261,7 +260,6 @@ function configurarEventosItens() {
         });
     });
     
-    // Eventos para botões remover
     tbody.querySelectorAll('.remover-item').forEach(btn => {
         btn.onclick = function() {
             const idx = parseInt(this.dataset.index);
@@ -271,7 +269,6 @@ function configurarEventosItens() {
 }
 
 function recalcularTotais() {
-    // Atualizar array de itens a partir dos inputs
     const tbody = document.getElementById('orcamentoItemsBody');
     if (!tbody) return;
     
@@ -297,11 +294,9 @@ function recalcularTotais() {
         subtotalGeral += subtotal;
     });
     
-    // Atualizar subtotal
     const subtotalEl = document.getElementById('orcamentoSubtotal');
     if (subtotalEl) subtotalEl.textContent = formatarMoeda(subtotalGeral);
     
-    // Calcular desconto
     const descontoInput = document.getElementById('orcamentoDesconto');
     let desconto = 0;
     if (descontoInput) {
@@ -314,17 +309,15 @@ function recalcularTotais() {
     const totalEl = document.getElementById('orcamentoTotal');
     if (totalEl) totalEl.textContent = formatarMoeda(total);
     
-    // Atualizar campo total do formulário
     const totalHidden = document.getElementById('orcamentoTotalHidden');
     if (totalHidden) totalHidden.value = total;
 }
 
 // ============================================================
-// FUNÇÕES DO FORMULÁRIO DE ORÇAMENTO
+// FUNÇÕES DO FORMULÁRIO
 // ============================================================
 
 function resetOrcamentoForm() {
-    // Limpar campos
     ['orcamentoCliente', 'orcamentoCnpj', 'orcamentoEndereco', 
      'orcamentoData', 'orcamentoPrazo', 'orcamentoObservacoes',
      'orcamentoDesconto'].forEach(id => {
@@ -332,18 +325,15 @@ function resetOrcamentoForm() {
         if (el) el.value = '';
     });
     
-    // Status
     const statusSelect = document.getElementById('orcamentoStatus');
     if (statusSelect) statusSelect.value = 'Pendente';
     
-    // Data padrão
     const dataEl = document.getElementById('orcamentoData');
     if (dataEl) {
         const hoje = new Date().toISOString().split('T')[0];
         dataEl.value = hoje;
     }
     
-    // Prazo padrão (7 dias)
     const prazoEl = document.getElementById('orcamentoPrazo');
     if (prazoEl) {
         const prazo = new Date();
@@ -351,29 +341,22 @@ function resetOrcamentoForm() {
         prazoEl.value = prazo.toISOString().split('T')[0];
     }
     
-    // Limpar itens
     window.orcamentoItens = [];
     const tbody = document.getElementById('orcamentoItemsBody');
     if (tbody) tbody.innerHTML = '';
     
-    // Adicionar linha inicial
     adicionarItemLinha();
-    
-    // Resetar ID de edição
     window.orcamentoEditandoId = null;
     
-    // Atualizar título
     const titulo = document.getElementById('orcamentoFormTitle');
     if (titulo) titulo.textContent = 'Novo Orçamento';
     
-    // Atualizar botão
     const submitBtn = document.getElementById('orcamentoSubmitBtn');
     if (submitBtn) {
         submitBtn.innerHTML = '<i class="fas fa-plus"></i> Criar Orçamento';
-        submitBtn.className = 'btn btn-success';
+        submitBtn.className = 'btn-win98';
     }
     
-    // Esconder botão cancelar
     const cancelBtn = document.getElementById('orcamentoCancelBtn');
     if (cancelBtn) cancelBtn.style.display = 'none';
     
@@ -387,16 +370,13 @@ function carregarOrcamentoParaEdicao(id) {
         return;
     }
     
-    // Abrir painel
     const panel = document.getElementById('orcamentoPanel');
     if (panel && panel.style.display !== 'block') {
         panel.style.display = 'block';
     }
     
-    // Trocar para aba formulário
     switchOrcamentoTab('form');
     
-    // Preencher campos
     document.getElementById('orcamentoCliente').value = orcamento.cliente || '';
     document.getElementById('orcamentoCnpj').value = orcamento.cnpj || '';
     document.getElementById('orcamentoEndereco').value = orcamento.endereco || '';
@@ -407,48 +387,47 @@ function carregarOrcamentoParaEdicao(id) {
     document.getElementById('orcamentoDesconto').value = orcamento.desconto ? 
         formatarMoeda(orcamento.desconto).replace('R$ ', '') : '0,00';
     
-    // Carregar itens
     window.orcamentoItens = orcamento.itens ? [...orcamento.itens] : [];
     const tbody = document.getElementById('orcamentoItemsBody');
     if (tbody) {
         tbody.innerHTML = '';
         window.orcamentoItens.forEach((item, index) => {
             const linha = document.createElement('tr');
+            linha.style.border = '1px solid #808080';
+            linha.style.borderTop = '1px solid #ffffff';
+            linha.style.borderLeft = '1px solid #ffffff';
             linha.innerHTML = `
-                <td>${index + 1}</td>
-                <td>
-                    <input type="text" class="form-control form-control-sm item-descricao" 
-                           value="${item.descricao || ''}" 
-                           data-index="${index}">
+                <td style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:2px 4px; text-align:center; background:#f0f0f0;">${index + 1}</td>
+                <td style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:2px 4px;">
+                    <input type="text" class="item-descricao" value="${item.descricao || ''}" data-index="${index}"
+                           style="border:1px solid #808080; border-top-color:#404040; border-left-color:#404040; padding:2px 4px; width:100%; background:#ffffff; font-family:'Courier New',monospace; font-size:0.85rem;">
                 </td>
-                <td>
-                    <input type="text" class="form-control form-control-sm item-unidade" 
-                           value="${item.unidade || 'UN'}" 
-                           data-index="${index}" style="width:80px;">
+                <td style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:2px 4px;">
+                    <input type="text" class="item-unidade" value="${item.unidade || 'UN'}" data-index="${index}"
+                           style="border:1px solid #808080; border-top-color:#404040; border-left-color:#404040; padding:2px 4px; width:60px; background:#ffffff; font-family:'Courier New',monospace; font-size:0.85rem;">
                 </td>
-                <td>
-                    <input type="number" class="form-control form-control-sm item-quantidade" 
-                           value="${item.quantidade || 1}" min="1" 
-                           data-index="${index}" style="width:80px;">
+                <td style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:2px 4px;">
+                    <input type="number" class="item-quantidade" value="${item.quantidade || 1}" min="1" data-index="${index}"
+                           style="border:1px solid #808080; border-top-color:#404040; border-left-color:#404040; padding:2px 4px; width:60px; background:#ffffff; font-family:'Courier New',monospace; font-size:0.85rem;">
                 </td>
-                <td>
-                    <input type="text" class="form-control form-control-sm item-valor" 
-                           value="${formatarMoeda(item.valor_unitario || 0).replace('R$ ', '')}" 
-                           data-index="${index}" style="width:120px;">
+                <td style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:2px 4px;">
+                    <input type="text" class="item-valor" value="${formatarMoeda(item.valor_unitario || 0).replace('R$ ', '')}" data-index="${index}"
+                           style="border:1px solid #808080; border-top-color:#404040; border-left-color:#404040; padding:2px 4px; width:100px; background:#ffffff; font-family:'Courier New',monospace; font-size:0.85rem;">
                 </td>
-                <td class="item-subtotal text-end" data-index="${index}">
+                <td class="item-subtotal" data-index="${index}" 
+                    style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:2px 4px; text-align:right; background:#f0f0f0; font-family:'Courier New',monospace; font-size:0.85rem;">
                     ${formatarMoeda((item.quantidade || 0) * (item.valor_unitario || 0))}
                 </td>
-                <td>
-                    <button type="button" class="btn btn-sm btn-danger remover-item" data-index="${index}">
-                        <i class="fas fa-trash"></i>
+                <td style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:2px 4px; text-align:center; background:#f0f0f0;">
+                    <button type="button" class="remover-item" data-index="${index}"
+                            style="background:#ece9d8; color:#000000; border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:1px 6px; cursor:pointer; font-size:0.75rem;">
+                        <i class="fas fa-trash" style="color:#000000;"></i>
                     </button>
                 </td>
             `;
             tbody.appendChild(linha);
         });
         
-        // Se não houver itens, adicionar um
         if (window.orcamentoItens.length === 0) {
             adicionarItemLinha();
         }
@@ -457,12 +436,11 @@ function carregarOrcamentoParaEdicao(id) {
         atualizarIndicesItens();
     }
     
-    // Atualizar título e botão
     document.getElementById('orcamentoFormTitle').textContent = `Editando: ${orcamento.numero || 'Orçamento'}`;
     const submitBtn = document.getElementById('orcamentoSubmitBtn');
     if (submitBtn) {
         submitBtn.innerHTML = '<i class="fas fa-save"></i> Salvar Alterações';
-        submitBtn.className = 'btn btn-primary';
+        submitBtn.className = 'btn-win98 btn-win98-primary';
     }
     
     const cancelBtn = document.getElementById('orcamentoCancelBtn');
@@ -474,7 +452,6 @@ function carregarOrcamentoParaEdicao(id) {
 
 function salvarOrcamento() {
     try {
-        // Coletar dados
         const cliente = document.getElementById('orcamentoCliente')?.value?.trim() || '';
         const cnpj = document.getElementById('orcamentoCnpj')?.value?.trim() || '';
         const endereco = document.getElementById('orcamentoEndereco')?.value?.trim() || '';
@@ -484,7 +461,6 @@ function salvarOrcamento() {
         const status = document.getElementById('orcamentoStatus')?.value || 'Pendente';
         const desconto = parseFloat(document.getElementById('orcamentoDesconto')?.value?.replace(/[^\d,]/g, '').replace(',', '.') || 0);
         
-        // Validar
         if (!cliente) {
             mostrarNotificacao('⚠️ Informe o nome do cliente!', 'warning');
             return;
@@ -495,11 +471,9 @@ function salvarOrcamento() {
             return;
         }
         
-        // Calcular totais
         const subtotal = calcularTotalItens(window.orcamentoItens);
         const total = subtotal - (desconto || 0);
         
-        // Montar objeto
         const orcamentoData = {
             cliente,
             cnpj,
@@ -521,7 +495,6 @@ function salvarOrcamento() {
         };
         
         if (window.orcamentoEditandoId) {
-            // Edição
             const index = window.orcamentos.findIndex(o => o.id === window.orcamentoEditandoId);
             if (index !== -1) {
                 window.orcamentos[index] = {
@@ -537,7 +510,6 @@ function salvarOrcamento() {
                 switchOrcamentoTab('list');
             }
         } else {
-            // Novo
             const novoOrcamento = {
                 id: 'orc_' + Date.now(),
                 numero: gerarNumeroOrcamento(),
@@ -558,36 +530,6 @@ function salvarOrcamento() {
     }
 }
 
-function excluirOrcamento(id) {
-    if (!confirm('❓ Tem certeza que deseja excluir este orçamento?')) return;
-    
-    window.orcamentos = window.orcamentos.filter(o => o.id !== id);
-    salvarOrcamentos();
-    listarOrcamentos();
-    mostrarNotificacao('✅ Orçamento excluído!', 'success');
-}
-
-function duplicarOrcamento(id) {
-    const original = window.orcamentos.find(o => o.id === id);
-    if (!original) {
-        mostrarNotificacao('❌ Orçamento não encontrado!', 'error');
-        return;
-    }
-    
-    const novo = {
-        ...original,
-        id: 'orc_' + Date.now(),
-        numero: gerarNumeroOrcamento(),
-        created_at: new Date().toISOString(),
-        cliente: original.cliente + ' (cópia)'
-    };
-    
-    window.orcamentos.unshift(novo);
-    salvarOrcamentos();
-    listarOrcamentos();
-    mostrarNotificacao('✅ Orçamento duplicado!', 'success');
-}
-
 // ============================================================
 // FUNÇÕES DE LISTAGEM
 // ============================================================
@@ -598,10 +540,10 @@ function listarOrcamentos() {
     
     if (!window.orcamentos || window.orcamentos.length === 0) {
         container.innerHTML = `
-            <div class="text-center py-5">
-                <i class="fas fa-file-invoice" style="font-size:3rem; color:#ccc;"></i>
-                <p class="mt-3 text-muted">Nenhum orçamento cadastrado.</p>
-                <button class="btn btn-success mt-2" onclick="switchOrcamentoTab('form')">
+            <div style="text-align:center; padding:30px 0; background:#ece9d8; border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff;">
+                <i class="fas fa-file-invoice" style="font-size:2.5rem; color:#808080;"></i>
+                <p style="margin-top:12px; color:#666;">Nenhum orçamento cadastrado.</p>
+                <button class="btn-win98" onclick="switchOrcamentoTab('form')" style="margin-top:8px;">
                     <i class="fas fa-plus"></i> Criar Primeiro Orçamento
                 </button>
             </div>
@@ -610,16 +552,16 @@ function listarOrcamentos() {
     }
     
     let html = `
-        <div class="table-responsive">
-            <table class="table table-striped table-hover">
-                <thead class="table-dark">
-                    <tr>
-                        <th>Nº</th>
-                        <th>Cliente</th>
-                        <th>Data</th>
-                        <th>Status</th>
-                        <th>Total</th>
-                        <th>Ações</th>
+        <div style="overflow-x:auto; background:#ece9d8; border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:4px;">
+            <table style="width:100%; border-collapse:collapse; background:#ffffff; font-family:'Courier New',monospace; font-size:0.85rem;">
+                <thead>
+                    <tr style="background:#ece9d8; border-bottom:2px solid #808080;">
+                        <th style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:4px 8px; text-align:left; color:#000000;">Nº</th>
+                        <th style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:4px 8px; text-align:left; color:#000000;">Cliente</th>
+                        <th style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:4px 8px; text-align:left; color:#000000;">Data</th>
+                        <th style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:4px 8px; text-align:left; color:#000000;">Status</th>
+                        <th style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:4px 8px; text-align:right; color:#000000;">Total</th>
+                        <th style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:4px 8px; text-align:center; color:#000000;">Ações</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -627,34 +569,26 @@ function listarOrcamentos() {
     
     window.orcamentos.forEach(orc => {
         const statusColors = {
-            'Pendente': 'warning',
-            'Aprovado': 'success',
-            'Cancelado': 'danger'
+            'Pendente': '#f39c12',
+            'Aprovado': '#27ae60',
+            'Cancelado': '#e74c3c'
         };
-        const statusColor = statusColors[orc.status] || 'secondary';
+        const statusColor = statusColors[orc.status] || '#666';
         
         html += `
-            <tr>
-                <td><strong>${orc.numero || 'N/A'}</strong></td>
-                <td>${orc.cliente || 'Sem cliente'}</td>
-                <td>${formatarData(orc.data)}</td>
-                <td><span class="badge bg-${statusColor}">${orc.status || 'Pendente'}</span></td>
-                <td><strong>${formatarMoeda(orc.total || 0)}</strong></td>
-                <td>
-                    <div class="btn-group btn-group-sm" role="group">
-                        <button class="btn btn-outline-primary" onclick="verOrcamento('${orc.id}')" title="Visualizar">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                        <button class="btn btn-outline-warning" onclick="carregarOrcamentoParaEdicao('${orc.id}')" title="Editar">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="btn btn-outline-secondary" onclick="duplicarOrcamento('${orc.id}')" title="Duplicar">
-                            <i class="fas fa-copy"></i>
-                        </button>
-                        <button class="btn btn-outline-danger" onclick="excluirOrcamento('${orc.id}')" title="Excluir">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
+            <tr style="border-bottom:1px solid #808080;">
+                <td style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:4px 8px;"><strong>${orc.numero || 'N/A'}</strong></td>
+                <td style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:4px 8px;">${orc.cliente || 'Sem cliente'}</td>
+                <td style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:4px 8px;">${formatarData(orc.data)}</td>
+                <td style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:4px 8px;">
+                    <span style="background:${statusColor}; color:#fff; padding:2px 8px; border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; font-size:0.7rem;">${orc.status || 'Pendente'}</span>
+                </td>
+                <td style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:4px 8px; text-align:right;"><strong>${formatarMoeda(orc.total || 0)}</strong></td>
+                <td style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:4px 8px; text-align:center;">
+                    <button class="btn-win98-sm" onclick="verOrcamento('${orc.id}')" title="Visualizar"><i class="fas fa-eye"></i></button>
+                    <button class="btn-win98-sm" onclick="carregarOrcamentoParaEdicao('${orc.id}')" title="Editar"><i class="fas fa-edit"></i></button>
+                    <button class="btn-win98-sm" onclick="duplicarOrcamento('${orc.id}')" title="Duplicar"><i class="fas fa-copy"></i></button>
+                    <button class="btn-win98-sm btn-win98-danger" onclick="excluirOrcamento('${orc.id}')" title="Excluir"><i class="fas fa-trash"></i></button>
                 </td>
             </tr>
         `;
@@ -664,7 +598,7 @@ function listarOrcamentos() {
                 </tbody>
             </table>
         </div>
-        <div class="mt-3 text-muted small">
+        <div style="margin-top:8px; font-size:0.75rem; color:#666; font-family:'Courier New',monospace;">
             <i class="fas fa-info-circle"></i> Total: ${window.orcamentos.length} orçamento(s)
         </div>
     `;
@@ -683,61 +617,52 @@ function verOrcamento(id) {
         return;
     }
     
-    // Criar modal ou painel de visualização
     const modalHtml = `
-        <div class="modal fade" id="orcamentoModal" tabindex="-1">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header" style="background: #0a2e4d; color: white;">
-                        <h5 class="modal-title">
-                            <i class="fas fa-file-invoice"></i> Orçamento ${orc.numero || ''}
-                        </h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body">
-                        ${gerarHtmlOrcamento(orc)}
-                    </div>
-                    <div class="modal-footer">
-                        <button class="btn btn-success" onclick="enviarWhatsAppOrcamento('${orc.id}')">
-                            <i class="fab fa-whatsapp"></i> Enviar WhatsApp
-                        </button>
-                        <button class="btn btn-primary" onclick="imprimirOrcamento('${orc.id}')">
-                            <i class="fas fa-print"></i> Imprimir
-                        </button>
-                        <button class="btn btn-danger" onclick="gerarPDFOrcamento('${orc.id}')">
-                            <i class="fas fa-file-pdf"></i> PDF
-                        </button>
-                        <button class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-                    </div>
+        <div class="modal-win98" id="orcamentoModal">
+            <div class="modal-win98-content">
+                <div class="modal-win98-header">
+                    <span class="modal-win98-title"><i class="fas fa-file-invoice"></i> Orçamento ${orc.numero || ''}</span>
+                    <button class="modal-win98-close" onclick="fecharModalWin98('orcamentoModal')">×</button>
+                </div>
+                <div class="modal-win98-body">
+                    ${gerarHtmlOrcamento(orc)}
+                </div>
+                <div class="modal-win98-footer">
+                    <button class="btn-win98" onclick="enviarWhatsAppOrcamento('${orc.id}')"><i class="fab fa-whatsapp"></i> WhatsApp</button>
+                    <button class="btn-win98" onclick="imprimirOrcamento('${orc.id}')"><i class="fas fa-print"></i> Imprimir</button>
+                    <button class="btn-win98" onclick="gerarPDFOrcamento('${orc.id}')"><i class="fas fa-file-pdf"></i> PDF</button>
+                    <button class="btn-win98" onclick="fecharModalWin98('orcamentoModal')">Fechar</button>
                 </div>
             </div>
         </div>
     `;
     
-    // Remover modal existente
     const existingModal = document.getElementById('orcamentoModal');
     if (existingModal) existingModal.remove();
     
-    // Adicionar modal
     document.body.insertAdjacentHTML('beforeend', modalHtml);
     
-    // Mostrar modal
-    const modal = new bootstrap.Modal(document.getElementById('orcamentoModal'));
-    modal.show();
+    const modal = document.getElementById('orcamentoModal');
+    if (modal) modal.style.display = 'flex';
+}
+
+function fecharModalWin98(id) {
+    const modal = document.getElementById(id);
+    if (modal) modal.style.display = 'none';
 }
 
 function gerarHtmlOrcamento(orc) {
     const statusColors = {
-        'Pendente': 'warning',
-        'Aprovado': 'success',
-        'Cancelado': 'danger'
+        'Pendente': '#f39c12',
+        'Aprovado': '#27ae60',
+        'Cancelado': '#e74c3c'
     };
-    const statusColor = statusColors[orc.status] || 'secondary';
+    const statusColor = statusColors[orc.status] || '#666';
     
     let html = `
-        <div class="orcamento-visualizacao">
-            <div class="row mb-3">
-                <div class="col-6">
+        <div style="font-family:'Courier New',monospace; font-size:0.85rem;">
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px; background:#ece9d8; padding:12px; border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff;">
+                <div>
                     <strong>${ORCAMENTO_CONFIG.empresa.nome}</strong><br>
                     CNPJ: ${ORCAMENTO_CONFIG.empresa.cnpj}<br>
                     ${ORCAMENTO_CONFIG.empresa.endereco}<br>
@@ -745,38 +670,32 @@ function gerarHtmlOrcamento(orc) {
                     Email: ${ORCAMENTO_CONFIG.empresa.email}<br>
                     PIX: ${ORCAMENTO_CONFIG.empresa.pix}
                 </div>
-                <div class="col-6 text-end">
-                    <h3>ORÇAMENTO</h3>
+                <div style="text-align:right;">
+                    <h3 style="margin:0 0 8px 0; color:#0a2e4d;">ORÇAMENTO</h3>
                     <p><strong>Nº:</strong> ${orc.numero || 'N/A'}</p>
                     <p><strong>Data:</strong> ${formatarData(orc.data)}</p>
                     <p><strong>Prazo:</strong> ${formatarData(orc.prazo)}</p>
-                    <p><span class="badge bg-${statusColor}">${orc.status || 'Pendente'}</span></p>
+                    <p><span style="background:${statusColor}; color:#fff; padding:2px 12px; border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff;">${orc.status || 'Pendente'}</span></p>
                 </div>
             </div>
             
-            <hr>
-            
-            <div class="row mb-3">
-                <div class="col-12">
-                    <strong>CLIENTE</strong><br>
-                    ${orc.cliente || 'Não informado'}<br>
-                    ${orc.cnpj ? 'CNPJ: ' + orc.cnpj : ''}<br>
-                    ${orc.endereco || ''}
-                </div>
+            <div style="background:#ece9d8; padding:12px; margin-bottom:12px; border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff;">
+                <strong>CLIENTE</strong><br>
+                ${orc.cliente || 'Não informado'}<br>
+                ${orc.cnpj ? 'CNPJ: ' + orc.cnpj : ''}<br>
+                ${orc.endereco || ''}
             </div>
             
-            <hr>
-            
-            <div class="table-responsive">
-                <table class="table table-bordered">
-                    <thead class="table-dark">
-                        <tr>
-                            <th>Item</th>
-                            <th>Descrição</th>
-                            <th>UN</th>
-                            <th>Quant.</th>
-                            <th>Valor Unit.</th>
-                            <th>Subtotal</th>
+            <div style="overflow-x:auto; background:#ece9d8; padding:4px; border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff;">
+                <table style="width:100%; border-collapse:collapse; background:#ffffff; font-family:'Courier New',monospace; font-size:0.85rem;">
+                    <thead>
+                        <tr style="background:#ece9d8; border-bottom:2px solid #808080;">
+                            <th style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:4px 8px; text-align:left;">Item</th>
+                            <th style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:4px 8px; text-align:left;">Descrição</th>
+                            <th style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:4px 8px; text-align:left;">UN</th>
+                            <th style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:4px 8px; text-align:center;">Quant.</th>
+                            <th style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:4px 8px; text-align:right;">Valor Unit.</th>
+                            <th style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:4px 8px; text-align:right;">Subtotal</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -786,12 +705,12 @@ function gerarHtmlOrcamento(orc) {
         const subtotal = (item.quantidade || 0) * (item.valor_unitario || 0);
         html += `
             <tr>
-                <td>${index + 1}</td>
-                <td>${item.descricao || ''}</td>
-                <td>${item.unidade || 'UN'}</td>
-                <td>${item.quantidade || 1}</td>
-                <td>${formatarMoeda(item.valor_unitario || 0)}</td>
-                <td class="text-end">${formatarMoeda(subtotal)}</td>
+                <td style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:4px 8px;">${index + 1}</td>
+                <td style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:4px 8px;">${item.descricao || ''}</td>
+                <td style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:4px 8px;">${item.unidade || 'UN'}</td>
+                <td style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:4px 8px; text-align:center;">${item.quantidade || 1}</td>
+                <td style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:4px 8px; text-align:right;">${formatarMoeda(item.valor_unitario || 0)}</td>
+                <td style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:4px 8px; text-align:right;">${formatarMoeda(subtotal)}</td>
             </tr>
         `;
     });
@@ -800,29 +719,29 @@ function gerarHtmlOrcamento(orc) {
                     </tbody>
                     <tfoot>
                         <tr>
-                            <td colspan="5" class="text-end"><strong>Subtotal</strong></td>
-                            <td class="text-end"><strong>${formatarMoeda(orc.subtotal || 0)}</strong></td>
+                            <td colspan="5" style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:4px 8px; text-align:right;"><strong>Subtotal</strong></td>
+                            <td style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:4px 8px; text-align:right;"><strong>${formatarMoeda(orc.subtotal || 0)}</strong></td>
                         </tr>
                         <tr>
-                            <td colspan="5" class="text-end"><strong>Desconto</strong></td>
-                            <td class="text-end"><strong>${formatarMoeda(orc.desconto || 0)}</strong></td>
+                            <td colspan="5" style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:4px 8px; text-align:right;"><strong>Desconto</strong></td>
+                            <td style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:4px 8px; text-align:right;"><strong>${formatarMoeda(orc.desconto || 0)}</strong></td>
                         </tr>
-                        <tr class="table-success">
-                            <td colspan="5" class="text-end"><strong>TOTAL GERAL</strong></td>
-                            <td class="text-end"><strong>${formatarMoeda(orc.total || 0)}</strong></td>
+                        <tr style="background:#d4e6f1;">
+                            <td colspan="5" style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:4px 8px; text-align:right;"><strong>TOTAL GERAL</strong></td>
+                            <td style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:4px 8px; text-align:right;"><strong>${formatarMoeda(orc.total || 0)}</strong></td>
                         </tr>
                     </tfoot>
                 </table>
             </div>
             
             ${orc.observacoes ? `
-            <div class="mt-3">
+            <div style="background:#ece9d8; padding:12px; margin-top:12px; border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff;">
                 <strong>Observações:</strong><br>
                 ${orc.observacoes}
             </div>
             ` : ''}
             
-            <div class="mt-3 text-center text-muted small">
+            <div style="text-align:center; margin-top:16px; font-size:0.7rem; color:#666; font-family:'Courier New',monospace;">
                 <p>${ORCAMENTO_CONFIG.empresa.nome} - Assistência Técnica Independente</p>
                 <p>Documento gerado em ${formatarDataHora(new Date().toISOString())}</p>
             </div>
@@ -833,7 +752,7 @@ function gerarHtmlOrcamento(orc) {
 }
 
 // ============================================================
-// FUNÇÕES DE EXPORTAÇÃO (PDF, WhatsApp, Imprimir)
+// FUNÇÕES DE EXPORTAÇÃO
 // ============================================================
 
 function imprimirOrcamento(id) {
@@ -851,20 +770,21 @@ function imprimirOrcamento(id) {
         <html>
         <head>
             <title>Orçamento ${orc.numero || ''}</title>
-            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
             <style>
-                body { padding: 30px; font-family: Arial, sans-serif; }
+                body { padding: 30px; font-family: 'Courier New', monospace; background: #ffffff; }
                 @media print { .no-print { display: none !important; } }
+                .modal-win98 { background: #ece9d8; border: 1px solid #808080; border-top-color: #ffffff; border-left-color: #ffffff; padding: 12px; }
+                .btn-win98 { background: #ece9d8; color: #000000; border: 1px solid #808080; border-top-color: #ffffff; border-left-color: #ffffff; padding: 4px 16px; cursor: pointer; font-family: 'Courier New', monospace; }
             </style>
         </head>
         <body>
             ${conteudo}
             <div class="text-center mt-4 no-print">
-                <button class="btn btn-primary" onclick="window.print()">🖨️ Imprimir</button>
-                <button class="btn btn-secondary" onclick="window.close()">Fechar</button>
+                <button class="btn-win98" onclick="window.print()">🖨️ Imprimir</button>
+                <button class="btn-win98" onclick="window.close()">Fechar</button>
             </div>
             <script>
-                // Auto-print
                 setTimeout(() => { window.print(); }, 500);
             <\/script>
         </body>
@@ -880,9 +800,7 @@ function gerarPDFOrcamento(id) {
         return;
     }
     
-    // Usar a biblioteca html2pdf se disponível
     if (typeof html2pdf === 'undefined') {
-        // Carregar bibliotecas
         const script1 = document.createElement('script');
         script1.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
         document.head.appendChild(script1);
@@ -909,8 +827,6 @@ function gerarPDFOrcamento(id) {
     container.style.background = 'white';
     container.style.width = '100%';
     
-    const loading = LoadingManager?.show?.('Gerando PDF...', 'Aguarde enquanto o PDF é gerado.', { variant: 'processing' });
-    
     html2pdf()
         .from(container)
         .set({
@@ -922,12 +838,10 @@ function gerarPDFOrcamento(id) {
         })
         .save()
         .then(() => {
-            if (loading) loading.hide();
             mostrarNotificacao('✅ PDF gerado com sucesso!', 'success');
         })
         .catch((error) => {
             console.error('Erro ao gerar PDF:', error);
-            if (loading) loading.hide();
             mostrarNotificacao('❌ Erro ao gerar PDF.', 'error');
         });
 }
@@ -939,7 +853,6 @@ function enviarWhatsAppOrcamento(id) {
         return;
     }
     
-    // Construir mensagem
     const telefone = ORCAMENTO_CONFIG.empresa.whatsapp;
     
     let mensagem = `*${ORCAMENTO_CONFIG.empresa.nome}*\n`;
@@ -972,7 +885,7 @@ function enviarWhatsAppOrcamento(id) {
 }
 
 // ============================================================
-// FUNÇÕES DE INTERFACE E NAVEGAÇÃO
+// FUNÇÕES DE INTERFACE
 // ============================================================
 
 function switchOrcamentoTab(tab) {
@@ -1014,8 +927,6 @@ function toggleOrcamentoPanel() {
     
     setTimeout(() => {
         panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        panel.classList.add('admin-panel-highlight');
-        setTimeout(() => panel.classList.remove('admin-panel-highlight'), 1000);
     }, 100);
 }
 
@@ -1046,18 +957,20 @@ function mostrarNotificacao(mensagem, tipo = 'info', duracao = 3000) {
         background: ${cores[tipo] || '#3498db'};
         color: white;
         padding: 15px 25px;
-        border-radius: 8px;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        border-radius: 0px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.3);
         z-index: 9999999;
-        font-family: 'Inter', sans-serif;
-        font-size: 0.95rem;
+        font-family: 'Courier New', monospace;
+        font-size: 0.9rem;
         display: flex;
         align-items: center;
         gap: 10px;
         max-width: 400px;
-        animation: slideInRight 0.5s ease;
         opacity: 1;
         transition: opacity 0.5s ease;
+        border: 1px solid #808080;
+        border-top-color: #ffffff;
+        border-left-color: #ffffff;
     `;
     
     notificacao.innerHTML = `<i class="fas ${icon[tipo] || 'fa-info-circle'}"></i> ${mensagem}`;
@@ -1068,19 +981,6 @@ function mostrarNotificacao(mensagem, tipo = 'info', duracao = 3000) {
         notificacao.style.opacity = '0';
         setTimeout(() => notificacao.remove(), 500);
     }, duracao);
-    
-    // Adicionar CSS para animação
-    if (!document.getElementById('notification-style')) {
-        const style = document.createElement('style');
-        style.id = 'notification-style';
-        style.textContent = `
-            @keyframes slideInRight {
-                from { transform: translateX(100%); opacity: 0; }
-                to { transform: translateX(0); opacity: 1; }
-            }
-        `;
-        document.head.appendChild(style);
-    }
 }
 
 // ============================================================
@@ -1092,11 +992,9 @@ function initializeOrcamento() {
     
     carregarOrcamentos();
     
-    // Configurar painel
     const panel = document.getElementById('orcamentoPanel');
     if (panel) panel.style.display = 'none';
     
-    // Configurar botão de acesso
     const toggleBtn = document.querySelector('.orcamento-toggle');
     if (toggleBtn) {
         toggleBtn.onclick = function(e) {
@@ -1106,7 +1004,6 @@ function initializeOrcamento() {
         };
     }
     
-    // Configurar botão cancelar
     const cancelBtn = document.getElementById('orcamentoCancelBtn');
     if (cancelBtn) {
         cancelBtn.onclick = function() {
@@ -1125,7 +1022,6 @@ function initializeOrcamento() {
         cancelBtn.style.display = 'none';
     }
     
-    // Configurar formulário
     const form = document.getElementById('orcamentoForm');
     if (form) {
         form.onsubmit = function(e) {
@@ -1134,7 +1030,6 @@ function initializeOrcamento() {
         };
     }
     
-    // Adicionar item
     const addBtn = document.getElementById('orcamentoAddItemBtn');
     if (addBtn) {
         addBtn.onclick = function() {
@@ -1142,7 +1037,6 @@ function initializeOrcamento() {
         };
     }
     
-    // Inicializar com uma linha
     setTimeout(() => {
         resetOrcamentoForm();
     }, 200);
@@ -1157,7 +1051,7 @@ if (document.readyState === 'loading') {
     initializeOrcamento();
 }
 
-// Exportar funções para uso global
+// Exportar funções
 window.toggleOrcamentoPanel = toggleOrcamentoPanel;
 window.switchOrcamentoTab = switchOrcamentoTab;
 window.resetOrcamentoForm = resetOrcamentoForm;
@@ -1174,5 +1068,6 @@ window.enviarWhatsAppOrcamento = enviarWhatsAppOrcamento;
 window.excluirOrcamento = excluirOrcamento;
 window.duplicarOrcamento = duplicarOrcamento;
 window.mostrarNotificacao = mostrarNotificacao;
+window.fecharModalWin98 = fecharModalWin98;
 
-console.log('✅ orcamento.js v1.0 carregado - Sistema de Orçamentos pronto!');
+console.log('✅ orcamento.js v1.1 carregado - Layout Windows 98!');
