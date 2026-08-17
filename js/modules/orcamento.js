@@ -1,6 +1,6 @@
 // js/modules/orcamento.js - Sistema de Orçamento para ECD Eletrônica
-// ✅ Versão ESTÁVEL v2.5 - WHATSAPP COM IMAGEM + DOWNLOAD + MENSAGEM
-console.log('✅ orcamento.js carregado - Versão ESTÁVEL v2.5');
+// ✅ Versão ESTÁVEL v2.6 - COM TÍTULO, BOTÃO RECIBO E RECIBO PROFISSIONAL
+console.log('✅ orcamento.js carregado - Versão ESTÁVEL v2.6');
 
 // ============================================================
 // CONFIGURAÇÕES
@@ -38,6 +38,226 @@ var ORCAMENTO_CONFIG = {
         chave_pix: "82988998040"
     }
 };
+
+// ============================================================
+// FUNÇÃO PARA GERAR NÚMERO DO ORÇAMENTO COM DIA
+// ============================================================
+
+function gerarNumeroOrcamento() {
+    var agora = new Date();
+    var ano = agora.getFullYear();
+    var mes = String(agora.getMonth() + 1).padStart(2, '0');
+    var dia = String(agora.getDate()).padStart(2, '0');
+    var ultimo = window.orcamentos.length || 0;
+    var sequencial = String(ultimo + 1).padStart(4, '0');
+    return "ECD-" + ano + mes + dia + "-" + sequencial;
+}
+
+// ============================================================
+// FUNÇÃO PARA GERAR RECIBO
+// ============================================================
+
+function gerarRecibo(id) {
+    var orc = null;
+    for (var i = 0; i < window.orcamentos.length; i++) {
+        if (window.orcamentos[i].id === id) {
+            orc = window.orcamentos[i];
+            break;
+        }
+    }
+    if (!orc) {
+        mostrarNotificacao("❌ Orçamento não encontrado!", "error");
+        return;
+    }
+    
+    var conteudo = gerarHtmlRecibo(orc);
+    var printWindow = window.open("", "_blank", "width=800,height=600");
+    if (!printWindow) {
+        mostrarNotificacao("❌ Bloqueie o pop-up e tente novamente!", "error");
+        return;
+    }
+    var doc = printWindow.document;
+    doc.write("<!DOCTYPE html><html><head><title>Recibo " + (orc.numero || "") + "</title>");
+    doc.write("<link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css\">");
+    doc.write("<style>body { padding: 30px; font-family: 'Courier New', monospace; background: #f0f0f0; } ");
+    doc.write(".recibo-container { max-width: 700px; margin: 0 auto; background: #ffffff; padding: 30px; border: 2px solid #000000; box-shadow: 0 4px 20px rgba(0,0,0,0.1); } ");
+    doc.write(".recibo-header { text-align: center; border-bottom: 2px solid #000000; padding-bottom: 15px; margin-bottom: 20px; } ");
+    doc.write(".recibo-header h1 { font-size: 1.8rem; margin: 0; color: #0a2e4d; text-transform: uppercase; letter-spacing: 3px; } ");
+    doc.write(".recibo-header .numero { font-size: 0.9rem; color: #666; margin-top: 5px; } ");
+    doc.write(".recibo-corpo { padding: 10px 0; } ");
+    doc.write(".recibo-linha { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px dashed #ccc; } ");
+    doc.write(".recibo-linha .label { font-weight: 700; color: #0a2e4d; } ");
+    doc.write(".recibo-linha .valor { font-weight: 600; } ");
+    doc.write(".recibo-total { font-size: 1.2rem; background: #0a2e4d; color: #fff; padding: 10px 15px; text-align: center; margin: 15px 0; } ");
+    doc.write(".recibo-footer { margin-top: 20px; padding-top: 15px; border-top: 2px solid #000000; font-size: 0.7rem; text-align: center; color: #666; } ");
+    doc.write(".recibo-assinaturas { display: flex; justify-content: space-between; margin-top: 30px; padding-top: 10px; } ");
+    doc.write(".recibo-assinaturas div { text-align: center; width: 45%; } ");
+    doc.write(".recibo-assinaturas .linha { border-top: 1px solid #000000; width: 80%; margin: 30px auto 5px; } ");
+    doc.write(".recibo-legal { font-size: 0.65rem; color: #555; margin-top: 15px; text-align: justify; } ");
+    doc.write("@media print { body { background: #ffffff; } .recibo-container { box-shadow: none; } }");
+    doc.write("</style>");
+    doc.write("</head><body>" + conteudo + "</body></html>");
+    doc.close();
+}
+
+function gerarHtmlRecibo(orc) {
+    var dataAtual = formatarDataHora(new Date().toISOString());
+    var valorPorExtenso = converterValorPorExtenso(orc.total || 0);
+    
+    var html = "";
+    html += "<div class=\"recibo-container\">";
+    
+    // CABEÇALHO
+    html += "<div class=\"recibo-header\">";
+    html += "<h1>📄 RECIBO</h1>";
+    html += "<div class=\"numero\"><strong>Nº:</strong> " + (orc.numero || "N/A") + " | <strong>Data:</strong> " + formatarData(orc.data) + "</div>";
+    html += "<div style=\"font-size:0.8rem; color:#666;\">" + ORCAMENTO_CONFIG.empresa.nome + " - CNPJ: " + ORCAMENTO_CONFIG.empresa.cnpj + "</div>";
+    html += "</div>";
+    
+    // CORPO DO RECIBO
+    html += "<div class=\"recibo-corpo\">";
+    html += "<p style=\"text-align:center; font-size:0.9rem; margin-bottom:10px;\"><strong>RECEBEMOS DE:</strong></p>";
+    
+    // DADOS DO CLIENTE
+    html += "<div class=\"recibo-linha\"><span class=\"label\">CLIENTE:</span><span class=\"valor\">" + (orc.cliente || "Não informado") + "</span></div>";
+    if (orc.cnpj) {
+        html += "<div class=\"recibo-linha\"><span class=\"label\">CNPJ/CPF:</span><span class=\"valor\">" + orc.cnpj + "</span></div>";
+    }
+    if (orc.endereco) {
+        html += "<div class=\"recibo-linha\"><span class=\"label\">ENDEREÇO:</span><span class=\"valor\">" + orc.endereco + "</span></div>";
+    }
+    
+    html += "<div style=\"height:10px;\"></div>";
+    
+    // VALOR
+    html += "<div class=\"recibo-total\">";
+    html += "VALOR RECEBIDO: <strong>" + formatarMoeda(orc.total || 0) + "</strong>";
+    html += "</div>";
+    
+    html += "<div style=\"text-align:center; font-size:0.8rem; margin:5px 0 15px;\">";
+    html += "<strong>Por Extenso:</strong> " + valorPorExtenso;
+    html += "</div>";
+    
+    // DESCRIÇÃO DOS SERVIÇOS
+    html += "<div style=\"margin:10px 0; padding:8px; background:#f5f5f5; border:1px solid #ddd;\">";
+    html += "<p style=\"font-weight:700; margin-bottom:5px;\">REFERENTE A:</p>";
+    for (var i = 0; i < orc.itens.length; i++) {
+        var item = orc.itens[i];
+        html += "<div style=\"font-size:0.75rem; padding:2px 0; border-bottom:1px dotted #eee;\">";
+        html += (i + 1) + ". " + (item.descricao || "Item") + " - " + (item.quantidade || 1) + "x " + formatarMoeda(item.valor_unitario || 0);
+        html += " = " + formatarMoeda((item.quantidade || 0) * (item.valor_unitario || 0));
+        html += "</div>";
+    }
+    html += "</div>";
+    
+    // DADOS DO PROPONENTE
+    html += "<div style=\"margin:10px 0; padding:8px; background:#f0f4f8; border:1px solid #d4d0c8;\">";
+    html += "<p style=\"font-weight:700; margin-bottom:3px;\">DADOS DO PRESTADOR:</p>";
+    html += "<div style=\"font-size:0.7rem;\">";
+    html += "<strong>PROPONENTE:</strong> " + ORCAMENTO_CONFIG.proponente.nome + "<br>";
+    html += "<strong>CNPJ:</strong> " + ORCAMENTO_CONFIG.proponente.cnpj + "<br>";
+    html += "<strong>ENDEREÇO:</strong> " + ORCAMENTO_CONFIG.proponente.endereco + "<br>";
+    html += "<strong>PIX:</strong> " + ORCAMENTO_CONFIG.proponente.pix;
+    html += "</div></div>";
+    
+    // ASSINATURAS
+    html += "<div class=\"recibo-assinaturas\">";
+    html += "<div><div class=\"linha\"></div><strong>Recebedor</strong><br><span style=\"font-size:0.65rem;\">" + ORCAMENTO_CONFIG.proponente.nome + "</span></div>";
+    html += "<div><div class=\"linha\"></div><strong>Cliente</strong><br><span style=\"font-size:0.65rem;\">" + (orc.cliente || "___________________") + "</span></div>";
+    html += "</div>";
+    
+    // DISPOSITIVO LEGAL
+    html += "<div class=\"recibo-legal\">";
+    html += "<p><strong>DISPOSITIVO LEGAL:</strong></p>";
+    html += "<p>O presente recibo tem validade como documento de quitação de prestação de serviços, nos termos do Art. 320 do Código Civil Brasileiro (Lei nº 10.406/2002), e do Art. 6º, inciso III, da Lei nº 8.078/1990 (Código de Defesa do Consumidor), que garantem a transparência e a formalização das relações de consumo e prestação de serviços.</p>";
+    html += "<p style=\"margin-top:5px;\">Este documento comprova o pagamento integral do serviço descrito, liberando ambas as partes das obrigações referentes ao objeto contratado.</p>";
+    html += "</div>";
+    
+    // RODAPÉ
+    html += "<div class=\"recibo-footer\">";
+    html += "<p>" + ORCAMENTO_CONFIG.empresa.nome + " - Assistência Técnica Independente</p>";
+    html += "<p>CNPJ: " + ORCAMENTO_CONFIG.empresa.cnpj + " | Tel: " + ORCAMENTO_CONFIG.empresa.telefone + " | Site: " + ORCAMENTO_CONFIG.empresa.site + "</p>";
+    html += "<p>Documento gerado em " + formatarDataHora(new Date().toISOString()) + "</p>";
+    html += "</div>";
+    
+    html += "</div>";
+    
+    return html;
+}
+
+function converterValorPorExtenso(valor) {
+    if (!valor || valor === 0) return "Zero reais";
+    
+    var partes = valor.toFixed(2).split('.');
+    var reais = parseInt(partes[0]);
+    var centavos = parseInt(partes[1]);
+    
+    var extenso = "";
+    
+    if (reais > 0) {
+        extenso = numeroPorExtenso(reais) + " reais";
+    }
+    if (centavos > 0) {
+        if (extenso) extenso += " e ";
+        extenso += numeroPorExtenso(centavos) + " centavos";
+    }
+    return extenso.charAt(0).toUpperCase() + extenso.slice(1);
+}
+
+function numeroPorExtenso(num) {
+    var unidades = ["", "um", "dois", "três", "quatro", "cinco", "seis", "sete", "oito", "nove"];
+    var especiais = ["dez", "onze", "doze", "treze", "catorze", "quinze", "dezesseis", "dezessete", "dezoito", "dezenove"];
+    var dezenas = ["", "", "vinte", "trinta", "quarenta", "cinquenta", "sessenta", "setenta", "oitenta", "noventa"];
+    var centenas = ["", "cento", "duzentos", "trezentos", "quatrocentos", "quinhentos", "seiscentos", "setecentos", "oitocentos", "novecentos"];
+    
+    if (num === 0) return "zero";
+    if (num === 100) return "cem";
+    
+    var extenso = "";
+    
+    if (num >= 1000) {
+        var milhares = Math.floor(num / 1000);
+        var resto = num % 1000;
+        if (milhares === 1) {
+            extenso += "mil";
+        } else {
+            extenso += numeroPorExtenso(milhares) + " mil";
+        }
+        if (resto > 0) {
+            extenso += " e " + numeroPorExtenso(resto);
+        }
+        return extenso;
+    }
+    
+    if (num >= 100) {
+        var centena = Math.floor(num / 100);
+        var resto = num % 100;
+        if (centena === 1 && resto === 0) {
+            return "cem";
+        }
+        extenso += centenas[centena];
+        if (resto > 0) {
+            extenso += " e " + numeroPorExtenso(resto);
+        }
+        return extenso;
+    }
+    
+    if (num >= 20) {
+        var dezena = Math.floor(num / 10);
+        var unidade = num % 10;
+        extenso += dezenas[dezena];
+        if (unidade > 0) {
+            extenso += " e " + unidades[unidade];
+        }
+        return extenso;
+    }
+    
+    if (num >= 10) {
+        return especiais[num - 10];
+    }
+    
+    return unidades[num];
+}
 
 // ============================================================
 // FUNÇÃO DE FORMATAÇÃO CPF/CNPJ
@@ -177,20 +397,6 @@ function calcularTotalItens(itens) {
         total = total + subtotal;
     }
     return total;
-}
-
-// ============================================================
-// FUNÇÃO PARA GERAR NÚMERO DO ORÇAMENTO COM DIA
-// ============================================================
-
-function gerarNumeroOrcamento() {
-    var agora = new Date();
-    var ano = agora.getFullYear();
-    var mes = String(agora.getMonth() + 1).padStart(2, '0');
-    var dia = String(agora.getDate()).padStart(2, '0');
-    var ultimo = window.orcamentos.length || 0;
-    var sequencial = String(ultimo + 1).padStart(4, '0');
-    return "ECD-" + ano + mes + dia + "-" + sequencial;
 }
 
 // ============================================================
@@ -627,7 +833,8 @@ function listarOrcamentos() {
         html += "<button class=\"btn-win98-sm\" onclick=\"window.verOrcamento('" + orc.id + "')\" title=\"Visualizar\" style=\"padding:0 4px; font-size:0.65rem; background:#d4d0c8; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; cursor:pointer; font-family:'Courier New',monospace;\"><i class=\"fas fa-eye\"></i></button> ";
         html += "<button class=\"btn-win98-sm\" onclick=\"window.carregarOrcamentoParaEdicao('" + orc.id + "')\" title=\"Editar\" style=\"padding:0 4px; font-size:0.65rem; background:#d4d0c8; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; cursor:pointer; font-family:'Courier New',monospace;\"><i class=\"fas fa-edit\"></i></button> ";
         html += "<button class=\"btn-win98-sm\" onclick=\"window.duplicarOrcamento('" + orc.id + "')\" title=\"Duplicar\" style=\"padding:0 4px; font-size:0.65rem; background:#d4d0c8; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; cursor:pointer; font-family:'Courier New',monospace;\"><i class=\"fas fa-copy\"></i></button> ";
-        html += "<button class=\"btn-win98-sm btn-win98-danger\" onclick=\"window.excluirOrcamento('" + orc.id + "')\" title=\"Excluir\" style=\"padding:0 4px; font-size:0.65rem; background:#d4d0c8; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; cursor:pointer; font-family:'Courier New',monospace;\"><i class=\"fas fa-trash\"></i></button>";
+        html += "<button class=\"btn-win98-sm btn-win98-danger\" onclick=\"window.excluirOrcamento('" + orc.id + "')\" title=\"Excluir\" style=\"padding:0 4px; font-size:0.65rem; background:#d4d0c8; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; cursor:pointer; font-family:'Courier New',monospace;\"><i class=\"fas fa-trash\"></i></button> ";
+        html += "<button class=\"btn-win98-sm\" onclick=\"window.gerarRecibo('" + orc.id + "')\" title=\"Gerar Recibo\" style=\"padding:0 4px; font-size:0.65rem; background:#d4d0c8; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; cursor:pointer; font-family:'Courier New',monospace;\"><i class=\"fas fa-file-invoice\"></i></button>";
         html += "</td></tr>";
     }
     
@@ -640,7 +847,7 @@ function listarOrcamentos() {
 }
 
 // ============================================================
-// FUNÇÕES DE VISUALIZAÇÃO
+// FUNÇÕES DE VISUALIZAÇÃO - COM TÍTULO "NOTA DE ORÇAMENTO"
 // ============================================================
 
 function verOrcamento(id) {
@@ -691,20 +898,25 @@ function gerarHtmlOrcamento(orc) {
     html += "<div style=\"font-family:'Courier New',monospace; font-size:0.75rem; color:#000000;\">";
     
     // ========================================
-    // CABEÇALHO COM LOGO E DADOS DA EMPRESA
+    // TÍTULO "NOTA DE ORÇAMENTO"
     // ========================================
-    html += "<div style=\"display:flex; align-items:center; gap:12px; padding:8px 10px; margin-bottom:10px; background:#f0f0f0; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; box-shadow: inset 1px 1px 4px rgba(0,0,0,0.1);\">";
-    html += "<div style=\"flex-shrink:0;\"><img src=\"" + ORCAMENTO_CONFIG.empresa.logo + "\" alt=\"ECD Eletrônica\" style=\"max-height:60px; width:auto; border:1px solid #808080; padding:3px; background:#ffffff;\"></div>";
-    html += "<div style=\"flex:1;\"><strong style=\"font-size:1rem; color:#0a2e4d;\">" + ORCAMENTO_CONFIG.empresa.nome + "</strong><br>";
+    html += "<div style=\"text-align:center; padding:8px 0; margin-bottom:10px; background:#0a2e4d; color:#ffffff; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080;\">";
+    html += "<h2 style=\"margin:0; font-family:'Courier New',monospace; font-weight:700; font-size:1.2rem; letter-spacing:3px;\">📄 NOTA DE ORÇAMENTO</h2>";
+    html += "<div style=\"font-size:0.65rem; opacity:0.8;\">" + (orc.numero || "N/A") + " | " + formatarData(orc.data) + "</div>";
+    html += "</div>";
+    
+    // CABEÇALHO COM LOGO E DADOS DA EMPRESA
+    html += "<div style=\"display:flex; align-items:center; gap:12px; padding:6px 10px; margin-bottom:8px; background:#f0f0f0; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; box-shadow: inset 1px 1px 4px rgba(0,0,0,0.1);\">";
+    html += "<div style=\"flex-shrink:0;\"><img src=\"" + ORCAMENTO_CONFIG.empresa.logo + "\" alt=\"ECD Eletrônica\" style=\"max-height:50px; width:auto; border:1px solid #808080; padding:3px; background:#ffffff;\"></div>";
+    html += "<div style=\"flex:1;\"><strong style=\"font-size:0.9rem; color:#0a2e4d;\">" + ORCAMENTO_CONFIG.empresa.nome + "</strong><br>";
     html += "CNPJ: " + ORCAMENTO_CONFIG.empresa.cnpj + " | Tel: " + ORCAMENTO_CONFIG.empresa.telefone + "<br>";
     html += ORCAMENTO_CONFIG.empresa.endereco + " - CEP: " + ORCAMENTO_CONFIG.empresa.cep;
     html += "<br>Site: " + ORCAMENTO_CONFIG.empresa.site + "</div>";
-    html += "<div style=\"text-align:right; font-size:0.7rem;\"><strong>ORÇAMENTO</strong><br>Nº: " + (orc.numero || "N/A") + "<br>Data: " + formatarData(orc.data) + "</div>";
     html += "</div>";
     
     // DADOS DO PROPONENTE (FIXOS)
-    html += "<div style=\"background:#d4d0c8; padding:6px 10px; margin-bottom:6px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; box-shadow: inset 1px 1px 4px rgba(0,0,0,0.1);\">";
-    html += "<div style=\"display:grid; grid-template-columns:1fr 1fr; gap:4px; font-size:0.7rem;\">";
+    html += "<div style=\"background:#d4d0c8; padding:4px 10px; margin-bottom:6px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; box-shadow: inset 1px 1px 4px rgba(0,0,0,0.1);\">";
+    html += "<div style=\"display:grid; grid-template-columns:1fr 1fr; gap:4px; font-size:0.65rem;\">";
     html += "<div><strong>PROPONENTE:</strong> " + ORCAMENTO_CONFIG.proponente.nome + "</div>";
     html += "<div style=\"text-align:right;\"><strong>CNPJ:</strong> " + ORCAMENTO_CONFIG.proponente.cnpj + "</div>";
     html += "<div style=\"grid-column:1/3;\"><strong>END:</strong> " + ORCAMENTO_CONFIG.proponente.endereco + "</div>";
@@ -714,19 +926,19 @@ function gerarHtmlOrcamento(orc) {
     html += "</div></div>";
     
     // DADOS DO CLIENTE
-    html += "<div style=\"background:#d4d0c8; padding:6px 10px; margin-bottom:6px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; box-shadow: inset 1px 1px 4px rgba(0,0,0,0.1);\">";
-    html += "<div style=\"display:grid; grid-template-columns:1fr 1fr; gap:4px; font-size:0.7rem;\">";
+    html += "<div style=\"background:#d4d0c8; padding:4px 10px; margin-bottom:6px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; box-shadow: inset 1px 1px 4px rgba(0,0,0,0.1);\">";
+    html += "<div style=\"display:grid; grid-template-columns:1fr 1fr; gap:4px; font-size:0.65rem;\">";
     html += "<div><strong>CLIENTE:</strong> " + (orc.cliente || "Não informado") + "</div>";
     html += "<div style=\"text-align:right;\"><strong>CNPJ/CPF:</strong> " + (orc.cnpj || "Não informado") + "</div>";
     html += "<div style=\"grid-column:1/3;\"><strong>ENDEREÇO:</strong> " + (orc.endereco || "Não informado") + "</div>";
     html += "<div><strong>DATA:</strong> " + formatarData(orc.data) + "</div>";
     html += "<div style=\"text-align:right;\"><strong>PRAZO:</strong> " + formatarData(orc.prazo) + "</div>";
-    html += "<div><strong>STATUS:</strong> <span style=\"background:" + statusColor + "; color:#fff; padding:0 8px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; font-weight:700; font-size:0.65rem;\">" + (orc.status || "Pendente") + "</span></div>";
+    html += "<div><strong>STATUS:</strong> <span style=\"background:" + statusColor + "; color:#fff; padding:0 8px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; font-weight:700; font-size:0.6rem;\">" + (orc.status || "Pendente") + "</span></div>";
     html += "</div></div>";
     
     // Tabela de itens
     html += "<div style=\"overflow-x:auto; background:#d4d0c8; padding:3px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; box-shadow: inset 2px 2px 6px rgba(0,0,0,0.12);\">";
-    html += "<table style=\"width:100%; border-collapse:collapse; background:#ffffff; font-family:'Courier New',monospace; font-size:0.7rem;\">";
+    html += "<table style=\"width:100%; border-collapse:collapse; background:#ffffff; font-family:'Courier New',monospace; font-size:0.65rem;\">";
     html += "<thead><tr style=\"background:#d4d0c8; border-bottom:2px solid #404040;\">";
     html += "<th style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:center; font-weight:700;\">Item</th>";
     html += "<th style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:left; font-weight:700;\">Descrição</th>";
@@ -754,13 +966,13 @@ function gerarHtmlOrcamento(orc) {
     html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:right; background:#f0f0f0;\"><strong>" + formatarMoeda(orc.subtotal || 0) + "</strong></td></tr>";
     html += "<tr><td colspan=\"5\" style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:right; background:#f0f0f0;\"><strong>Desconto</strong></td>";
     html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:right; background:#f0f0f0;\"><strong>" + formatarMoeda(orc.desconto || 0) + "</strong></td></tr>";
-    html += "<tr style=\"background:#d4e6f1;\"><td colspan=\"5\" style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:right; font-weight:700; font-size:0.85rem;\"><strong>TOTAL GERAL</strong></td>";
-    html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:right; font-weight:700; font-size:0.85rem;\"><strong>" + formatarMoeda(orc.total || 0) + "</strong></td></tr>";
+    html += "<tr style=\"background:#d4e6f1;\"><td colspan=\"5\" style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:right; font-weight:700; font-size:0.8rem;\"><strong>TOTAL GERAL</strong></td>";
+    html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:right; font-weight:700; font-size:0.8rem;\"><strong>" + formatarMoeda(orc.total || 0) + "</strong></td></tr>";
     html += "</tfoot></table></div>";
     
     // Observações
     if (orc.observacoes) {
-        html += "<div style=\"background:#d4d0c8; padding:6px 10px; margin-top:6px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; box-shadow: inset 1px 1px 4px rgba(0,0,0,0.1);\">";
+        html += "<div style=\"background:#d4d0c8; padding:4px 10px; margin-top:6px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; box-shadow: inset 1px 1px 4px rgba(0,0,0,0.1);\">";
         html += "<strong>Observações:</strong><br>" + orc.observacoes;
         html += "</div>";
     }
@@ -771,31 +983,31 @@ function gerarHtmlOrcamento(orc) {
     html += "<div style=\"display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px;\">";
     
     // Coluna 1: QR Code PIX
-    html += "<div style=\"background:#d4d0c8; padding:8px 10px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; box-shadow: inset 1px 1px 4px rgba(0,0,0,0.1); text-align:center;\">";
-    html += "<strong style=\"display:block; margin-bottom:4px; font-size:0.8rem;\">PIX para Pagamento</strong>";
-    html += "<div style=\"background:#ffffff; padding:8px; display:inline-block; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080;\">";
-    html += "<img src=\"https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=00020126580014BR.GOV.BCB.PIX0136" + ORCAMENTO_CONFIG.banco.pix + "5204000053039865802BR5913ECD Eletronica6009SAO PAULO61080540900062290525ECD" + orc.numero.replace(/-/g, '') + "6304" + Math.floor(Math.random() * 9000 + 1000) + "\" alt=\"QR Code PIX\" style=\"max-width:120px; height:auto;\" crossorigin=\"anonymous\">";
+    html += "<div style=\"background:#d4d0c8; padding:6px 10px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; box-shadow: inset 1px 1px 4px rgba(0,0,0,0.1); text-align:center;\">";
+    html += "<strong style=\"display:block; margin-bottom:4px; font-size:0.7rem;\">PIX para Pagamento</strong>";
+    html += "<div style=\"background:#ffffff; padding:6px; display:inline-block; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080;\">";
+    html += "<img src=\"https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=00020126580014BR.GOV.BCB.PIX0136" + ORCAMENTO_CONFIG.banco.pix + "5204000053039865802BR5913ECD Eletronica6009SAO PAULO61080540900062290525ECD" + orc.numero.replace(/-/g, '') + "6304" + Math.floor(Math.random() * 9000 + 1000) + "\" alt=\"QR Code PIX\" style=\"max-width:100px; height:auto;\" crossorigin=\"anonymous\">";
     html += "</div>";
-    html += "<div style=\"margin-top:4px; font-size:0.65rem; font-weight:700;\">Chave PIX: " + ORCAMENTO_CONFIG.banco.pix + "</div>";
+    html += "<div style=\"margin-top:4px; font-size:0.6rem; font-weight:700;\">Chave PIX: " + ORCAMENTO_CONFIG.banco.pix + "</div>";
     html += "</div>";
     
     // Coluna 2: Dados para Pagamento
-    html += "<div style=\"background:#d4d0c8; padding:8px 10px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; box-shadow: inset 1px 1px 4px rgba(0,0,0,0.1);\">";
-    html += "<strong style=\"display:block; margin-bottom:4px; font-size:0.8rem;\">Dados para Pagamento</strong>";
-    html += "<div style=\"font-size:0.65rem; line-height:1.6;\">";
+    html += "<div style=\"background:#d4d0c8; padding:6px 10px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; box-shadow: inset 1px 1px 4px rgba(0,0,0,0.1);\">";
+    html += "<strong style=\"display:block; margin-bottom:4px; font-size:0.7rem;\">Dados para Pagamento</strong>";
+    html += "<div style=\"font-size:0.6rem; line-height:1.5;\">";
     html += "<strong>Banco:</strong> " + ORCAMENTO_CONFIG.banco.nome + "<br>";
     html += "<strong>Agência:</strong> " + ORCAMENTO_CONFIG.banco.agencia + "<br>";
     html += "<strong>Conta:</strong> " + ORCAMENTO_CONFIG.banco.conta + " (" + ORCAMENTO_CONFIG.banco.tipo + ")<br>";
     html += "<strong>PIX (Chave):</strong> " + ORCAMENTO_CONFIG.banco.pix + "<br>";
     html += "<strong>CNPJ:</strong> " + ORCAMENTO_CONFIG.empresa.cnpj + "<br>";
     html += "<hr style=\"border-color:#808080; margin:4px 0;\">";
-    html += "<div style=\"background:#ffffff; padding:4px 6px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; text-align:center;\">";
+    html += "<div style=\"background:#ffffff; padding:3px 6px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; text-align:center;\">";
     html += "<strong>Valor: " + formatarMoeda(orc.total || 0) + "</strong>";
     html += "</div>";
     html += "</div></div></div>";
     
     // Rodapé com dados fixos
-    html += "<div style=\"text-align:center; margin-top:10px; padding-top:6px; border-top:2px solid #808080; font-size:0.55rem; color:#404040; font-family:'Courier New',monospace;\">";
+    html += "<div style=\"text-align:center; margin-top:8px; padding-top:6px; border-top:2px solid #808080; font-size:0.5rem; color:#404040; font-family:'Courier New',monospace;\">";
     html += "<p style=\"margin:1px 0;\">" + ORCAMENTO_CONFIG.empresa.nome + " - Assistência Técnica Independente</p>";
     html += "<p style=\"margin:1px 0;\">CNPJ: " + ORCAMENTO_CONFIG.empresa.cnpj + " | Tel: " + ORCAMENTO_CONFIG.empresa.telefone + " | Site: " + ORCAMENTO_CONFIG.empresa.site + "</p>";
     html += "<p style=\"margin:1px 0;\">Documento gerado em " + formatarDataHora(new Date().toISOString()) + "</p>";
@@ -905,7 +1117,7 @@ function gerarPDFOrcamento(id) {
 }
 
 // ============================================================
-// FUNÇÃO PRINCIPAL: ENVIAR WHATSAPP COM IMAGEM (FUNCIONAL)
+// WHATSAPP COM IMAGEM
 // ============================================================
 
 function enviarWhatsAppOrcamento(id) {
@@ -921,17 +1133,12 @@ function enviarWhatsAppOrcamento(id) {
         return;
     }
     
-    // Verificar se a biblioteca html2canvas está carregada
     if (typeof html2canvas === "undefined") {
         mostrarNotificacao("📥 Carregando biblioteca de imagem...", "info");
         var script = document.createElement("script");
         script.src = "https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js";
-        script.onload = function() {
-            enviarWhatsAppOrcamento(id);
-        };
-        script.onerror = function() {
-            enviarWhatsAppMensagem(orc);
-        };
+        script.onload = function() { enviarWhatsAppOrcamento(id); };
+        script.onerror = function() { enviarWhatsAppMensagem(orc); };
         document.head.appendChild(script);
         return;
     }
@@ -939,7 +1146,6 @@ function enviarWhatsAppOrcamento(id) {
     mostrarNotificacao("📸 Gerando imagem do orçamento...", "info");
     
     try {
-        // Criar o conteúdo HTML do orçamento
         var conteudo = gerarHtmlOrcamento(orc);
         var container = document.createElement("div");
         container.innerHTML = conteudo;
@@ -953,20 +1159,17 @@ function enviarWhatsAppOrcamento(id) {
         container.style.boxSizing = "border-box";
         container.style.position = "relative";
         
-        // Garantir que as imagens carreguem
         var imagens = container.querySelectorAll("img");
         for (var i = 0; i < imagens.length; i++) {
             imagens[i].crossOrigin = "anonymous";
             imagens[i].setAttribute("crossOrigin", "anonymous");
         }
         
-        // Adicionar ao corpo para renderizar (off-screen)
         container.style.position = "absolute";
         container.style.left = "-9999px";
         container.style.top = "0";
         document.body.appendChild(container);
         
-        // Configurar opções do html2canvas
         var options = {
             scale: 2,
             useCORS: true,
@@ -986,45 +1189,20 @@ function enviarWhatsAppOrcamento(id) {
             }
         };
         
-        // Gerar a imagem
         html2canvas(container, options)
             .then(function(canvas) {
-                // Remover o container
                 if (container.parentNode) {
                     document.body.removeChild(container);
                 }
-                
-                // Converter canvas para data URL (imagem PNG)
                 var imageDataUrl = canvas.toDataURL("image/png");
-                
-                // 1. BAIXAR A IMAGEM AUTOMATICAMENTE
                 var link = document.createElement("a");
                 link.href = imageDataUrl;
                 link.download = "Orçamento_" + (orc.numero || "ECD") + ".png";
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
-                
                 mostrarNotificacao("✅ Imagem baixada!", "success");
-                
-                // 2. ABRIR O WHATSAPP COM A MENSAGEM
-                var telefone = ORCAMENTO_CONFIG.empresa.whatsapp;
-                var mensagem = "*" + ORCAMENTO_CONFIG.empresa.nome + "*\n";
-                mensagem += "Orçamento: " + (orc.numero || "N/A") + "\n";
-                mensagem += "Data: " + formatarData(orc.data) + "\n";
-                mensagem += "Cliente: " + (orc.cliente || "Não informado") + "\n";
-                mensagem += "Total: " + formatarMoeda(orc.total || 0) + "\n";
-                mensagem += "\n*Pagamento via PIX:* " + ORCAMENTO_CONFIG.banco.pix;
-                mensagem += "\n*Site:* " + ORCAMENTO_CONFIG.empresa.site;
-                mensagem += "\n\n*Assistência Técnica Independente*";
-                mensagem += "\n" + ORCAMENTO_CONFIG.empresa.telefone;
-                
-                // Abrir WhatsApp com a mensagem
-                var mensagemCodificada = encodeURIComponent(mensagem);
-                var url = "https://wa.me/" + telefone + "?text=" + mensagemCodificada;
-                window.open(url, "_blank");
-                
-                mostrarNotificacao("💬 WhatsApp aberto! Anexe a imagem baixada.", "success");
+                enviarWhatsAppMensagem(orc);
             })
             .catch(function(error) {
                 console.error("Erro ao gerar imagem:", error);
@@ -1041,10 +1219,6 @@ function enviarWhatsAppOrcamento(id) {
         enviarWhatsAppMensagem(orc);
     }
 }
-
-// ============================================================
-// ENVIAR MENSAGEM DO WHATSAPP (FALLBACK)
-// ============================================================
 
 function enviarWhatsAppMensagem(orc) {
     var telefone = ORCAMENTO_CONFIG.empresa.whatsapp;
@@ -1307,6 +1481,7 @@ window.excluirOrcamento = excluirOrcamento;
 window.duplicarOrcamento = duplicarOrcamento;
 window.mostrarNotificacao = mostrarNotificacao;
 window.fecharModalWin98 = fecharModalWin98;
+window.gerarRecibo = gerarRecibo;
 
 // ============================================================
 // INICIALIZAR
@@ -1318,4 +1493,4 @@ if (document.readyState === "loading") {
     initializeOrcamento();
 }
 
-console.log("✅ orcamento.js v2.5 carregado - WHATSAPP COM IMAGEM E DOWNLOAD!");
+console.log("✅ orcamento.js v2.6 carregado - COM TÍTULO, BOTÃO RECIBO E RECIBO PROFISSIONAL!");
