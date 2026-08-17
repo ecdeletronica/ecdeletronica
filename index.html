@@ -519,6 +519,33 @@
         }
 
         /* ============================================
+                   CRÉDITOS DO DESENVOLVEDOR
+                   ============================================ */
+        .developer-credits {
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.4);
+        }
+        .developer-credits a {
+            color: var(--secondary);
+            text-decoration: none;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+        .developer-credits a:hover {
+            color: var(--accent);
+            text-decoration: underline;
+        }
+        .developer-credits i {
+            color: rgba(255,255,255,0.3);
+        }
+        .developer-credits strong {
+            color: var(--secondary);
+        }
+
+        /* ============================================
                    RESPONSIVIDADE
                    ============================================ */
         @media (max-width: 992px) {
@@ -734,7 +761,7 @@
     </section>
 
     <!-- ==========================================
-    FOOTER
+    FOOTER - COM CRÉDITOS
     ========================================== -->
     <footer>
         <div class="container">
@@ -753,6 +780,20 @@
                 <a href="#"><i class="fas fa-envelope"></i></a>
             </div>
             <p class="copy">© 2026 ECD Eletrônica. Todos os direitos reservados.</p>
+
+            <!-- ==========================================
+            CRÉDITOS DO DESENVOLVEDOR
+            ========================================== -->
+            <div class="developer-credits">
+                <p>
+                    <i class="fas fa-code" aria-hidden="true"></i>
+                    Desenvolvido por
+                    <a href="https://webtectec.com.br/" target="_blank" rel="noopener noreferrer">
+                        <strong>WEB TEC-TEC</strong>
+                    </a>
+                    - Soluções digitais inteligentes
+                </p>
+            </div>
         </div>
     </footer>
 
