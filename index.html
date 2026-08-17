@@ -32,6 +32,7 @@
             --shadow-sm: 0 2px 15px rgba(0,0,0,0.06);
             --radius: 12px;
             --font: 'Inter', sans-serif;
+            --legal-red: #e74c3c;
         }
         body {
             font-family: var(--font);
@@ -552,7 +553,7 @@
         }
 
         /* ============================================
-                   FOOTER - COM MARCAS E LEGAL
+                   FOOTER - COM MARCAS LEGAIS EM VERMELHO
                    ============================================ */
         footer {
             background: var(--primary);
@@ -691,25 +692,38 @@
         }
 
         /* ============================================
-                   MARCAS LEGAIS - RODAPÉ
+                   MARCAS LEGAIS - VERMELHO
                    ============================================ */
         .legal-brands {
             margin-top: 12px;
-            padding: 12px 20px;
+            padding: 14px 20px;
             background: rgba(255,255,255,0.03);
             border-radius: 12px;
             border: 1px solid rgba(255,255,255,0.05);
-            max-width: 800px;
+            max-width: 900px;
             margin-left: auto;
             margin-right: auto;
         }
         .legal-brands p {
-            font-size: 0.7rem;
-            color: rgba(255,255,255,0.35);
-            line-height: 1.5;
-        }
-        .legal-brands strong {
+            font-size: 0.75rem;
+            line-height: 1.6;
             color: rgba(255,255,255,0.5);
+        }
+        .legal-brands .highlight-red {
+            color: #e74c3c;
+            font-weight: 600;
+        }
+        .legal-brands .highlight-red-strong {
+            color: #e74c3c;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .legal-brands .brand-name {
+            color: rgba(255,255,255,0.7);
+            font-weight: 500;
+        }
+        .legal-brands .brand-name:hover {
+            color: var(--secondary);
         }
 
         .developer-credits {
@@ -769,6 +783,9 @@
             .footer-grid {
                 flex-direction: column;
                 gap: 2rem;
+            }
+            .legal-brands p {
+                font-size: 0.65rem;
             }
         }
         @media (max-width: 768px) {
@@ -1115,7 +1132,7 @@
     </section>
 
     <!-- ==========================================
-    FOOTER - COM MARCAS LEGAIS
+    FOOTER - COM MARCAS LEGAIS EM VERMELHO
     ========================================== -->
     <footer>
         <div class="container">
@@ -1141,15 +1158,34 @@
             </div>
 
             <!-- ==========================================
-            MARCAS LEGAIS - RODAPÉ DE PROTEÇÃO
+            MARCAS LEGAIS - TEXTO EM VERMELHO
             ========================================== -->
             <div class="legal-brands">
                 <p>
-                    <strong>Marcas Registradas:</strong> Samsung, LG, Electrolux, Brastemp, Consul, Philco, Panasonic, 
-                    Springer, Intelbras, Emerson, WEG, Philips, GE, Siemens, Mindray, Drager e outras marcas citadas 
-                    são de propriedade exclusiva de seus respectivos fabricantes. 
-                    <strong>A ECD Eletrônica não possui vínculo com as marcas.</strong> 
-                    Serviço de <strong>assistência técnica independente</strong>.
+                    <span class="highlight-red-strong">⚠️ ATENÇÃO:</span>
+                    <span class="brand-name">Samsung</span>, 
+                    <span class="brand-name">LG</span>, 
+                    <span class="brand-name">Electrolux</span>, 
+                    <span class="brand-name">Brastemp</span>, 
+                    <span class="brand-name">Consul</span>, 
+                    <span class="brand-name">Philco</span>, 
+                    <span class="brand-name">Panasonic</span>, 
+                    <span class="brand-name">Springer</span>, 
+                    <span class="brand-name">Intelbras</span>, 
+                    <span class="brand-name">Emerson</span>, 
+                    <span class="brand-name">WEG</span>, 
+                    <span class="brand-name">Philips</span>, 
+                    <span class="brand-name">GE</span>, 
+                    <span class="brand-name">Siemens</span>, 
+                    <span class="brand-name">Mindray</span>, 
+                    <span class="brand-name">Drager</span> 
+                    <span style="color:rgba(255,255,255,0.4);">e outras marcas citadas</span>
+                    <span style="color:rgba(255,255,255,0.4);">são de propriedade exclusiva de seus respectivos fabricantes.</span>
+                    <br>
+                    <span class="highlight-red"><strong>A ECD Eletrônica não possui vínculo com as marcas.</strong></span>
+                    <span style="color:rgba(255,255,255,0.4);">Serviço de</span>
+                    <span class="highlight-red"><strong>assistência técnica independente</strong></span>
+                    <span style="color:rgba(255,255,255,0.4);">.</span>
                 </p>
             </div>
 
