@@ -1,8 +1,9 @@
 // js/modules/orcamento.js - Sistema de Orçamento para ECD Eletrônica
-// ✅ Versão ESTÁVEL v1.2 - LAYOUT WINDOWS 98 ESCURO
+// ✅ Versão ESTÁVEL v1.3 - LAYOUT PADRONIZADO (estilo Weber Lessa)
 // ✅ Funcionalidades: CRUD, PDF, WhatsApp, Imprimir, Storage Local
+// ✅ ESTILO: Campos com contraste, fundo cinza claro nos inputs
 
-console.log('✅ orcamento.js carregado - Versão ESTÁVEL v1.2 (Windows 98 Escuro)');
+console.log('✅ orcamento.js carregado - Versão ESTÁVEL v1.3');
 
 // ============================================================
 // CONFIGURAÇÕES
@@ -112,7 +113,7 @@ function gerarNumeroOrcamento() {
 }
 
 // ============================================================
-// FUNÇÕES DA PLANILHA (Itens)
+// FUNÇÕES DA PLANILHA (Itens) - ESTILO PADRONIZADO
 // ============================================================
 
 function adicionarItemLinha() {
@@ -128,27 +129,27 @@ function adicionarItemLinha() {
     linha.style.background = '#ffffff';
     
     linha.innerHTML = `
-        <td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 6px; text-align:center; background:#d4d0c8; font-weight:700; font-size:0.8rem;">${index + 1}</td>
+        <td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 6px; text-align:center; background:#d4d0c8; font-weight:700; font-size:0.75rem; font-family:'Courier New',monospace;">${index + 1}</td>
         <td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px;">
             <input type="text" class="item-descricao" 
                    placeholder="Descrição do serviço" 
                    data-index="${index}"
-                   style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; width:100%; background:#ffffff; font-family:'Courier New',monospace; font-size:0.8rem; color:#000000; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.1);">
+                   style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; width:100%; background:#f0f0f0; font-family:'Courier New',monospace; font-size:0.8rem; color:#000000; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.08);">
         </td>
         <td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px;">
             <input type="text" class="item-unidade" value="UN" data-index="${index}"
-                   style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 4px; width:50px; background:#ffffff; font-family:'Courier New',monospace; font-size:0.8rem; color:#000000; text-align:center; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.1);">
+                   style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 4px; width:50px; background:#f0f0f0; font-family:'Courier New',monospace; font-size:0.8rem; color:#000000; text-align:center; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.08);">
         </td>
         <td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px;">
             <input type="number" class="item-quantidade" value="1" min="1" data-index="${index}"
-                   style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 4px; width:50px; background:#ffffff; font-family:'Courier New',monospace; font-size:0.8rem; color:#000000; text-align:center; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.1);">
+                   style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 4px; width:50px; background:#f0f0f0; font-family:'Courier New',monospace; font-size:0.8rem; color:#000000; text-align:center; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.08);">
         </td>
         <td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px;">
             <input type="text" class="item-valor" value="0,00" data-index="${index}"
-                   style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 4px; width:100px; background:#ffffff; font-family:'Courier New',monospace; font-size:0.8rem; color:#000000; text-align:right; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.1);">
+                   style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 4px; width:100px; background:#f0f0f0; font-family:'Courier New',monospace; font-size:0.8rem; color:#000000; text-align:right; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.08);">
         </td>
         <td class="item-subtotal" data-index="${index}" 
-            style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:right; background:#f0f0f0; font-family:'Courier New',monospace; font-size:0.8rem; font-weight:700;">R$ 0,00</td>
+            style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:right; background:#ece9d8; font-family:'Courier New',monospace; font-size:0.8rem; font-weight:700;">R$ 0,00</td>
         <td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; text-align:center; background:#d4d0c8;">
             <button type="button" class="remover-item" data-index="${index}"
                     style="background:#d4d0c8; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:1px 8px; cursor:pointer; font-size:0.7rem; font-family:'Courier New',monospace; font-weight:700;">
@@ -315,7 +316,7 @@ function recalcularTotais() {
 }
 
 // ============================================================
-// FUNÇÕES DO FORMULÁRIO
+// FUNÇÕES DO FORMULÁRIO - ESTILO PADRONIZADO
 // ============================================================
 
 function resetOrcamentoForm() {
@@ -399,25 +400,25 @@ function carregarOrcamentoParaEdicao(id) {
             linha.style.borderLeft = '2px solid #808080';
             linha.style.background = '#ffffff';
             linha.innerHTML = `
-                <td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 6px; text-align:center; background:#d4d0c8; font-weight:700; font-size:0.8rem;">${index + 1}</td>
+                <td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 6px; text-align:center; background:#d4d0c8; font-weight:700; font-size:0.75rem; font-family:'Courier New',monospace;">${index + 1}</td>
                 <td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px;">
                     <input type="text" class="item-descricao" value="${item.descricao || ''}" data-index="${index}"
-                           style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; width:100%; background:#ffffff; font-family:'Courier New',monospace; font-size:0.8rem; color:#000000; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.1);">
+                           style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; width:100%; background:#f0f0f0; font-family:'Courier New',monospace; font-size:0.8rem; color:#000000; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.08);">
                 </td>
                 <td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px;">
                     <input type="text" class="item-unidade" value="${item.unidade || 'UN'}" data-index="${index}"
-                           style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 4px; width:50px; background:#ffffff; font-family:'Courier New',monospace; font-size:0.8rem; color:#000000; text-align:center; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.1);">
+                           style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 4px; width:50px; background:#f0f0f0; font-family:'Courier New',monospace; font-size:0.8rem; color:#000000; text-align:center; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.08);">
                 </td>
                 <td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px;">
                     <input type="number" class="item-quantidade" value="${item.quantidade || 1}" min="1" data-index="${index}"
-                           style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 4px; width:50px; background:#ffffff; font-family:'Courier New',monospace; font-size:0.8rem; color:#000000; text-align:center; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.1);">
+                           style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 4px; width:50px; background:#f0f0f0; font-family:'Courier New',monospace; font-size:0.8rem; color:#000000; text-align:center; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.08);">
                 </td>
                 <td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px;">
                     <input type="text" class="item-valor" value="${formatarMoeda(item.valor_unitario || 0).replace('R$ ', '')}" data-index="${index}"
-                           style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 4px; width:100px; background:#ffffff; font-family:'Courier New',monospace; font-size:0.8rem; color:#000000; text-align:right; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.1);">
+                           style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 4px; width:100px; background:#f0f0f0; font-family:'Courier New',monospace; font-size:0.8rem; color:#000000; text-align:right; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.08);">
                 </td>
                 <td class="item-subtotal" data-index="${index}" 
-                    style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:right; background:#f0f0f0; font-family:'Courier New',monospace; font-size:0.8rem; font-weight:700;">
+                    style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:right; background:#ece9d8; font-family:'Courier New',monospace; font-size:0.8rem; font-weight:700;">
                     ${formatarMoeda((item.quantidade || 0) * (item.valor_unitario || 0))}
                 </td>
                 <td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; text-align:center; background:#d4d0c8;">
@@ -533,7 +534,7 @@ function salvarOrcamento() {
 }
 
 // ============================================================
-// FUNÇÕES DE LISTAGEM
+// FUNÇÕES DE LISTAGEM - ESTILO PADRONIZADO
 // ============================================================
 
 function listarOrcamentos() {
@@ -609,7 +610,7 @@ function listarOrcamentos() {
 }
 
 // ============================================================
-// FUNÇÕES DE VISUALIZAÇÃO
+// FUNÇÕES DE VISUALIZAÇÃO - ESTILO PADRONIZADO
 // ============================================================
 
 function verOrcamento(id) {
@@ -1073,4 +1074,4 @@ window.duplicarOrcamento = duplicarOrcamento;
 window.mostrarNotificacao = mostrarNotificacao;
 window.fecharModalWin98 = fecharModalWin98;
 
-console.log('✅ orcamento.js v1.2 carregado - Layout Windows 98 Escuro!');
+console.log('✅ orcamento.js v1.3 carregado - Layout padronizado com fundo cinza claro nos campos!');
