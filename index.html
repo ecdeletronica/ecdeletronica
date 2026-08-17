@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ECD Eletrônica | Conserto e Manutenção Especializada</title>
-    <meta name="description" content="ECD Eletrônica: Assistência técnica especializada em placas de lavadoras, geladeiras, ar-condicionado e muito mais. Em Maceió-AL. Conserto rápido e garantia.">
+    <meta name="description" content="ECD Eletrônica: Assistência técnica independente especializada em placas de lavadoras, geladeiras, ar-condicionado e muito mais. Em Maceió-AL. Conserto rápido e garantia.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
@@ -94,7 +94,7 @@
         }
 
         /* ============================================
-                   HEADER - BORDA INFERIOR LARANJA GROSSA
+                   HEADER
                    ============================================ */
         header {
             background: rgba(255,255,255,0.92);
@@ -367,7 +367,7 @@
         }
 
         /* ============================================
-                   SERVIÇOS
+                   SERVIÇOS - COM MARCAS
                    ============================================ */
         .services {
             padding: 80px 0;
@@ -408,6 +408,22 @@
         .service-card p {
             color: var(--gray-600);
             font-size: 0.95rem;
+        }
+        .service-card .brands {
+            margin-top: 12px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 6px;
+        }
+        .service-card .brands span {
+            background: var(--gray-100);
+            border: 1px solid var(--gray-200);
+            padding: 2px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--gray-600);
         }
 
         /* ============================================
@@ -536,7 +552,7 @@
         }
 
         /* ============================================
-                   FOOTER - REORGANIZADO
+                   FOOTER - COM MARCAS E LEGAL
                    ============================================ */
         footer {
             background: var(--primary);
@@ -672,6 +688,28 @@
         footer .copy {
             font-size: 0.85rem;
             margin-top: 16px;
+        }
+
+        /* ============================================
+                   MARCAS LEGAIS - RODAPÉ
+                   ============================================ */
+        .legal-brands {
+            margin-top: 12px;
+            padding: 12px 20px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.05);
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .legal-brands p {
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.35);
+            line-height: 1.5;
+        }
+        .legal-brands strong {
+            color: rgba(255,255,255,0.5);
         }
 
         .developer-credits {
@@ -812,6 +850,9 @@
             .footer-left .logo-slogan {
                 font-size: 0.7rem;
             }
+            .legal-brands p {
+                font-size: 0.6rem;
+            }
         }
         @media (max-width: 480px) {
             .hero-card .logo-wrapper-hero img {
@@ -855,6 +896,9 @@
             .footer-left .logo-slogan {
                 font-size: 0.65rem;
             }
+            .legal-brands p {
+                font-size: 0.55rem;
+            }
         }
     </style>
 </head>
@@ -871,7 +915,7 @@
                 </span>
                 <div class="logo-text">
                     <h1>ECD <span>Eletrônica</span></h1>
-                    <span class="slogan">Conserto e Manutenção em placas</span>
+                    <span class="slogan">Assistência Técnica Independente</span>
                 </div>
             </div>
 
@@ -902,7 +946,7 @@
             <div>
                 <span class="section-tag" style="background:rgba(255,255,255,0.1); color:var(--secondary);">Tecnologia que conecta. Qualidade que resolve.</span>
                 <h1>Especialistas em <span>Placas Eletrônicas</span></h1>
-                <p>Recuperação e manutenção de placas de lavadoras, geladeiras, ar-condicionado, micro-ondas e muito mais. Atendimento rápido e garantia de excelência.</p>
+                <p>Assistência técnica independente especializada em placas de lavadoras, geladeiras, ar-condicionado, micro-ondas e muito mais. Atendimento rápido e garantia de excelência.</p>
                 <div style="display:flex; gap:16px; flex-wrap:wrap;">
                     <a href="#contato" class="btn btn-primary">Solicitar Orçamento</a>
                     <a href="#servicos" class="btn btn-outline">Nossos Serviços</a>
@@ -928,22 +972,88 @@
     </section>
 
     <!-- ==========================================
-    SERVIÇOS
+    SERVIÇOS - COM MARCAS
     ========================================== -->
     <section class="services" id="servicos">
         <div class="container">
             <div class="section-header">
                 <span class="section-tag">Nossos Serviços</span>
                 <h2 class="section-title">Recuperamos o que a tecnologia <br> não conseguiu</h2>
-                <p style="color:var(--gray-600); max-width:600px; margin:0 auto;">Atuamos com precisão e conhecimento técnico em diversos tipos de equipamentos.</p>
+                <p style="color:var(--gray-600); max-width:600px; margin:0 auto;">Atuamos com precisão e conhecimento técnico em diversos tipos de equipamentos. Assistência técnica independente.</p>
             </div>
             <div class="services-grid">
-                <div class="service-card"><div class="icon"><i class="fas fa-washing-machine"></i></div><h3>Placas de Lavadoras</h3><p>Diagnóstico e reparo de placas eletrônicas de lavadoras de roupas e louças.</p></div>
-                <div class="service-card"><div class="icon"><i class="fas fa-ice-cream"></i></div><h3>Placas de Geladeiras</h3><p>Manutenção em placas de geladeiras e freezers, garantindo o funcionamento ideal.</p></div>
-                <div class="service-card"><div class="icon"><i class="fas fa-snowflake"></i></div><h3>Placas de Ar-Condicionado</h3><p>Reparo de placas de sistemas de climatização, split, cassete e janela.</p></div>
-                <div class="service-card"><div class="icon"><i class="fas fa-micro-wave"></i></div><h3>Placas de Micro-ondas</h3><p>Solução em placas de micro-ondas com alta eficiência e segurança.</p></div>
-                <div class="service-card"><div class="icon"><i class="fas fa-bolt"></i></div><h3>Placas Inverter</h3><p>Especialidade em inversores, nobreaks e fontes chaveadas.</p></div>
-                <div class="service-card"><div class="icon"><i class="fas fa-heartbeat"></i></div><h3>Equipamentos Médicos</h3><p>Manutenção especializada em equipamentos hospitalares e de diagnóstico.</p></div>
+                <div class="service-card">
+                    <div class="icon"><i class="fas fa-washing-machine"></i></div>
+                    <h3>Placas de Lavadoras</h3>
+                    <p>Diagnóstico e reparo de placas eletrônicas de lavadoras de roupas e louças.</p>
+                    <div class="brands">
+                        <span>Samsung</span>
+                        <span>LG</span>
+                        <span>Electrolux</span>
+                        <span>Philco</span>
+                        <span>Brastemp</span>
+                    </div>
+                </div>
+                <div class="service-card">
+                    <div class="icon"><i class="fas fa-ice-cream"></i></div>
+                    <h3>Placas de Geladeiras</h3>
+                    <p>Manutenção em placas de geladeiras e freezers, garantindo o funcionamento ideal.</p>
+                    <div class="brands">
+                        <span>Samsung</span>
+                        <span>LG</span>
+                        <span>Electrolux</span>
+                        <span>Consul</span>
+                        <span>Brastemp</span>
+                    </div>
+                </div>
+                <div class="service-card">
+                    <div class="icon"><i class="fas fa-snowflake"></i></div>
+                    <h3>Placas de Ar-Condicionado</h3>
+                    <p>Reparo de placas de sistemas de climatização, split, cassete e janela.</p>
+                    <div class="brands">
+                        <span>Samsung</span>
+                        <span>LG</span>
+                        <span>Springer</span>
+                        <span>Consul</span>
+                        <span>Electrolux</span>
+                    </div>
+                </div>
+                <div class="service-card">
+                    <div class="icon"><i class="fas fa-micro-wave"></i></div>
+                    <h3>Placas de Micro-ondas</h3>
+                    <p>Solução em placas de micro-ondas com alta eficiência e segurança.</p>
+                    <div class="brands">
+                        <span>Samsung</span>
+                        <span>LG</span>
+                        <span>Electrolux</span>
+                        <span>Panasonic</span>
+                        <span>Philco</span>
+                    </div>
+                </div>
+                <div class="service-card">
+                    <div class="icon"><i class="fas fa-bolt"></i></div>
+                    <h3>Placas Inverter</h3>
+                    <p>Especialidade em inversores, nobreaks e fontes chaveadas.</p>
+                    <div class="brands">
+                        <span>Samsung</span>
+                        <span>LG</span>
+                        <span>Intelbras</span>
+                        <span>Emerson</span>
+                        <span>WEG</span>
+                    </div>
+                </div>
+                <div class="service-card">
+                    <div class="icon"><i class="fas fa-heartbeat"></i></div>
+                    <h3>Equipamentos Médicos</h3>
+                    <p>Manutenção especializada em equipamentos hospitalares e de diagnóstico.</p>
+                    <div class="brands">
+                        <span>Philips</span>
+                        <span>GE</span>
+                        <span>Siemens</span>
+                        <span>Mindray</span>
+                        <span>Drager</span>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -956,7 +1066,7 @@
             <div>
                 <span class="section-tag">Sobre a ECD</span>
                 <h2 class="section-title">Compromisso com a <span style="color:var(--secondary);">Excelência</span></h2>
-                <p style="color:var(--gray-600);">Com anos de experiência no mercado, a ECD Eletrônica se destaca pela qualidade, transparência e preços acessíveis para pequenos e médios empreendedores.</p>
+                <p style="color:var(--gray-600);">Com anos de experiência no mercado, a ECD Eletrônica se destaca pela qualidade, transparência e preços acessíveis para pequenos e médios empreendedores. Atuamos como assistência técnica independente para diversas marcas do mercado.</p>
                 <ul class="about-list">
                     <li><i class="fas fa-check-circle"></i> Laudo técnico detalhado</li>
                     <li><i class="fas fa-check-circle"></i> Orçamento sem compromisso</li>
@@ -969,6 +1079,7 @@
                 <p>"Tecnologia que conecta. Qualidade que resolve."</p>
                 <hr>
                 <p><strong>Responsável Técnico</strong><br>Sr. Elaylton</p>
+                <p style="font-size:0.8rem; opacity:0.6; margin-top:8px;">Assistência Técnica Independente</p>
             </div>
         </div>
     </section>
@@ -1004,12 +1115,11 @@
     </section>
 
     <!-- ==========================================
-    FOOTER - REORGANIZADO
+    FOOTER - COM MARCAS LEGAIS
     ========================================== -->
     <footer>
         <div class="container">
             <div class="footer-grid">
-                <!-- LADO ESQUERDO: LOGO E TEXTO REORGANIZADO -->
                 <div class="footer-left">
                     <span class="logo-wrapper-footer">
                         <img src="assets/images/logo-ecd.jpg" alt="ECD Eletrônica">
@@ -1017,10 +1127,9 @@
                     <span class="logo-text">
                         ECD <span>Eletrônica</span>
                     </span>
-                    <span class="logo-slogan">Conserto e Manutenção em placas</span>
+                    <span class="logo-slogan">Assistência Técnica Independente</span>
                 </div>
 
-                <!-- LADO DIREITO: QR CODE -->
                 <div class="footer-right">
                     <div class="qrcode-footer">
                         <img src="assets/images/qr-code.png" alt="QR Code ECD Eletrônica">
@@ -1029,6 +1138,19 @@
                         <div class="site-url">ecdeletronica.github.io</div>
                     </div>
                 </div>
+            </div>
+
+            <!-- ==========================================
+            MARCAS LEGAIS - RODAPÉ DE PROTEÇÃO
+            ========================================== -->
+            <div class="legal-brands">
+                <p>
+                    <strong>Marcas Registradas:</strong> Samsung, LG, Electrolux, Brastemp, Consul, Philco, Panasonic, 
+                    Springer, Intelbras, Emerson, WEG, Philips, GE, Siemens, Mindray, Drager e outras marcas citadas 
+                    são de propriedade exclusiva de seus respectivos fabricantes. 
+                    <strong>A ECD Eletrônica não possui vínculo com as marcas.</strong> 
+                    Serviço de <strong>assistência técnica independente</strong>.
+                </p>
             </div>
 
             <div class="footer-divider"></div>
