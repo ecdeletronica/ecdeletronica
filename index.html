@@ -48,15 +48,16 @@
         }
         .section-tag {
             display: inline-block;
-            background: rgba(230, 126, 34, 0.1);
+            background: rgba(26, 75, 109, 0.15);
             color: var(--secondary);
             font-weight: 700;
             font-size: 0.75rem;
             text-transform: uppercase;
             letter-spacing: 1.5px;
-            padding: 6px 18px;
+            padding: 8px 20px;
             border-radius: 50px;
             margin-bottom: 16px;
+            border: 1px solid rgba(230, 126, 34, 0.15);
         }
         .section-title {
             font-size: 2.5rem;
@@ -262,7 +263,7 @@
         }
 
         /* ============================================
-                   TICKER / PLACAR ROLANTE - INTEGRADO AO CABEÇALHO
+                   TICKER / PLACAR ROLANTE
                    ============================================ */
         .ticker-container {
             background: var(--primary);
@@ -330,11 +331,11 @@
         }
 
         /* ============================================
-                   HERO - COM padding-top ajustado
+                   HERO - COM padding-top AJUSTADO
                    ============================================ */
         .hero {
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-            padding: 200px 0 80px;
+            padding: 220px 0 80px;
             color: var(--white);
         }
         .hero .container {
@@ -875,7 +876,7 @@
                 font-size: 1.3rem;
             }
             .hero {
-                padding: 190px 0 60px;
+                padding: 200px 0 60px;
             }
         }
         @media (max-width: 768px) {
@@ -900,7 +901,7 @@
                 display: flex;
             }
             .hero {
-                padding: 180px 0 60px;
+                padding: 190px 0 60px;
             }
             .hero h1 {
                 font-size: 2rem;
@@ -1042,6 +1043,9 @@
             .ticker-item .separator {
                 margin-left: 8px;
             }
+            .hero {
+                padding: 180px 0 40px;
+            }
         }
     </style>
 </head>
@@ -1084,7 +1088,7 @@
             </div>
         </header>
 
-        <!-- TICKER / PLACAR ROLANTE - INTEGRADO -->
+        <!-- TICKER / PLACAR ROLANTE -->
         <div class="ticker-container">
             <div class="ticker-track">
                 <!-- Primeira duplicata -->
@@ -1159,12 +1163,14 @@
     </div>
 
     <!-- ==========================================
-    HERO
+    HERO - COM padding-top AJUSTADO
     ========================================== -->
     <section class="hero">
         <div class="container">
             <div>
-                <span class="section-tag" style="background:rgba(255,255,255,0.1); color:var(--secondary);">Tecnologia que conecta. Qualidade que resolve.</span>
+                <span class="section-tag" style="background:rgba(26, 75, 109, 0.2); color:var(--secondary); border:1px solid rgba(230, 126, 34, 0.2);">
+                    Tecnologia que conecta. Qualidade que resolve.
+                </span>
                 <h1>Especialistas em <span>Placas Eletrônicas</span></h1>
                 <p>Assistência técnica independente especializada em placas de lavadoras, geladeiras, ar-condicionado, micro-ondas e muito mais. Atendimento rápido e garantia de excelência.</p>
                 <div style="display:flex; gap:16px; flex-wrap:wrap;">
@@ -1197,7 +1203,7 @@
     <section class="services" id="servicos">
         <div class="container">
             <div class="section-header">
-                <span class="section-tag">Nossos Serviços</span>
+                <span class="section-tag" style="background:rgba(26, 75, 109, 0.15); color:var(--secondary); border:1px solid rgba(230, 126, 34, 0.15);">Nossos Serviços</span>
                 <h2 class="section-title">Recuperamos o que a tecnologia <br> não conseguiu</h2>
                 <p style="color:var(--gray-600); max-width:600px; margin:0 auto;">Atuamos com precisão e conhecimento técnico em diversos tipos de equipamentos. Assistência técnica independente.</p>
             </div>
@@ -1284,7 +1290,7 @@
     <section class="about" id="sobre">
         <div class="container">
             <div>
-                <span class="section-tag">Sobre a ECD</span>
+                <span class="section-tag" style="background:rgba(26, 75, 109, 0.15); color:var(--secondary); border:1px solid rgba(230, 126, 34, 0.15);">Sobre a ECD</span>
                 <h2 class="section-title">Compromisso com a <span style="color:var(--secondary);">Excelência</span></h2>
                 <p style="color:var(--gray-600);">Com anos de experiência no mercado, a ECD Eletrônica se destaca pela qualidade, transparência e preços acessíveis para pequenos e médios empreendedores. Atuamos como assistência técnica independente para diversas marcas do mercado.</p>
                 <ul class="about-list">
@@ -1310,7 +1316,7 @@
     <section class="contact" id="contato">
         <div class="container">
             <div>
-                <span class="section-tag">Entre em contato</span>
+                <span class="section-tag" style="background:rgba(26, 75, 109, 0.15); color:var(--secondary); border:1px solid rgba(230, 126, 34, 0.15);">Entre em contato</span>
                 <h2 class="section-title">Vamos resolver <br>o seu problema</h2>
                 <p style="color:var(--gray-600); margin-bottom:24px;">Estamos prontos para atender você. Entre em contato e agende um diagnóstico.</p>
                 <div class="contact-details">
