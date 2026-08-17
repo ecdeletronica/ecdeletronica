@@ -48,16 +48,18 @@
         }
         .section-tag {
             display: inline-block;
-            background: rgba(26, 75, 109, 0.15);
+            background: rgba(26, 75, 109, 0.25);
             color: var(--secondary);
-            font-weight: 700;
-            font-size: 0.75rem;
+            font-weight: 800;
+            font-size: 0.8rem;
             text-transform: uppercase;
             letter-spacing: 1.5px;
-            padding: 8px 20px;
+            padding: 10px 24px;
             border-radius: 50px;
             margin-bottom: 16px;
-            border: 1px solid rgba(230, 126, 34, 0.15);
+            border: 2px solid rgba(230, 126, 34, 0.3);
+            text-shadow: 0 0 20px rgba(230, 126, 34, 0.3), 0 0 40px rgba(230, 126, 34, 0.1);
+            box-shadow: 0 0 30px rgba(230, 126, 34, 0.05);
         }
         .section-title {
             font-size: 2.5rem;
@@ -263,7 +265,7 @@
         }
 
         /* ============================================
-                   TICKER / PLACAR ROLANTE
+                   TICKER / PLACAR ROLANTE - COM EMOJIS
                    ============================================ */
         .ticker-container {
             background: var(--primary);
@@ -305,24 +307,24 @@
         .ticker-item {
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 0 40px;
+            gap: 10px;
+            padding: 0 35px;
             white-space: nowrap;
             color: rgba(255,255,255,0.9);
             font-weight: 600;
             font-size: 1rem;
             letter-spacing: 0.5px;
         }
-        .ticker-item i {
-            font-size: 1.6rem;
-            color: var(--secondary);
-            min-width: 32px;
+        .ticker-item .emoji {
+            font-size: 1.8rem;
+            min-width: 36px;
             text-align: center;
+            line-height: 1;
         }
         .ticker-item .separator {
             color: rgba(255,255,255,0.15);
             font-size: 1.2rem;
-            margin-left: 20px;
+            margin-left: 15px;
         }
 
         @keyframes ticker-scroll {
@@ -335,7 +337,7 @@
                    ============================================ */
         .hero {
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-            padding: 220px 0 80px;
+            padding: 235px 0 80px;
             color: var(--white);
         }
         .hero .container {
@@ -872,11 +874,11 @@
                 font-size: 0.85rem;
                 padding: 0 20px;
             }
-            .ticker-item i {
-                font-size: 1.3rem;
+            .ticker-item .emoji {
+                font-size: 1.5rem;
             }
             .hero {
-                padding: 200px 0 60px;
+                padding: 210px 0 60px;
             }
         }
         @media (max-width: 768px) {
@@ -901,7 +903,7 @@
                 display: flex;
             }
             .hero {
-                padding: 190px 0 60px;
+                padding: 200px 0 60px;
             }
             .hero h1 {
                 font-size: 2rem;
@@ -970,14 +972,14 @@
             .ticker-item {
                 font-size: 0.75rem;
                 padding: 0 16px;
-                gap: 8px;
+                gap: 6px;
             }
-            .ticker-item i {
-                font-size: 1.1rem;
-                min-width: 24px;
+            .ticker-item .emoji {
+                font-size: 1.3rem;
+                min-width: 28px;
             }
             .ticker-item .separator {
-                margin-left: 12px;
+                margin-left: 10px;
             }
         }
         @media (max-width: 480px) {
@@ -1032,19 +1034,20 @@
                 padding: 8px 0;
             }
             .ticker-item {
-                font-size: 0.65rem;
-                padding: 0 12px;
-                gap: 6px;
+                font-size: 0.6rem;
+                padding: 0 10px;
+                gap: 4px;
             }
-            .ticker-item i {
-                font-size: 0.9rem;
-                min-width: 20px;
+            .ticker-item .emoji {
+                font-size: 1.1rem;
+                min-width: 22px;
             }
             .ticker-item .separator {
-                margin-left: 8px;
+                margin-left: 6px;
+                font-size: 0.8rem;
             }
             .hero {
-                padding: 180px 0 40px;
+                padding: 190px 0 40px;
             }
         }
     </style>
@@ -1088,73 +1091,73 @@
             </div>
         </header>
 
-        <!-- TICKER / PLACAR ROLANTE -->
+        <!-- TICKER / PLACAR ROLANTE - COM EMOJIS -->
         <div class="ticker-container">
             <div class="ticker-track">
                 <!-- Primeira duplicata -->
                 <div class="ticker-item">
-                    <i class="fas fa-washing-machine"></i> Placas de Lavadoras
+                    <span class="emoji">🧺</span> Placas de Lavadoras
                     <span class="separator">|</span>
                 </div>
                 <div class="ticker-item">
-                    <i class="fas fa-ice-cream"></i> Placas de Geladeiras
+                    <span class="emoji">🧊</span> Placas de Geladeiras
                     <span class="separator">|</span>
                 </div>
                 <div class="ticker-item">
-                    <i class="fas fa-snowflake"></i> Placas de Ar-Condicionado
+                    <span class="emoji">❄️</span> Placas de Ar-Condicionado
                     <span class="separator">|</span>
                 </div>
                 <div class="ticker-item">
-                    <i class="fas fa-micro-wave"></i> Placas de Micro-ondas
+                    <span class="emoji">📡</span> Placas de Micro-ondas
                     <span class="separator">|</span>
                 </div>
                 <div class="ticker-item">
-                    <i class="fas fa-bolt"></i> Placas Inverter
+                    <span class="emoji">⚡</span> Placas Inverter
                     <span class="separator">|</span>
                 </div>
                 <div class="ticker-item">
-                    <i class="fas fa-plug"></i> Inversores / Nobreaks
+                    <span class="emoji">🔌</span> Inversores / Nobreaks
                     <span class="separator">|</span>
                 </div>
                 <div class="ticker-item">
-                    <i class="fas fa-heartbeat"></i> Equipamentos Médicos
+                    <span class="emoji">❤️</span> Equipamentos Médicos
                     <span class="separator">|</span>
                 </div>
                 <div class="ticker-item">
-                    <i class="fas fa-battery-three-quarters"></i> Fontes Chaveadas
+                    <span class="emoji">🔋</span> Fontes Chaveadas
                     <span class="separator">|</span>
                 </div>
                 <!-- Segunda duplicata para loop infinito -->
                 <div class="ticker-item">
-                    <i class="fas fa-washing-machine"></i> Placas de Lavadoras
+                    <span class="emoji">🧺</span> Placas de Lavadoras
                     <span class="separator">|</span>
                 </div>
                 <div class="ticker-item">
-                    <i class="fas fa-ice-cream"></i> Placas de Geladeiras
+                    <span class="emoji">🧊</span> Placas de Geladeiras
                     <span class="separator">|</span>
                 </div>
                 <div class="ticker-item">
-                    <i class="fas fa-snowflake"></i> Placas de Ar-Condicionado
+                    <span class="emoji">❄️</span> Placas de Ar-Condicionado
                     <span class="separator">|</span>
                 </div>
                 <div class="ticker-item">
-                    <i class="fas fa-micro-wave"></i> Placas de Micro-ondas
+                    <span class="emoji">📡</span> Placas de Micro-ondas
                     <span class="separator">|</span>
                 </div>
                 <div class="ticker-item">
-                    <i class="fas fa-bolt"></i> Placas Inverter
+                    <span class="emoji">⚡</span> Placas Inverter
                     <span class="separator">|</span>
                 </div>
                 <div class="ticker-item">
-                    <i class="fas fa-plug"></i> Inversores / Nobreaks
+                    <span class="emoji">🔌</span> Inversores / Nobreaks
                     <span class="separator">|</span>
                 </div>
                 <div class="ticker-item">
-                    <i class="fas fa-heartbeat"></i> Equipamentos Médicos
+                    <span class="emoji">❤️</span> Equipamentos Médicos
                     <span class="separator">|</span>
                 </div>
                 <div class="ticker-item">
-                    <i class="fas fa-battery-three-quarters"></i> Fontes Chaveadas
+                    <span class="emoji">🔋</span> Fontes Chaveadas
                     <span class="separator">|</span>
                 </div>
             </div>
@@ -1163,12 +1166,12 @@
     </div>
 
     <!-- ==========================================
-    HERO - COM padding-top AJUSTADO
+    HERO - COM TAG EM NEGRITO E BRILHO
     ========================================== -->
     <section class="hero">
         <div class="container">
             <div>
-                <span class="section-tag" style="background:rgba(26, 75, 109, 0.2); color:var(--secondary); border:1px solid rgba(230, 126, 34, 0.2);">
+                <span class="section-tag">
                     Tecnologia que conecta. Qualidade que resolve.
                 </span>
                 <h1>Especialistas em <span>Placas Eletrônicas</span></h1>
