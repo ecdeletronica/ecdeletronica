@@ -8,10 +8,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
-    <!-- Google Material Symbols -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-    <!-- Font Awesome (mantido para outras partes do site) -->
+    <!-- Font Awesome (mantido) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <!-- Lucide Icons (que funcionava) -->
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         /* ============================================
                    DESIGN SYSTEM E RESET
@@ -267,7 +267,7 @@
         }
 
         /* ============================================
-                   TICKER / PLACAR ROLANTE - COM MATERIAL SYMBOLS
+                   TICKER / PLACAR ROLANTE - LUCIDE
                    ============================================ */
         .ticker-container {
             background: var(--primary);
@@ -317,11 +317,12 @@
             font-size: 1rem;
             letter-spacing: 0.5px;
         }
-        .ticker-item .material-symbols-outlined {
-            font-size: 26px;
+        .ticker-item .lucide-icon {
+            width: 24px;
+            height: 24px;
             color: var(--secondary);
-            min-width: 32px;
-            text-align: center;
+            min-width: 28px;
+            stroke-width: 2.5;
         }
         .ticker-item .separator {
             color: rgba(255,255,255,0.15);
@@ -876,9 +877,10 @@
                 font-size: 0.85rem;
                 padding: 0 20px;
             }
-            .ticker-item .material-symbols-outlined {
-                font-size: 22px;
-                min-width: 28px;
+            .ticker-item .lucide-icon {
+                width: 20px;
+                height: 20px;
+                min-width: 24px;
             }
             .hero {
                 padding: 210px 0 60px;
@@ -977,9 +979,10 @@
                 padding: 0 16px;
                 gap: 6px;
             }
-            .ticker-item .material-symbols-outlined {
-                font-size: 20px;
-                min-width: 24px;
+            .ticker-item .lucide-icon {
+                width: 18px;
+                height: 18px;
+                min-width: 20px;
             }
             .ticker-item .separator {
                 margin-left: 10px;
@@ -1041,9 +1044,10 @@
                 padding: 0 10px;
                 gap: 4px;
             }
-            .ticker-item .material-symbols-outlined {
-                font-size: 18px;
-                min-width: 20px;
+            .ticker-item .lucide-icon {
+                width: 16px;
+                height: 16px;
+                min-width: 18px;
             }
             .ticker-item .separator {
                 margin-left: 6px;
@@ -1093,72 +1097,72 @@
             </div>
         </header>
 
-        <!-- TICKER / PLACAR ROLANTE - COM MATERIAL SYMBOLS -->
+        <!-- TICKER / PLACAR ROLANTE - COM LUCIDE (FUNCIONAVA) -->
         <div class="ticker-container">
             <div class="ticker-track">
                 <div class="ticker-item">
-                    <span class="material-symbols-outlined">washing_machine</span> Placas de Lavadoras
+                    <i data-lucide="washing-machine" class="lucide-icon"></i> Placas de Lavadoras
                     <span class="separator">|</span>
                 </div>
                 <div class="ticker-item">
-                    <span class="material-symbols-outlined">refrigerator</span> Placas de Geladeiras
+                    <i data-lucide="refrigerator" class="lucide-icon"></i> Placas de Geladeiras
                     <span class="separator">|</span>
                 </div>
                 <div class="ticker-item">
-                    <span class="material-symbols-outlined">air_conditioner</span> Placas de Ar-Condicionado
+                    <i data-lucide="snowflake" class="lucide-icon"></i> Placas de Ar-Condicionado
                     <span class="separator">|</span>
                 </div>
                 <div class="ticker-item">
-                    <span class="material-symbols-outlined">microwave</span> Placas de Micro-ondas
+                    <i data-lucide="microwave" class="lucide-icon"></i> Placas de Micro-ondas
                     <span class="separator">|</span>
                 </div>
                 <div class="ticker-item">
-                    <span class="material-symbols-outlined">bolt</span> Placas Inverter
+                    <i data-lucide="zap" class="lucide-icon"></i> Placas Inverter
                     <span class="separator">|</span>
                 </div>
                 <div class="ticker-item">
-                    <span class="material-symbols-outlined">power</span> Inversores / Nobreaks
+                    <i data-lucide="plug" class="lucide-icon"></i> Inversores / Nobreaks
                     <span class="separator">|</span>
                 </div>
                 <div class="ticker-item">
-                    <span class="material-symbols-outlined">stethoscope</span> Equipamentos Médicos
+                    <i data-lucide="stethoscope" class="lucide-icon"></i> Equipamentos Médicos
                     <span class="separator">|</span>
                 </div>
                 <div class="ticker-item">
-                    <span class="material-symbols-outlined">battery_horiz_000</span> Fontes Chaveadas
+                    <i data-lucide="battery" class="lucide-icon"></i> Fontes Chaveadas
                     <span class="separator">|</span>
                 </div>
-                <!-- Duplicata para loop infinito -->
+                <!-- Duplicata -->
                 <div class="ticker-item">
-                    <span class="material-symbols-outlined">washing_machine</span> Placas de Lavadoras
-                    <span class="separator">|</span>
-                </div>
-                <div class="ticker-item">
-                    <span class="material-symbols-outlined">refrigerator</span> Placas de Geladeiras
+                    <i data-lucide="washing-machine" class="lucide-icon"></i> Placas de Lavadoras
                     <span class="separator">|</span>
                 </div>
                 <div class="ticker-item">
-                    <span class="material-symbols-outlined">air_conditioner</span> Placas de Ar-Condicionado
+                    <i data-lucide="refrigerator" class="lucide-icon"></i> Placas de Geladeiras
                     <span class="separator">|</span>
                 </div>
                 <div class="ticker-item">
-                    <span class="material-symbols-outlined">microwave</span> Placas de Micro-ondas
+                    <i data-lucide="snowflake" class="lucide-icon"></i> Placas de Ar-Condicionado
                     <span class="separator">|</span>
                 </div>
                 <div class="ticker-item">
-                    <span class="material-symbols-outlined">bolt</span> Placas Inverter
+                    <i data-lucide="microwave" class="lucide-icon"></i> Placas de Micro-ondas
                     <span class="separator">|</span>
                 </div>
                 <div class="ticker-item">
-                    <span class="material-symbols-outlined">power</span> Inversores / Nobreaks
+                    <i data-lucide="zap" class="lucide-icon"></i> Placas Inverter
                     <span class="separator">|</span>
                 </div>
                 <div class="ticker-item">
-                    <span class="material-symbols-outlined">stethoscope</span> Equipamentos Médicos
+                    <i data-lucide="plug" class="lucide-icon"></i> Inversores / Nobreaks
                     <span class="separator">|</span>
                 </div>
                 <div class="ticker-item">
-                    <span class="material-symbols-outlined">battery_horiz_000</span> Fontes Chaveadas
+                    <i data-lucide="stethoscope" class="lucide-icon"></i> Equipamentos Médicos
+                    <span class="separator">|</span>
+                </div>
+                <div class="ticker-item">
+                    <i data-lucide="battery" class="lucide-icon"></i> Fontes Chaveadas
                     <span class="separator">|</span>
                 </div>
             </div>
@@ -1425,6 +1429,9 @@
     SCRIPTS
     ========================================== -->
     <script>
+        // Inicializa os ícones Lucide
+        lucide.createIcons();
+
         // ==========================================
         // SCRIPT MENU MOBILE
         // ==========================================
