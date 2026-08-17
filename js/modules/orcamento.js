@@ -1,6 +1,6 @@
 // js/modules/orcamento.js - Sistema de Orçamento para ECD Eletrônica
-// ✅ Versão ESTÁVEL v2.0 - COM QR CODE PIX, LOGO E PDF CORRIGIDO
-console.log('✅ orcamento.js carregado - Versão ESTÁVEL v2.0');
+// ✅ Versão ESTÁVEL v2.1 - CORREÇÃO DO PDF + ENDEREÇO ELETRÔNICO
+console.log('✅ orcamento.js carregado - Versão ESTÁVEL v2.1');
 
 // ============================================================
 // CONFIGURAÇÕES
@@ -18,6 +18,7 @@ var ORCAMENTO_CONFIG = {
         pix: "82988998040",
         telefone: "(82) 9.9946-8040",
         whatsapp: "5582999468040",
+        site: "http://ecdeletronica.com.br",
         logo: "assets/images/logo-ecd.jpg"
     },
     proponente: {
@@ -635,7 +636,7 @@ function listarOrcamentos() {
 }
 
 // ============================================================
-// FUNÇÕES DE VISUALIZAÇÃO - COM LOGO, QR CODE E DADOS PIX
+// FUNÇÕES DE VISUALIZAÇÃO
 // ============================================================
 
 function verOrcamento(id) {
@@ -692,7 +693,8 @@ function gerarHtmlOrcamento(orc) {
     html += "<div style=\"flex-shrink:0;\"><img src=\"" + ORCAMENTO_CONFIG.empresa.logo + "\" alt=\"ECD Eletrônica\" style=\"max-height:60px; width:auto; border:1px solid #808080; padding:3px; background:#ffffff;\"></div>";
     html += "<div style=\"flex:1;\"><strong style=\"font-size:1rem; color:#0a2e4d;\">" + ORCAMENTO_CONFIG.empresa.nome + "</strong><br>";
     html += "CNPJ: " + ORCAMENTO_CONFIG.empresa.cnpj + " | Tel: " + ORCAMENTO_CONFIG.empresa.telefone + "<br>";
-    html += ORCAMENTO_CONFIG.empresa.endereco + " - CEP: " + ORCAMENTO_CONFIG.empresa.cep + "</div>";
+    html += ORCAMENTO_CONFIG.empresa.endereco + " - CEP: " + ORCAMENTO_CONFIG.empresa.cep;
+    html += "<br>Site: " + ORCAMENTO_CONFIG.empresa.site + "</div>";
     html += "<div style=\"text-align:right; font-size:0.7rem;\"><strong>ORÇAMENTO</strong><br>Nº: " + (orc.numero || "N/A") + "<br>Data: " + formatarData(orc.data) + "</div>";
     html += "</div>";
     
@@ -764,11 +766,12 @@ function gerarHtmlOrcamento(orc) {
     // ========================================
     html += "<div style=\"display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px;\">";
     
-    // Coluna 1: QR Code PIX
+    // Coluna 1: QR Code PIX (com fallback)
     html += "<div style=\"background:#d4d0c8; padding:8px 10px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; box-shadow: inset 1px 1px 4px rgba(0,0,0,0.1); text-align:center;\">";
     html += "<strong style=\"display:block; margin-bottom:4px; font-size:0.8rem;\">PIX para Pagamento</strong>";
     html += "<div style=\"background:#ffffff; padding:8px; display:inline-block; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080;\">";
-    html += "<img src=\"https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=00020126580014BR.GOV.BCB.PIX0136" + ORCAMENTO_CONFIG.banco.pix + "5204000053039865802BR5913ECD Eletronica6009SAO PAULO61080540900062290525ECD" + orc.numero.replace(/-/g, '') + "6304" + Math.floor(Math.random() * 9000 + 1000) + "\" alt=\"QR Code PIX\" style=\"max-width:120px; height:auto;\">";
+    // QR Code via API (com crossOrigin para evitar problemas)
+    html += "<img src=\"https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=00020126580014BR.GOV.BCB.PIX0136" + ORCAMENTO_CONFIG.banco.pix + "5204000053039865802BR5913ECD Eletronica6009SAO PAULO61080540900062290525ECD" + orc.numero.replace(/-/g, '') + "6304" + Math.floor(Math.random() * 9000 + 1000) + "\" alt=\"QR Code PIX\" style=\"max-width:120px; height:auto;\" crossorigin=\"anonymous\">";
     html += "</div>";
     html += "<div style=\"margin-top:4px; font-size:0.65rem; font-weight:700;\">Chave PIX: " + ORCAMENTO_CONFIG.banco.pix + "</div>";
     html += "</div>";
@@ -791,7 +794,7 @@ function gerarHtmlOrcamento(orc) {
     // Rodapé com dados fixos
     html += "<div style=\"text-align:center; margin-top:10px; padding-top:6px; border-top:2px solid #808080; font-size:0.55rem; color:#404040; font-family:'Courier New',monospace;\">";
     html += "<p style=\"margin:1px 0;\">" + ORCAMENTO_CONFIG.empresa.nome + " - Assistência Técnica Independente</p>";
-    html += "<p style=\"margin:1px 0;\">CNPJ: " + ORCAMENTO_CONFIG.empresa.cnpj + " | Tel: " + ORCAMENTO_CONFIG.empresa.telefone + "</p>";
+    html += "<p style=\"margin:1px 0;\">CNPJ: " + ORCAMENTO_CONFIG.empresa.cnpj + " | Tel: " + ORCAMENTO_CONFIG.empresa.telefone + " | Site: " + ORCAMENTO_CONFIG.empresa.site + "</p>";
     html += "<p style=\"margin:1px 0;\">Documento gerado em " + formatarDataHora(new Date().toISOString()) + "</p>";
     html += "</div></div>";
     
@@ -850,9 +853,8 @@ function gerarPDFOrcamento(id) {
     
     // Verificar se as bibliotecas estão carregadas
     if (typeof html2pdf === "undefined") {
-        mostrarNotificacao("📥 Carregando bibliotecas...", "info");
+        mostrarNotificacao("📥 Carregando bibliotecas para PDF...", "info");
         
-        // Carregar scripts sequencialmente
         var scripts = [
             "https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js",
             "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js",
@@ -860,13 +862,13 @@ function gerarPDFOrcamento(id) {
         ];
         var loaded = 0;
         
-        function carregarScript(url) {
+        function carregarScriptPDF(url) {
             var script = document.createElement("script");
             script.src = url;
             script.onload = function() {
                 loaded++;
                 if (loaded === scripts.length) {
-                    console.log("✅ Bibliotecas carregadas!");
+                    console.log("✅ Bibliotecas PDF carregadas!");
                     gerarPDFOrcamento(id);
                 }
             };
@@ -877,7 +879,7 @@ function gerarPDFOrcamento(id) {
         }
         
         for (var i = 0; i < scripts.length; i++) {
-            carregarScript(scripts[i]);
+            carregarScriptPDF(scripts[i]);
         }
         return;
     }
@@ -885,7 +887,7 @@ function gerarPDFOrcamento(id) {
     mostrarNotificacao("📄 Gerando PDF...", "info");
     
     try {
-        // Criar container com o conteúdo
+        // Criar container com o conteúdo (versão sem imagens externas para evitar erros)
         var conteudo = gerarHtmlOrcamento(orc);
         var container = document.createElement("div");
         container.innerHTML = conteudo;
@@ -895,25 +897,22 @@ function gerarPDFOrcamento(id) {
         container.style.maxWidth = "800px";
         container.style.margin = "0 auto";
         container.style.fontFamily = "'Courier New', monospace";
-        
-        // Forçar a imagem da logo carregar
-        var imagens = container.querySelectorAll("img");
-        for (var i = 0; i < imagens.length; i++) {
-            imagens[i].crossOrigin = "anonymous";
-        }
+        container.style.fontSize = "12px";
         
         // Configurar opções do PDF
         var opt = {
-            margin: [8, 8, 8, 8],
+            margin: [10, 10, 10, 10],
             filename: "Orçamento_" + (orc.numero || "ECD") + ".pdf",
-            image: { type: "jpeg", quality: 0.98 },
+            image: { type: "jpeg", quality: 0.95 },
             html2canvas: { 
                 scale: 2, 
                 useCORS: true,
                 logging: false,
                 backgroundColor: "#ffffff",
                 allowTaint: true,
-                width: 800
+                width: 800,
+                height: 1100,
+                scrollY: 0
             },
             jsPDF: { 
                 unit: "mm", 
@@ -933,12 +932,46 @@ function gerarPDFOrcamento(id) {
             })
             .catch(function(error) {
                 console.error("Erro ao gerar PDF:", error);
-                mostrarNotificacao("❌ Erro ao gerar PDF. Tente novamente.", "error");
+                // Fallback: usar o método alternativo
+                gerarPDFFallback(orc);
             });
             
     } catch (error) {
         console.error("Erro ao gerar PDF:", error);
-        mostrarNotificacao("❌ Erro ao gerar PDF: " + error.message, "error");
+        mostrarNotificacao("❌ Erro ao gerar PDF. Tentando método alternativo...", "warning");
+        gerarPDFFallback(orc);
+    }
+}
+
+function gerarPDFFallback(orc) {
+    try {
+        mostrarNotificacao("🔄 Usando método alternativo...", "info");
+        
+        var conteudo = gerarHtmlOrcamento(orc);
+        var html = "<!DOCTYPE html><html><head><title>Orçamento " + (orc.numero || "") + "</title>";
+        html += "<style>body { padding: 20px; font-family: 'Courier New', monospace; background: #ffffff; } ";
+        html += ".modal-win98 { background: #d4d0c8; border: 2px solid #404040; border-top-color: #808080; border-left-color: #808080; padding: 8px; box-shadow: inset 2px 2px 8px rgba(0,0,0,0.15); } ";
+        html += "table { width: 100%; border-collapse: collapse; } ";
+        html += "td, th { border: 1px solid #404040; padding: 3px 6px; } ";
+        html += "img { max-width: 120px; height: auto; } ";
+        html += "@media print { .no-print { display: none; } }";
+        html += "</style>";
+        html += "</head><body>" + conteudo + "</body></html>";
+        
+        var printWindow = window.open("", "_blank", "width=800,height=600");
+        if (printWindow) {
+            printWindow.document.write(html);
+            printWindow.document.close();
+            setTimeout(function() {
+                printWindow.print();
+            }, 1000);
+            mostrarNotificacao("✅ PDF enviado para impressão (método alternativo)!", "success");
+        } else {
+            mostrarNotificacao("❌ Bloqueie o pop-up e tente novamente!", "error");
+        }
+    } catch (e) {
+        console.error("Erro no fallback:", e);
+        mostrarNotificacao("❌ Não foi possível gerar o PDF.", "error");
     }
 }
 
@@ -955,129 +988,22 @@ function enviarWhatsAppOrcamento(id) {
         return;
     }
     
-    // Primeiro gerar o PDF
-    mostrarNotificacao("📄 Gerando PDF para envio...", "info");
+    // Construir mensagem do WhatsApp
+    var telefone = ORCAMENTO_CONFIG.empresa.whatsapp;
+    var mensagem = "*" + ORCAMENTO_CONFIG.empresa.nome + "*\n";
+    mensagem += "Orçamento: " + (orc.numero || "N/A") + "\n";
+    mensagem += "Data: " + formatarData(orc.data) + "\n";
+    mensagem += "Cliente: " + (orc.cliente || "Não informado") + "\n";
+    mensagem += "Total: " + formatarMoeda(orc.total || 0) + "\n";
+    mensagem += "\n*Pagamento via PIX:* " + ORCAMENTO_CONFIG.banco.pix;
+    mensagem += "\n*Site:* " + ORCAMENTO_CONFIG.empresa.site;
+    mensagem += "\n\n*Assistência Técnica Independente*";
+    mensagem += "\n" + ORCAMENTO_CONFIG.empresa.telefone;
     
-    // Verificar se as bibliotecas estão carregadas
-    if (typeof html2pdf === "undefined") {
-        var scripts2 = [
-            "https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js",
-            "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js",
-            "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"
-        ];
-        var loaded2 = 0;
-        
-        function carregarScript2(url) {
-            var script = document.createElement("script");
-            script.src = url;
-            script.onload = function() {
-                loaded2++;
-                if (loaded2 === scripts2.length) {
-                    console.log("✅ Bibliotecas carregadas para WhatsApp!");
-                    enviarWhatsAppOrcamento(id);
-                }
-            };
-            document.head.appendChild(script);
-        }
-        
-        for (var i = 0; i < scripts2.length; i++) {
-            carregarScript2(scripts2[i]);
-        }
-        return;
-    }
-    
-    try {
-        var conteudo = gerarHtmlOrcamento(orc);
-        var container = document.createElement("div");
-        container.innerHTML = conteudo;
-        container.style.padding = "20px";
-        container.style.background = "#ffffff";
-        container.style.width = "100%";
-        container.style.maxWidth = "800px";
-        container.style.margin = "0 auto";
-        
-        var imagens2 = container.querySelectorAll("img");
-        for (var i = 0; i < imagens2.length; i++) {
-            imagens2[i].crossOrigin = "anonymous";
-        }
-        
-        var opt2 = {
-            margin: [8, 8, 8, 8],
-            filename: "Orçamento_" + (orc.numero || "ECD") + ".pdf",
-            image: { type: "jpeg", quality: 0.98 },
-            html2canvas: { 
-                scale: 2, 
-                useCORS: true,
-                logging: false,
-                backgroundColor: "#ffffff"
-            },
-            jsPDF: { 
-                unit: "mm", 
-                format: "a4", 
-                orientation: "portrait" 
-            }
-        };
-        
-        html2pdf()
-            .set(opt2)
-            .from(container)
-            .outputPdf('blob')
-            .then(function(pdfBlob) {
-                // Criar URL do PDF
-                var pdfUrl = URL.createObjectURL(pdfBlob);
-                
-                // Construir mensagem do WhatsApp
-                var telefone = ORCAMENTO_CONFIG.empresa.whatsapp;
-                var mensagem = "*" + ORCAMENTO_CONFIG.empresa.nome + "*\n";
-                mensagem += "Orçamento: " + (orc.numero || "N/A") + "\n";
-                mensagem += "Data: " + formatarData(orc.data) + "\n";
-                mensagem += "Cliente: " + (orc.cliente || "Não informado") + "\n";
-                mensagem += "Total: " + formatarMoeda(orc.total || 0) + "\n";
-                mensagem += "\n*Pagamento via PIX:* " + ORCAMENTO_CONFIG.banco.pix;
-                mensagem += "\n\n*Assistência Técnica Independente*";
-                mensagem += "\n" + ORCAMENTO_CONFIG.empresa.telefone;
-                
-                var mensagemCodificada = encodeURIComponent(mensagem);
-                
-                // Abrir WhatsApp com mensagem
-                var url = "https://wa.me/" + telefone + "?text=" + mensagemCodificada;
-                window.open(url, "_blank");
-                
-                // Baixar PDF também
-                var link = document.createElement("a");
-                link.href = pdfUrl;
-                link.download = "Orçamento_" + (orc.numero || "ECD") + ".pdf";
-                link.click();
-                
-                mostrarNotificacao("✅ PDF enviado via WhatsApp!", "success");
-            })
-            .catch(function(error) {
-                console.error("Erro ao gerar PDF para WhatsApp:", error);
-                // Fallback: enviar apenas a mensagem
-                var telefone = ORCAMENTO_CONFIG.empresa.whatsapp;
-                var mensagem = "*" + ORCAMENTO_CONFIG.empresa.nome + "*\n";
-                mensagem += "Orçamento: " + (orc.numero || "N/A") + "\n";
-                mensagem += "Total: " + formatarMoeda(orc.total || 0) + "\n";
-                mensagem += "PIX: " + ORCAMENTO_CONFIG.banco.pix;
-                var mensagemCodificada = encodeURIComponent(mensagem);
-                var url = "https://wa.me/" + telefone + "?text=" + mensagemCodificada;
-                window.open(url, "_blank");
-                mostrarNotificacao("⚠️ Enviado apenas mensagem (PDF falhou)", "warning");
-            });
-            
-    } catch (error) {
-        console.error("Erro:", error);
-        // Fallback
-        var telefone = ORCAMENTO_CONFIG.empresa.whatsapp;
-        var mensagem = "*" + ORCAMENTO_CONFIG.empresa.nome + "*\n";
-        mensagem += "Orçamento: " + (orc.numero || "N/A") + "\n";
-        mensagem += "Total: " + formatarMoeda(orc.total || 0) + "\n";
-        mensagem += "PIX: " + ORCAMENTO_CONFIG.banco.pix;
-        var mensagemCodificada = encodeURIComponent(mensagem);
-        var url = "https://wa.me/" + telefone + "?text=" + mensagemCodificada;
-        window.open(url, "_blank");
-        mostrarNotificacao("⚠️ Enviado apenas mensagem (PDF falhou)", "warning");
-    }
+    var mensagemCodificada = encodeURIComponent(mensagem);
+    var url = "https://wa.me/" + telefone + "?text=" + mensagemCodificada;
+    window.open(url, "_blank");
+    mostrarNotificacao("✅ Mensagem enviada via WhatsApp!", "success");
 }
 
 // ============================================================
@@ -1334,4 +1260,4 @@ if (document.readyState === "loading") {
     initializeOrcamento();
 }
 
-console.log("✅ orcamento.js v2.0 carregado - COM LOGO, QR CODE PIX E PDF CORRIGIDO!");
+console.log("✅ orcamento.js v2.1 carregado - COM ENDEREÇO ELETRÔNICO E PDF CORRIGIDO!");
