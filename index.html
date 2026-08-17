@@ -122,7 +122,6 @@
             gap: 2rem;
         }
 
-        /* LOGO - DOBRADA (192px) */
         .logo-image {
             width: 192px;
             height: auto;
@@ -139,7 +138,7 @@
         }
 
         .logo-text h1 {
-            font-size: 2.4rem; /* REDUZIDO de 3rem para 2.4rem */
+            font-size: 2.4rem;
             line-height: 1.2;
             color: var(--primary);
             font-weight: 800;
@@ -149,7 +148,7 @@
             color: var(--secondary);
         }
         .logo-text .slogan {
-            font-size: 1rem; /* REDUZIDO de 1.2rem para 1rem */
+            font-size: 1rem;
             color: var(--gray-600);
             font-weight: 400;
             letter-spacing: 0.3px;
@@ -157,7 +156,6 @@
             margin-top: -2px;
         }
 
-        /* QR CODE NO HEADER - AJUSTADO */
         .qrcode-header {
             display: flex;
             align-items: center;
@@ -176,7 +174,7 @@
             border-color: var(--secondary);
         }
         .qrcode-header img {
-            width: 64px; /* REDUZIDO de 72px para 64px */
+            width: 64px;
             height: 64px;
             border-radius: 14px;
             background: white;
@@ -189,7 +187,7 @@
             line-height: 1.2;
         }
         .qrcode-header .qr-text span {
-            font-size: 1.1rem; /* REDUZIDO de 1.4rem para 1.1rem */
+            font-size: 1.1rem;
             font-weight: 700;
             color: var(--primary);
         }
@@ -199,7 +197,7 @@
         }
         .qrcode-header .qr-text small {
             color: var(--gray-600);
-            font-size: 0.8rem; /* REDUZIDO de 1rem para 0.8rem */
+            font-size: 0.8rem;
             font-weight: 400;
         }
 
@@ -214,7 +212,7 @@
             text-decoration: none;
             font-weight: 600;
             transition: 0.3s;
-            font-size: 1.1rem; /* REDUZIDO de 1.2rem para 1.1rem */
+            font-size: 1.1rem;
         }
         .nav-links a:hover {
             color: var(--primary);
@@ -225,7 +223,7 @@
             padding: 12px 32px;
             border-radius: 50px;
             font-weight: 700;
-            font-size: 1.1rem !important; /* REDUZIDO de 1.2rem para 1.1rem */
+            font-size: 1.1rem !important;
         }
         .nav-cta:hover {
             background: var(--accent);
@@ -249,7 +247,7 @@
         }
 
         /* ============================================
-                   HERO (ajuste para header maior)
+                   HERO - LOGO DO HERO MAIOR
                    ============================================ */
         .hero {
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
@@ -296,30 +294,31 @@
         }
         .hero-card .logo-frame-big {
             background: rgba(255,255,255,0.06);
-            padding: 12px;
-            border-radius: 16px;
+            padding: 16px; /* AUMENTADO de 12px para 16px */
+            border-radius: 20px; /* AUMENTADO de 16px para 20px */
             border: 3px solid rgba(230, 126, 34, 0.25);
-            box-shadow: 0 0 40px rgba(230, 126, 34, 0.08), inset 0 0 40px rgba(230, 126, 34, 0.03);
+            box-shadow: 0 0 50px rgba(230, 126, 34, 0.08), inset 0 0 50px rgba(230, 126, 34, 0.03);
             transition: all 0.4s ease;
             display: inline-block;
             margin-bottom: 16px;
         }
         .hero-card .logo-frame-big:hover {
             border-color: var(--secondary);
-            box-shadow: 0 0 50px rgba(230, 126, 34, 0.2), inset 0 0 50px rgba(230, 126, 34, 0.05);
+            box-shadow: 0 0 60px rgba(230, 126, 34, 0.25), inset 0 0 60px rgba(230, 126, 34, 0.05);
             transform: scale(1.03);
         }
         .hero-card .logo-frame-big img {
-            max-width: 220px;
-            max-height: 140px;
+            max-width: 320px; /* AUMENTADO de 220px para 320px */
+            max-height: 200px; /* AUMENTADO de 140px para 200px */
             width: auto;
             height: auto;
-            border-radius: 10px;
+            border-radius: 12px;
             display: block;
         }
         .hero-card h3 {
             margin: 8px 0 4px;
             color: var(--white);
+            font-size: 1.3rem;
         }
         .hero-card p {
             color: rgba(255,255,255,0.7);
@@ -330,6 +329,7 @@
             font-weight: 700;
             color: var(--white);
             margin-top: 4px;
+            font-size: 1.1rem;
         }
 
         /* ============================================
@@ -502,7 +502,7 @@
         }
 
         /* ============================================
-                   FOOTER - COM QR CODE
+                   FOOTER
                    ============================================ */
         footer {
             background: var(--primary);
@@ -529,7 +529,7 @@
             height: 32px;
             width: auto;
             border-radius: 4px;
-            /-filter: brightness(0) invert(1);
+            filter: brightness(0) invert(1);
             display: block;
         }
         .footer-logo .logo-text {
@@ -563,7 +563,6 @@
             margin-top: 16px;
         }
 
-        /* QR CODE NO FOOTER */
         .qrcode-footer {
             display: flex;
             flex-direction: column;
@@ -629,7 +628,6 @@
             border: 1px solid rgba(255,255,255,0.05);
         }
 
-        /* CRÉDITOS DO DESENVOLVEDOR */
         .developer-credits {
             margin-top: 20px;
             padding-top: 16px;
@@ -691,6 +689,10 @@
                 padding: 10px 28px;
                 font-size: 1rem !important;
             }
+            .hero-card .logo-frame-big img {
+                max-width: 260px;
+                max-height: 160px;
+            }
         }
         @media (max-width: 992px) {
             .hero .container,
@@ -717,6 +719,10 @@
             }
             .logo-text .slogan {
                 font-size: 0.8rem;
+            }
+            .hero-card .logo-frame-big img {
+                max-width: 220px;
+                max-height: 140px;
             }
         }
         @media (max-width: 768px) {
@@ -750,8 +756,8 @@
                 font-size: 1.8rem;
             }
             .hero-card .logo-frame-big img {
-                max-width: 160px;
-                max-height: 100px;
+                max-width: 200px;
+                max-height: 130px;
             }
             .logo-text h1 {
                 font-size: 1.4rem;
@@ -777,11 +783,14 @@
             header {
                 padding: 14px 0;
             }
+            .hero-card h3 {
+                font-size: 1.1rem;
+            }
         }
         @media (max-width: 480px) {
             .hero-card .logo-frame-big img {
-                max-width: 130px;
-                max-height: 80px;
+                max-width: 160px;
+                max-height: 100px;
             }
             .logo-text h1 {
                 font-size: 1.1rem;
@@ -810,13 +819,19 @@
             .hero p {
                 font-size: 1rem;
             }
+            .hero-card h3 {
+                font-size: 1rem;
+            }
+            .hero-card .phone {
+                font-size: 0.95rem;
+            }
         }
     </style>
 </head>
 <body>
 
     <!-- ==========================================
-    HEADER - AJUSTADO
+    HEADER
     ========================================== -->
     <header>
         <div class="container">
@@ -828,7 +843,6 @@
                 </div>
             </div>
 
-            <!-- QR CODE NO HEADER -->
             <a href="https://ecdeletronica.github.io" target="_blank" class="qrcode-header">
                 <img src="assets/images/qr-code.png" alt="QR Code ECD Eletrônica">
                 <div class="qr-text">
@@ -849,7 +863,7 @@
     </header>
 
     <!-- ==========================================
-    HERO
+    HERO - LOGO MAIOR ACIMA DO SR. CLAYTON
     ========================================== -->
     <section class="hero">
         <div class="container">
@@ -954,7 +968,7 @@
     </section>
 
     <!-- ==========================================
-    FOOTER - COM QR CODE E CRÉDITOS
+    FOOTER
     ========================================== -->
     <footer>
         <div class="container">
@@ -968,7 +982,6 @@
                 </span>
             </div>
 
-            <!-- QR CODE NO FOOTER -->
             <div class="qrcode-footer">
                 <img src="assets/images/qr-code.png" alt="QR Code ECD Eletrônica">
                 <h4><i class="fa-regular fa-qrcode"></i> Acesse pelo celular</h4>
@@ -983,7 +996,6 @@
             </div>
             <p class="copy">© 2026 ECD Eletrônica. Todos os direitos reservados.</p>
 
-            <!-- CRÉDITOS DO DESENVOLVEDOR -->
             <div class="developer-credits">
                 <p>
                     <i class="fas fa-code" aria-hidden="true"></i>
