@@ -116,9 +116,6 @@
             gap: 12px;
             text-decoration: none;
         }
-        /* ============================================
-                   MOLDURA DA LOGO - HEADER
-                   ============================================ */
         .logo-frame {
             background: var(--gray-100);
             padding: 6px;
@@ -185,6 +182,49 @@
             background: var(--accent);
             color: var(--white) !important;
         }
+
+        /* ============================================
+                   QR CODE NO HEADER
+                   ============================================ */
+        .qrcode-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(230, 126, 34, 0.08);
+            padding: 6px 16px 6px 10px;
+            border-radius: 50px;
+            border: 1px solid rgba(230, 126, 34, 0.15);
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        .qrcode-header:hover {
+            background: rgba(230, 126, 34, 0.15);
+            transform: scale(1.02);
+            border-color: var(--secondary);
+        }
+        .qrcode-header img {
+            width: 35px;
+            height: 35px;
+            border-radius: 8px;
+            background: white;
+            padding: 4px;
+        }
+        .qrcode-header .text {
+            color: var(--primary);
+            font-size: 0.75rem;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+        .qrcode-header .text i {
+            color: var(--secondary);
+            margin-right: 4px;
+        }
+        .qrcode-header .text small {
+            font-weight: 400;
+            color: var(--gray-600);
+            font-size: 0.6rem;
+        }
+
         .menu-toggle {
             display: none;
             flex-direction: column;
@@ -239,10 +279,6 @@
             font-size: 0.9rem;
             backdrop-filter: blur(4px);
         }
-
-        /* ============================================
-                   MOLDURA DA LOGO - HERO CARD
-                   ============================================ */
         .hero-card {
             background: rgba(255,255,255,0.05);
             border-radius: var(--radius);
@@ -458,7 +494,7 @@
         }
 
         /* ============================================
-                   FOOTER
+                   FOOTER - COM QR CODE
                    ============================================ */
         footer {
             background: var(--primary);
@@ -499,6 +535,7 @@
             color: rgba(255,255,255,0.5);
             font-size: 0.55rem;
         }
+
         footer .social {
             display: flex;
             justify-content: center;
@@ -519,6 +556,74 @@
         }
 
         /* ============================================
+                   QR CODE NO FOOTER
+                   ============================================ */
+        .qrcode-footer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            background: rgba(255,255,255,0.06);
+            padding: 2rem 1.5rem;
+            border-radius: 2rem;
+            margin-top: 2rem;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.06);
+            max-width: 320px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .qrcode-footer:hover {
+            background: rgba(255,255,255,0.1);
+            transform: translateY(-5px);
+            border-color: rgba(230, 126, 34, 0.2);
+        }
+
+        .qrcode-footer img {
+            width: 120px;
+            height: 120px;
+            border-radius: 1.5rem;
+            background: white;
+            padding: 10px;
+            margin-bottom: 1rem;
+            transition: transform 0.3s;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        .qrcode-footer img:hover {
+            transform: scale(1.05);
+        }
+
+        .qrcode-footer h4 {
+            color: white;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .qrcode-footer h4 i {
+            color: var(--secondary);
+            margin-right: 8px;
+        }
+
+        .qrcode-footer p {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.85rem;
+        }
+
+        .qrcode-footer .site-url {
+            background: rgba(255,255,255,0.08);
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-top: 0.5rem;
+            color: rgba(255,255,255,0.8);
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        /* ============================================
                    CRÉDITOS DO DESENVOLVEDOR
                    ============================================ */
         .developer-credits {
@@ -526,7 +631,7 @@
             padding-top: 16px;
             border-top: 1px solid rgba(255,255,255,0.06);
             font-size: 0.75rem;
-            color: rgba(255,255,255,0.4);
+            color: rgba(255,255,255,0.35);
         }
         .developer-credits a {
             color: var(--secondary);
@@ -539,7 +644,7 @@
             text-decoration: underline;
         }
         .developer-credits i {
-            color: rgba(255,255,255,0.3);
+            color: rgba(255,255,255,0.25);
         }
         .developer-credits strong {
             color: var(--secondary);
@@ -560,6 +665,9 @@
             }
             .about-list li {
                 justify-content: center;
+            }
+            .qrcode-header {
+                display: none;
             }
         }
         @media (max-width: 768px) {
@@ -607,6 +715,14 @@
             .contact-form {
                 padding: 24px;
             }
+            .qrcode-footer {
+                max-width: 100%;
+                padding: 1.5rem 1rem;
+            }
+            .qrcode-footer img {
+                width: 100px;
+                height: 100px;
+            }
         }
         @media (max-width: 480px) {
             .hero-card .logo-frame-big img {
@@ -625,13 +741,24 @@
             .hero h1 {
                 font-size: 1.6rem;
             }
+            .qrcode-footer img {
+                width: 80px;
+                height: 80px;
+            }
+            .qrcode-footer h4 {
+                font-size: 0.95rem;
+            }
+            .qrcode-footer .site-url {
+                font-size: 0.75rem;
+                padding: 0.3rem 1rem;
+            }
         }
     </style>
 </head>
 <body>
 
     <!-- ==========================================
-    HEADER - FUNDO BRANCO
+    HEADER - FUNDO BRANCO COM QR CODE
     ========================================== -->
     <header>
         <div class="container">
@@ -644,6 +771,18 @@
                     <span class="logo-slogan">Conserto e Manutenção em placas</span>
                 </span>
             </a>
+
+            <!-- QR CODE NO HEADER -->
+            <a href="https://ecdeletronica.github.io" target="_blank" style="text-decoration: none;">
+                <div class="qrcode-header">
+                    <img src="assets/images/qr-code.png" alt="QR Code ECD Eletrônica">
+                    <div class="text">
+                        <span><i class="fa-regular fa-qrcode"></i> Acesso rápido</span><br>
+                        <small>escaneie e acesse</small>
+                    </div>
+                </div>
+            </a>
+
             <button class="menu-toggle" id="menuToggle">
                 <span></span><span></span><span></span>
             </button>
@@ -761,7 +900,7 @@
     </section>
 
     <!-- ==========================================
-    FOOTER - COM CRÉDITOS
+    FOOTER - COM QR CODE E CRÉDITOS
     ========================================== -->
     <footer>
         <div class="container">
@@ -774,6 +913,15 @@
                     <span class="logo-slogan">Conserto e Manutenção em placas</span>
                 </span>
             </div>
+
+            <!-- QR CODE NO FOOTER -->
+            <div class="qrcode-footer">
+                <img src="assets/images/qr-code.png" alt="QR Code ECD Eletrônica">
+                <h4><i class="fa-regular fa-qrcode"></i> Acesse pelo celular</h4>
+                <p>Escaneie o QR Code e visite nosso site</p>
+                <div class="site-url">ecdeletronica.github.io</div>
+            </div>
+
             <div class="social">
                 <a href="#"><i class="fab fa-instagram"></i></a>
                 <a href="#"><i class="fab fa-whatsapp"></i></a>
@@ -781,9 +929,7 @@
             </div>
             <p class="copy">© 2026 ECD Eletrônica. Todos os direitos reservados.</p>
 
-            <!-- ==========================================
-            CRÉDITOS DO DESENVOLVEDOR
-            ========================================== -->
+            <!-- CRÉDITOS DO DESENVOLVEDOR -->
             <div class="developer-credits">
                 <p>
                     <i class="fas fa-code" aria-hidden="true"></i>
