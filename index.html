@@ -96,16 +96,20 @@
         }
 
         /* ============================================
-                   HEADER
+                   HEADER + TICKER (INTEGRADOS)
                    ============================================ */
-        header {
-            background: rgba(255,255,255,0.92);
-            backdrop-filter: blur(12px);
-            box-shadow: var(--shadow-sm);
+        .header-wrapper {
             position: fixed;
             width: 100%;
             top: 0;
             z-index: 1000;
+        }
+
+        /* HEADER */
+        header {
+            background: rgba(255,255,255,0.92);
+            backdrop-filter: blur(12px);
+            box-shadow: var(--shadow-sm);
             border-bottom: 6px solid var(--secondary);
             padding: 20px 0;
         }
@@ -258,16 +262,15 @@
         }
 
         /* ============================================
-                   TICKER / PLACAR ROLANTE HORIZONTAL - CORRIGIDO
+                   TICKER / PLACAR ROLANTE - INTEGRADO AO CABEÇALHO
                    ============================================ */
         .ticker-container {
             background: var(--primary);
-            padding: 14px 0;
-            border-bottom: 3px solid var(--secondary);
+            padding: 12px 0;
             overflow: hidden;
             position: relative;
-            margin-top: 150px; /* AUMENTADO para ficar abaixo do cabeçalho */
-            z-index: 1;
+            border-top: 3px solid var(--secondary);
+            border-bottom: 3px solid var(--secondary);
         }
         .ticker-container::before,
         .ticker-container::after {
@@ -331,7 +334,7 @@
                    ============================================ */
         .hero {
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-            padding: 50px 0 80px;
+            padding: 200px 0 80px;
             color: var(--white);
         }
         .hero .container {
@@ -864,15 +867,15 @@
             .legal-brands {
                 padding: 14px 16px;
             }
-            .ticker-container {
-                margin-top: 130px;
-            }
             .ticker-item {
                 font-size: 0.85rem;
                 padding: 0 20px;
             }
             .ticker-item i {
                 font-size: 1.3rem;
+            }
+            .hero {
+                padding: 190px 0 60px;
             }
         }
         @media (max-width: 768px) {
@@ -897,7 +900,7 @@
                 display: flex;
             }
             .hero {
-                padding: 40px 0 60px;
+                padding: 180px 0 60px;
             }
             .hero h1 {
                 font-size: 2rem;
@@ -961,7 +964,6 @@
                 padding: 12px 14px;
             }
             .ticker-container {
-                margin-top: 110px;
                 padding: 10px 0;
             }
             .ticker-item {
@@ -1026,7 +1028,6 @@
                 padding: 10px 12px;
             }
             .ticker-container {
-                margin-top: 100px;
                 padding: 8px 0;
             }
             .ticker-item {
@@ -1047,111 +1048,114 @@
 <body>
 
     <!-- ==========================================
-    HEADER
+    HEADER + TICKER INTEGRADOS
     ========================================== -->
-    <header>
-        <div class="container">
-            <div class="logo-area">
-                <span class="logo-wrapper">
-                    <img src="assets/images/logo-ecd.jpg" alt="ECD Eletrônica">
-                </span>
-                <div class="logo-text">
-                    <h1>ECD <span>Eletrônica</span></h1>
-                    <span class="slogan">Assistência Técnica Independente</span>
+    <div class="header-wrapper">
+
+        <!-- HEADER -->
+        <header>
+            <div class="container">
+                <div class="logo-area">
+                    <span class="logo-wrapper">
+                        <img src="assets/images/logo-ecd.jpg" alt="ECD Eletrônica">
+                    </span>
+                    <div class="logo-text">
+                        <h1>ECD <span>Eletrônica</span></h1>
+                        <span class="slogan">Assistência Técnica Independente</span>
+                    </div>
+                </div>
+
+                <a href="https://ecdeletronica.github.io" target="_blank" class="qrcode-header">
+                    <img src="assets/images/qr-code.png" alt="QR Code ECD Eletrônica">
+                    <div class="qr-text">
+                        <span><i class="fa-regular fa-qrcode"></i> Acesso rápido</span>
+                        <small>escaneie e acesse</small>
+                    </div>
+                </a>
+
+                <button class="menu-toggle" id="menuToggle">
+                    <span></span><span></span><span></span>
+                </button>
+                <ul class="nav-links" id="navLinks">
+                    <li><a href="#servicos">Serviços</a></li>
+                    <li><a href="#sobre">Sobre</a></li>
+                    <li><a href="#contato" class="nav-cta">Fale Conosco</a></li>
+                </ul>
+            </div>
+        </header>
+
+        <!-- TICKER / PLACAR ROLANTE - INTEGRADO -->
+        <div class="ticker-container">
+            <div class="ticker-track">
+                <!-- Primeira duplicata -->
+                <div class="ticker-item">
+                    <i class="fas fa-washing-machine"></i> Placas de Lavadoras
+                    <span class="separator">|</span>
+                </div>
+                <div class="ticker-item">
+                    <i class="fas fa-ice-cream"></i> Placas de Geladeiras
+                    <span class="separator">|</span>
+                </div>
+                <div class="ticker-item">
+                    <i class="fas fa-snowflake"></i> Placas de Ar-Condicionado
+                    <span class="separator">|</span>
+                </div>
+                <div class="ticker-item">
+                    <i class="fas fa-micro-wave"></i> Placas de Micro-ondas
+                    <span class="separator">|</span>
+                </div>
+                <div class="ticker-item">
+                    <i class="fas fa-bolt"></i> Placas Inverter
+                    <span class="separator">|</span>
+                </div>
+                <div class="ticker-item">
+                    <i class="fas fa-plug"></i> Inversores / Nobreaks
+                    <span class="separator">|</span>
+                </div>
+                <div class="ticker-item">
+                    <i class="fas fa-heartbeat"></i> Equipamentos Médicos
+                    <span class="separator">|</span>
+                </div>
+                <div class="ticker-item">
+                    <i class="fas fa-battery-three-quarters"></i> Fontes Chaveadas
+                    <span class="separator">|</span>
+                </div>
+                <!-- Segunda duplicata para loop infinito -->
+                <div class="ticker-item">
+                    <i class="fas fa-washing-machine"></i> Placas de Lavadoras
+                    <span class="separator">|</span>
+                </div>
+                <div class="ticker-item">
+                    <i class="fas fa-ice-cream"></i> Placas de Geladeiras
+                    <span class="separator">|</span>
+                </div>
+                <div class="ticker-item">
+                    <i class="fas fa-snowflake"></i> Placas de Ar-Condicionado
+                    <span class="separator">|</span>
+                </div>
+                <div class="ticker-item">
+                    <i class="fas fa-micro-wave"></i> Placas de Micro-ondas
+                    <span class="separator">|</span>
+                </div>
+                <div class="ticker-item">
+                    <i class="fas fa-bolt"></i> Placas Inverter
+                    <span class="separator">|</span>
+                </div>
+                <div class="ticker-item">
+                    <i class="fas fa-plug"></i> Inversores / Nobreaks
+                    <span class="separator">|</span>
+                </div>
+                <div class="ticker-item">
+                    <i class="fas fa-heartbeat"></i> Equipamentos Médicos
+                    <span class="separator">|</span>
+                </div>
+                <div class="ticker-item">
+                    <i class="fas fa-battery-three-quarters"></i> Fontes Chaveadas
+                    <span class="separator">|</span>
                 </div>
             </div>
-
-            <a href="https://ecdeletronica.github.io" target="_blank" class="qrcode-header">
-                <img src="assets/images/qr-code.png" alt="QR Code ECD Eletrônica">
-                <div class="qr-text">
-                    <span><i class="fa-regular fa-qrcode"></i> Acesso rápido</span>
-                    <small>escaneie e acesse</small>
-                </div>
-            </a>
-
-            <button class="menu-toggle" id="menuToggle">
-                <span></span><span></span><span></span>
-            </button>
-            <ul class="nav-links" id="navLinks">
-                <li><a href="#servicos">Serviços</a></li>
-                <li><a href="#sobre">Sobre</a></li>
-                <li><a href="#contato" class="nav-cta">Fale Conosco</a></li>
-            </ul>
         </div>
-    </header>
 
-    <!-- ==========================================
-    PLACAR ROLANTE HORIZONTAL (TICKER)
-    ========================================== -->
-    <div class="ticker-container">
-        <div class="ticker-track">
-            <!-- Primeira duplicata -->
-            <div class="ticker-item">
-                <i class="fas fa-washing-machine"></i> Placas de Lavadoras
-                <span class="separator">|</span>
-            </div>
-            <div class="ticker-item">
-                <i class="fas fa-ice-cream"></i> Placas de Geladeiras
-                <span class="separator">|</span>
-            </div>
-            <div class="ticker-item">
-                <i class="fas fa-snowflake"></i> Placas de Ar-Condicionado
-                <span class="separator">|</span>
-            </div>
-            <div class="ticker-item">
-                <i class="fas fa-micro-wave"></i> Placas de Micro-ondas
-                <span class="separator">|</span>
-            </div>
-            <div class="ticker-item">
-                <i class="fas fa-bolt"></i> Placas Inverter
-                <span class="separator">|</span>
-            </div>
-            <div class="ticker-item">
-                <i class="fas fa-plug"></i> Inversores / Nobreaks
-                <span class="separator">|</span>
-            </div>
-            <div class="ticker-item">
-                <i class="fas fa-heartbeat"></i> Equipamentos Médicos
-                <span class="separator">|</span>
-            </div>
-            <div class="ticker-item">
-                <i class="fas fa-battery-three-quarters"></i> Fontes Chaveadas
-                <span class="separator">|</span>
-            </div>
-            <!-- Segunda duplicata para loop infinito -->
-            <div class="ticker-item">
-                <i class="fas fa-washing-machine"></i> Placas de Lavadoras
-                <span class="separator">|</span>
-            </div>
-            <div class="ticker-item">
-                <i class="fas fa-ice-cream"></i> Placas de Geladeiras
-                <span class="separator">|</span>
-            </div>
-            <div class="ticker-item">
-                <i class="fas fa-snowflake"></i> Placas de Ar-Condicionado
-                <span class="separator">|</span>
-            </div>
-            <div class="ticker-item">
-                <i class="fas fa-micro-wave"></i> Placas de Micro-ondas
-                <span class="separator">|</span>
-            </div>
-            <div class="ticker-item">
-                <i class="fas fa-bolt"></i> Placas Inverter
-                <span class="separator">|</span>
-            </div>
-            <div class="ticker-item">
-                <i class="fas fa-plug"></i> Inversores / Nobreaks
-                <span class="separator">|</span>
-            </div>
-            <div class="ticker-item">
-                <i class="fas fa-heartbeat"></i> Equipamentos Médicos
-                <span class="separator">|</span>
-            </div>
-            <div class="ticker-item">
-                <i class="fas fa-battery-three-quarters"></i> Fontes Chaveadas
-                <span class="separator">|</span>
-            </div>
-        </div>
     </div>
 
     <!-- ==========================================
