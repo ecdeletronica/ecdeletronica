@@ -1,6 +1,6 @@
 // js/modules/orcamento.js - Sistema de Orçamento para ECD Eletrônica
-// ✅ Versão ESTÁVEL v2.2 - WHATSAPP COM PDF AUTOMÁTICO
-console.log('✅ orcamento.js carregado - Versão ESTÁVEL v2.2');
+// ✅ Versão ESTÁVEL v2.3 - WHATSAPP COM PDF (CORRIGIDO)
+console.log('✅ orcamento.js carregado - Versão ESTÁVEL v2.3');
 
 // ============================================================
 // CONFIGURAÇÕES
@@ -664,7 +664,7 @@ function verOrcamento(id) {
     modalHtml += "</div>";
     modalHtml += "<div class=\"modal-win98-footer\" style=\"background:#d4d0c8; padding:6px 10px; text-align:right; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080;\">";
     modalHtml += "<button class=\"btn-win98\" onclick=\"window.imprimirOrcamento('" + orc.id + "')\" style=\"font-size:0.75rem; padding:3px 12px; background:#d4d0c8; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; cursor:pointer; font-family:'Courier New',monospace; font-weight:700;\"><i class=\"fas fa-print\"></i> Imprimir</button> ";
-    modalHtml += "<button class=\"btn-win98\" onclick=\"window.enviarWhatsAppOrcamento('" + orc.id + "')\" style=\"font-size:0.75rem; padding:3px 12px; background:#d4d0c8; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; cursor:pointer; font-family:'Courier New',monospace; font-weight:700;\"><i class=\"fab fa-whatsapp\"></i> WhatsApp</button> ";
+    modalHtml += "<button class=\"btn-win98\" onclick=\"window.enviarWhatsAppOrcamento('" + orc.id + "')\" style=\"font-size:0.75rem; padding:3px 12px; background:#25D366; color:#ffffff; border:2px solid #1da851; border-top-color:#2ecc71; border-left-color:#2ecc71; cursor:pointer; font-family:'Courier New',monospace; font-weight:700;\"><i class=\"fab fa-whatsapp\"></i> WhatsApp</button> ";
     modalHtml += "<button class=\"btn-win98\" onclick=\"window.gerarPDFOrcamento('" + orc.id + "')\" style=\"font-size:0.75rem; padding:3px 12px; background:#d4d0c8; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; cursor:pointer; font-family:'Courier New',monospace; font-weight:700;\"><i class=\"fas fa-file-pdf\"></i> PDF</button> ";
     modalHtml += "<button class=\"btn-win98\" onclick=\"window.fecharModalWin98('orcamentoModal')\" style=\"font-size:0.75rem; padding:3px 12px; background:#d4d0c8; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; cursor:pointer; font-family:'Courier New',monospace; font-weight:700;\">Fechar</button>";
     modalHtml += "</div></div></div>";
@@ -801,7 +801,7 @@ function gerarHtmlOrcamento(orc) {
 }
 
 // ============================================================
-// FUNÇÕES DE EXPORTAÇÃO - CORRIGIDAS
+// FUNÇÕES DE EXPORTAÇÃO
 // ============================================================
 
 function imprimirOrcamento(id) {
@@ -987,7 +987,7 @@ function enviarWhatsAppOrcamento(id) {
     
     // Verificar se as bibliotecas estão carregadas
     if (typeof html2pdf === "undefined") {
-        mostrarNotificacao("📥 Carregando bibliotecas para WhatsApp...", "info");
+        mostrarNotificacao("📥 Carregando bibliotecas...", "info");
         
         var scripts = [
             "https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js",
@@ -1002,12 +1002,11 @@ function enviarWhatsAppOrcamento(id) {
             script.onload = function() {
                 loaded++;
                 if (loaded === scripts.length) {
-                    console.log("✅ Bibliotecas carregadas para WhatsApp!");
+                    console.log("✅ Bibliotecas carregadas!");
                     enviarWhatsAppOrcamento(id);
                 }
             };
             script.onerror = function() {
-                // Se falhar, enviar apenas a mensagem
                 enviarWhatsAppMensagem(orc);
             };
             document.head.appendChild(script);
@@ -1019,8 +1018,8 @@ function enviarWhatsAppOrcamento(id) {
         return;
     }
     
-    // Gerar PDF e enviar via WhatsApp
-    mostrarNotificacao("📄 Gerando PDF para WhatsApp...", "info");
+    // Gerar PDF e abrir WhatsApp
+    mostrarNotificacao("📄 Gerando PDF...", "info");
     
     try {
         var conteudo = gerarHtmlOrcamento(orc);
@@ -1064,56 +1063,36 @@ function enviarWhatsAppOrcamento(id) {
             .from(container)
             .outputPdf('blob')
             .then(function(pdfBlob) {
-                // Criar URL do PDF
+                // 1. Baixar o PDF
                 var pdfUrl = URL.createObjectURL(pdfBlob);
-                
-                // Construir mensagem do WhatsApp
-                var telefone = ORCAMENTO_CONFIG.empresa.whatsapp;
-                var mensagem = "*" + ORCAMENTO_CONFIG.empresa.nome + "*\n";
-                mensagem += "Orçamento: " + (orc.numero || "N/A") + "\n";
-                mensagem += "Data: " + formatarData(orc.data) + "\n";
-                mensagem += "Cliente: " + (orc.cliente || "Não informado") + "\n";
-                mensagem += "Total: " + formatarMoeda(orc.total || 0) + "\n";
-                mensagem += "\n*Pagamento via PIX:* " + ORCAMENTO_CONFIG.banco.pix;
-                mensagem += "\n*Site:* " + ORCAMENTO_CONFIG.empresa.site;
-                mensagem += "\n\n*Assistência Técnica Independente*";
-                mensagem += "\n" + ORCAMENTO_CONFIG.empresa.telefone;
-                
-                var mensagemCodificada = encodeURIComponent(mensagem);
-                var url = "https://wa.me/" + telefone + "?text=" + mensagemCodificada;
-                
-                // Abrir WhatsApp
-                window.open(url, "_blank");
-                
-                // Baixar o PDF também (fallback caso o WhatsApp não receba)
                 var link = document.createElement("a");
                 link.href = pdfUrl;
                 link.download = "Orçamento_" + (orc.numero || "ECD") + ".pdf";
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
-                
                 setTimeout(function() {
                     URL.revokeObjectURL(pdfUrl);
                 }, 5000);
                 
-                mostrarNotificacao("✅ PDF gerado e enviado via WhatsApp!", "success");
+                // 2. Abrir WhatsApp com a mensagem
+                enviarWhatsAppMensagem(orc);
+                
+                mostrarNotificacao("✅ PDF baixado e WhatsApp aberto!", "success");
             })
             .catch(function(error) {
-                console.error("Erro ao gerar PDF para WhatsApp:", error);
-                // Fallback: enviar apenas a mensagem
+                console.error("Erro ao gerar PDF:", error);
                 enviarWhatsAppMensagem(orc);
             });
             
     } catch (error) {
         console.error("Erro:", error);
-        // Fallback: enviar apenas a mensagem
         enviarWhatsAppMensagem(orc);
     }
 }
 
 // ============================================================
-// FALLBACK: ENVIAR APENAS MENSAGEM DE TEXTO
+// ENVIAR MENSAGEM DO WHATSAPP
 // ============================================================
 
 function enviarWhatsAppMensagem(orc) {
@@ -1131,7 +1110,6 @@ function enviarWhatsAppMensagem(orc) {
     var mensagemCodificada = encodeURIComponent(mensagem);
     var url = "https://wa.me/" + telefone + "?text=" + mensagemCodificada;
     window.open(url, "_blank");
-    mostrarNotificacao("📱 Mensagem enviada via WhatsApp (PDF não foi gerado)", "info");
 }
 
 // ============================================================
@@ -1388,4 +1366,4 @@ if (document.readyState === "loading") {
     initializeOrcamento();
 }
 
-console.log("✅ orcamento.js v2.2 carregado - WHATSAPP COM PDF AUTOMÁTICO!");
+console.log("✅ orcamento.js v2.3 carregado - WHATSAPP COM PDF CORRIGIDO!");
