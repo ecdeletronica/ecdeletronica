@@ -1,6 +1,6 @@
 // js/modules/orcamento.js - Sistema de Orçamento para ECD Eletrônica
-// ✅ Versão ESTÁVEL v1.9 - CORREÇÃO DEFINITIVA DAS STRINGS
-console.log('✅ orcamento.js carregado - Versão ESTÁVEL v1.9');
+// ✅ Versão ESTÁVEL v2.0 - COM QR CODE PIX, LOGO E PDF CORRIGIDO
+console.log('✅ orcamento.js carregado - Versão ESTÁVEL v2.0');
 
 // ============================================================
 // CONFIGURAÇÕES
@@ -17,7 +17,8 @@ var ORCAMENTO_CONFIG = {
         email: "elaylton95@gmail.com",
         pix: "82988998040",
         telefone: "(82) 9.9946-8040",
-        whatsapp: "5582999468040"
+        whatsapp: "5582999468040",
+        logo: "assets/images/logo-ecd.jpg"
     },
     proponente: {
         nome: "ELAYLTON CAVALCANTE DAMASCENO",
@@ -26,6 +27,14 @@ var ORCAMENTO_CONFIG = {
         cep: "57010-262",
         email: "elaylton95@gmail.com",
         pix: "82988998040"
+    },
+    banco: {
+        nome: "Banco do Brasil",
+        agencia: "1234-5",
+        conta: "67890-1",
+        tipo: "Corrente",
+        pix: "82988998040",
+        chave_pix: "82988998040"
     }
 };
 
@@ -180,7 +189,7 @@ function gerarNumeroOrcamento() {
 }
 
 // ============================================================
-// FUNÇÕES DA PLANILHA (Itens) - COM ASPAS DUPLAS
+// FUNÇÕES DA PLANILHA (Itens)
 // ============================================================
 
 function adicionarItemLinha() {
@@ -191,13 +200,13 @@ function adicionarItemLinha() {
     var linha = document.createElement("tr");
     
     var html = "";
-    html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 6px; text-align:center; background:#d4d0c8; font-weight:700; font-size:0.65rem; font-family:\'Courier New\',monospace;\">" + (index + 1) + "</td>";
-    html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px;\"><input type=\"text\" class=\"item-descricao\" placeholder=\"Descrição do serviço\" data-index=\"" + index + "\" style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; width:100%; background:#f0f0f0; font-family:\'Courier New\',monospace; font-size:0.7rem; color:#000000; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.08);\"></td>";
-    html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px;\"><input type=\"text\" class=\"item-unidade\" value=\"UN\" data-index=\"" + index + "\" style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; width:38px; background:#f0f0f0; font-family:\'Courier New\',monospace; font-size:0.7rem; color:#000000; text-align:center; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.08);\"></td>";
-    html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px;\"><input type=\"number\" class=\"item-quantidade\" value=\"1\" min=\"1\" data-index=\"" + index + "\" style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; width:38px; background:#f0f0f0; font-family:\'Courier New\',monospace; font-size:0.7rem; color:#000000; text-align:center; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.08);\"></td>";
-    html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px;\"><input type=\"text\" class=\"item-valor\" value=\"0,00\" data-index=\"" + index + "\" style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; width:75px; background:#f0f0f0; font-family:\'Courier New\',monospace; font-size:0.7rem; color:#000000; text-align:right; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.08);\"></td>";
-    html += "<td class=\"item-subtotal\" data-index=\"" + index + "\" style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 6px; text-align:right; background:#ece9d8; font-family:\'Courier New\',monospace; font-size:0.7rem; font-weight:700;\">R$ 0,00</td>";
-    html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; text-align:center; background:#d4d0c8;\"><button type=\"button\" class=\"remover-item\" data-index=\"" + index + "\" style=\"background:#d4d0c8; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:0 6px; cursor:pointer; font-size:0.6rem; font-family:\'Courier New\',monospace; font-weight:700;\"><i class=\"fas fa-trash\" style=\"color:#000000;\"></i></button></td>";
+    html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 6px; text-align:center; background:#d4d0c8; font-weight:700; font-size:0.65rem; font-family:'Courier New',monospace;\">" + (index + 1) + "</td>";
+    html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px;\"><input type=\"text\" class=\"item-descricao\" placeholder=\"Descrição do serviço\" data-index=\"" + index + "\" style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; width:100%; background:#f0f0f0; font-family:'Courier New',monospace; font-size:0.7rem; color:#000000; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.08);\"></td>";
+    html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px;\"><input type=\"text\" class=\"item-unidade\" value=\"UN\" data-index=\"" + index + "\" style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; width:38px; background:#f0f0f0; font-family:'Courier New',monospace; font-size:0.7rem; color:#000000; text-align:center; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.08);\"></td>";
+    html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px;\"><input type=\"number\" class=\"item-quantidade\" value=\"1\" min=\"1\" data-index=\"" + index + "\" style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; width:38px; background:#f0f0f0; font-family:'Courier New',monospace; font-size:0.7rem; color:#000000; text-align:center; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.08);\"></td>";
+    html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px;\"><input type=\"text\" class=\"item-valor\" value=\"0,00\" data-index=\"" + index + "\" style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; width:75px; background:#f0f0f0; font-family:'Courier New',monospace; font-size:0.7rem; color:#000000; text-align:right; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.08);\"></td>";
+    html += "<td class=\"item-subtotal\" data-index=\"" + index + "\" style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 6px; text-align:right; background:#ece9d8; font-family:'Courier New',monospace; font-size:0.7rem; font-weight:700;\">R$ 0,00</td>";
+    html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; text-align:center; background:#d4d0c8;\"><button type=\"button\" class=\"remover-item\" data-index=\"" + index + "\" style=\"background:#d4d0c8; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:0 6px; cursor:pointer; font-size:0.6rem; font-family:'Courier New',monospace; font-weight:700;\"><i class=\"fas fa-trash\" style=\"color:#000000;\"></i></button></td>";
     
     linha.innerHTML = html;
     tbody.appendChild(linha);
@@ -429,13 +438,13 @@ function carregarOrcamentoParaEdicao(id) {
             var item = window.orcamentoItens[k];
             var linha = document.createElement("tr");
             var html = "";
-            html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 6px; text-align:center; background:#d4d0c8; font-weight:700; font-size:0.65rem; font-family:\'Courier New\',monospace;\">" + (k + 1) + "</td>";
-            html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px;\"><input type=\"text\" class=\"item-descricao\" value=\"" + (item.descricao || "") + "\" data-index=\"" + k + "\" style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; width:100%; background:#f0f0f0; font-family:\'Courier New\',monospace; font-size:0.7rem; color:#000000; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.08);\"></td>";
-            html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px;\"><input type=\"text\" class=\"item-unidade\" value=\"" + (item.unidade || "UN") + "\" data-index=\"" + k + "\" style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; width:38px; background:#f0f0f0; font-family:\'Courier New\',monospace; font-size:0.7rem; color:#000000; text-align:center; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.08);\"></td>";
-            html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px;\"><input type=\"number\" class=\"item-quantidade\" value=\"" + (item.quantidade || 1) + "\" min=\"1\" data-index=\"" + k + "\" style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; width:38px; background:#f0f0f0; font-family:\'Courier New\',monospace; font-size:0.7rem; color:#000000; text-align:center; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.08);\"></td>";
-            html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px;\"><input type=\"text\" class=\"item-valor\" value=\"" + (formatarMoeda(item.valor_unitario || 0).replace("R$ ", "")) + "\" data-index=\"" + k + "\" style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; width:75px; background:#f0f0f0; font-family:\'Courier New\',monospace; font-size:0.7rem; color:#000000; text-align:right; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.08);\"></td>";
-            html += "<td class=\"item-subtotal\" data-index=\"" + k + "\" style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 6px; text-align:right; background:#ece9d8; font-family:\'Courier New\',monospace; font-size:0.7rem; font-weight:700;\">" + formatarMoeda((item.quantidade || 0) * (item.valor_unitario || 0)) + "</td>";
-            html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; text-align:center; background:#d4d0c8;\"><button type=\"button\" class=\"remover-item\" data-index=\"" + k + "\" style=\"background:#d4d0c8; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:0 6px; cursor:pointer; font-size:0.6rem; font-family:\'Courier New\',monospace; font-weight:700;\"><i class=\"fas fa-trash\" style=\"color:#000000;\"></i></button></td>";
+            html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 6px; text-align:center; background:#d4d0c8; font-weight:700; font-size:0.65rem; font-family:'Courier New',monospace;\">" + (k + 1) + "</td>";
+            html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px;\"><input type=\"text\" class=\"item-descricao\" value=\"" + (item.descricao || "") + "\" data-index=\"" + k + "\" style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; width:100%; background:#f0f0f0; font-family:'Courier New',monospace; font-size:0.7rem; color:#000000; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.08);\"></td>";
+            html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px;\"><input type=\"text\" class=\"item-unidade\" value=\"" + (item.unidade || "UN") + "\" data-index=\"" + k + "\" style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; width:38px; background:#f0f0f0; font-family:'Courier New',monospace; font-size:0.7rem; color:#000000; text-align:center; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.08);\"></td>";
+            html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px;\"><input type=\"number\" class=\"item-quantidade\" value=\"" + (item.quantidade || 1) + "\" min=\"1\" data-index=\"" + k + "\" style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; width:38px; background:#f0f0f0; font-family:'Courier New',monospace; font-size:0.7rem; color:#000000; text-align:center; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.08);\"></td>";
+            html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px;\"><input type=\"text\" class=\"item-valor\" value=\"" + (formatarMoeda(item.valor_unitario || 0).replace("R$ ", "")) + "\" data-index=\"" + k + "\" style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; width:75px; background:#f0f0f0; font-family:'Courier New',monospace; font-size:0.7rem; color:#000000; text-align:right; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.08);\"></td>";
+            html += "<td class=\"item-subtotal\" data-index=\"" + k + "\" style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 6px; text-align:right; background:#ece9d8; font-family:'Courier New',monospace; font-size:0.7rem; font-weight:700;\">" + formatarMoeda((item.quantidade || 0) * (item.valor_unitario || 0)) + "</td>";
+            html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; text-align:center; background:#d4d0c8;\"><button type=\"button\" class=\"remover-item\" data-index=\"" + k + "\" style=\"background:#d4d0c8; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:0 6px; cursor:pointer; font-size:0.6rem; font-family:'Courier New',monospace; font-weight:700;\"><i class=\"fas fa-trash\" style=\"color:#000000;\"></i></button></td>";
             linha.innerHTML = html;
             tbody.appendChild(linha);
         }
@@ -578,8 +587,8 @@ function listarOrcamentos() {
         var emptyHtml = "";
         emptyHtml += "<div style=\"text-align:center; padding:20px 0; background:#d4d0c8; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; box-shadow: inset 2px 2px 8px rgba(0,0,0,0.15);\">";
         emptyHtml += "<i class=\"fas fa-file-invoice\" style=\"font-size:2rem; color:#404040;\"></i>";
-        emptyHtml += "<p style=\"margin-top:8px; color:#404040; font-family:\'Courier New\',monospace; font-weight:700; font-size:0.85rem;\">Nenhum orçamento cadastrado.</p>";
-        emptyHtml += "<button class=\"btn-win98\" onclick=\"window.switchOrcamentoTab(\'form\')\" style=\"margin-top:6px; font-size:0.75rem; background:#d4d0c8; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:4px 16px; cursor:pointer; font-family:\'Courier New\',monospace; font-weight:700;\">";
+        emptyHtml += "<p style=\"margin-top:8px; color:#404040; font-family:'Courier New',monospace; font-weight:700; font-size:0.85rem;\">Nenhum orçamento cadastrado.</p>";
+        emptyHtml += "<button class=\"btn-win98\" onclick=\"window.switchOrcamentoTab('form')\" style=\"margin-top:6px; font-size:0.75rem; background:#d4d0c8; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:4px 16px; cursor:pointer; font-family:'Courier New',monospace; font-weight:700;\">";
         emptyHtml += "<i class=\"fas fa-plus\"></i> Criar Primeiro Orçamento";
         emptyHtml += "</button></div>";
         container.innerHTML = emptyHtml;
@@ -588,7 +597,7 @@ function listarOrcamentos() {
     
     var html = "";
     html += "<div style=\"overflow-x:auto; background:#d4d0c8; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px; box-shadow: inset 2px 2px 6px rgba(0,0,0,0.12);\">";
-    html += "<table style=\"width:100%; border-collapse:collapse; background:#ffffff; font-family:\'Courier New\',monospace; font-size:0.7rem;\">";
+    html += "<table style=\"width:100%; border-collapse:collapse; background:#ffffff; font-family:'Courier New',monospace; font-size:0.7rem;\">";
     html += "<thead><tr style=\"background:#d4d0c8; border-bottom:2px solid #404040;\">";
     html += "<th style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:left; color:#000000; font-weight:700;\">Nº</th>";
     html += "<th style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:left; color:#000000; font-weight:700;\">Cliente</th>";
@@ -610,15 +619,15 @@ function listarOrcamentos() {
         html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px;\"><span style=\"background:" + statusColor + "; color:#fff; padding:1px 8px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; font-size:0.6rem; font-weight:700;\">" + (orc.status || "Pendente") + "</span></td>";
         html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:right;\"><strong>" + formatarMoeda(orc.total || 0) + "</strong></td>";
         html += "<td style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:center;\">";
-        html += "<button class=\"btn-win98-sm\" onclick=\"window.verOrcamento(\'" + orc.id + "\')\" title=\"Visualizar\" style=\"padding:0 4px; font-size:0.65rem; background:#d4d0c8; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; cursor:pointer; font-family:\'Courier New\',monospace;\"><i class=\"fas fa-eye\"></i></button> ";
-        html += "<button class=\"btn-win98-sm\" onclick=\"window.carregarOrcamentoParaEdicao(\'" + orc.id + "\')\" title=\"Editar\" style=\"padding:0 4px; font-size:0.65rem; background:#d4d0c8; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; cursor:pointer; font-family:\'Courier New\',monospace;\"><i class=\"fas fa-edit\"></i></button> ";
-        html += "<button class=\"btn-win98-sm\" onclick=\"window.duplicarOrcamento(\'" + orc.id + "\')\" title=\"Duplicar\" style=\"padding:0 4px; font-size:0.65rem; background:#d4d0c8; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; cursor:pointer; font-family:\'Courier New\',monospace;\"><i class=\"fas fa-copy\"></i></button> ";
-        html += "<button class=\"btn-win98-sm btn-win98-danger\" onclick=\"window.excluirOrcamento(\'" + orc.id + "\')\" title=\"Excluir\" style=\"padding:0 4px; font-size:0.65rem; background:#d4d0c8; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; cursor:pointer; font-family:\'Courier New\',monospace;\"><i class=\"fas fa-trash\"></i></button>";
+        html += "<button class=\"btn-win98-sm\" onclick=\"window.verOrcamento('" + orc.id + "')\" title=\"Visualizar\" style=\"padding:0 4px; font-size:0.65rem; background:#d4d0c8; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; cursor:pointer; font-family:'Courier New',monospace;\"><i class=\"fas fa-eye\"></i></button> ";
+        html += "<button class=\"btn-win98-sm\" onclick=\"window.carregarOrcamentoParaEdicao('" + orc.id + "')\" title=\"Editar\" style=\"padding:0 4px; font-size:0.65rem; background:#d4d0c8; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; cursor:pointer; font-family:'Courier New',monospace;\"><i class=\"fas fa-edit\"></i></button> ";
+        html += "<button class=\"btn-win98-sm\" onclick=\"window.duplicarOrcamento('" + orc.id + "')\" title=\"Duplicar\" style=\"padding:0 4px; font-size:0.65rem; background:#d4d0c8; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; cursor:pointer; font-family:'Courier New',monospace;\"><i class=\"fas fa-copy\"></i></button> ";
+        html += "<button class=\"btn-win98-sm btn-win98-danger\" onclick=\"window.excluirOrcamento('" + orc.id + "')\" title=\"Excluir\" style=\"padding:0 4px; font-size:0.65rem; background:#d4d0c8; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; cursor:pointer; font-family:'Courier New',monospace;\"><i class=\"fas fa-trash\"></i></button>";
         html += "</td></tr>";
     }
     
     html += "</tbody></table></div>";
-    html += "<div style=\"margin-top:6px; font-size:0.65rem; color:#404040; font-family:\'Courier New\',monospace; font-weight:700;\">";
+    html += "<div style=\"margin-top:6px; font-size:0.65rem; color:#404040; font-family:'Courier New',monospace; font-weight:700;\">";
     html += "<i class=\"fas fa-info-circle\"></i> Total: " + window.orcamentos.length + " orçamento(s)";
     html += "</div>";
     
@@ -626,7 +635,7 @@ function listarOrcamentos() {
 }
 
 // ============================================================
-// FUNÇÕES DE VISUALIZAÇÃO
+// FUNÇÕES DE VISUALIZAÇÃO - COM LOGO, QR CODE E DADOS PIX
 // ============================================================
 
 function verOrcamento(id) {
@@ -644,19 +653,19 @@ function verOrcamento(id) {
     
     var modalHtml = "";
     modalHtml += "<div class=\"modal-win98\" id=\"orcamentoModal\" style=\"position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:10001; display:flex; align-items:center; justify-content:center; padding:20px;\">";
-    modalHtml += "<div class=\"modal-win98-content\" style=\"max-width:850px; width:95%; background:#ece9d8; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; box-shadow: 4px 4px 20px rgba(0,0,0,0.3);\">";
+    modalHtml += "<div class=\"modal-win98-content\" style=\"max-width:900px; width:95%; background:#ece9d8; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; box-shadow: 4px 4px 20px rgba(0,0,0,0.3);\">";
     modalHtml += "<div class=\"modal-win98-header\" style=\"background:#000080; color:#ffffff; padding:4px 10px; display:flex; justify-content:space-between; align-items:center; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080;\">";
-    modalHtml += "<span class=\"modal-win98-title\" style=\"font-family:\'Courier New\',monospace; font-weight:700; font-size:0.85rem;\"><i class=\"fas fa-file-invoice\"></i> Orçamento " + (orc.numero || "") + "</span>";
-    modalHtml += "<button class=\"modal-win98-close\" onclick=\"window.fecharModalWin98(\'orcamentoModal\')\" style=\"background:#c0c0c0; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:0 8px; cursor:pointer; font-size:1rem; font-weight:700; font-family:\'Courier New\',monospace;\">×</button>";
+    modalHtml += "<span class=\"modal-win98-title\" style=\"font-family:'Courier New',monospace; font-weight:700; font-size:0.85rem;\"><i class=\"fas fa-file-invoice\"></i> Orçamento " + (orc.numero || "") + "</span>";
+    modalHtml += "<button class=\"modal-win98-close\" onclick=\"window.fecharModalWin98('orcamentoModal')\" style=\"background:#c0c0c0; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:0 8px; cursor:pointer; font-size:1rem; font-weight:700; font-family:'Courier New',monospace;\">×</button>";
     modalHtml += "</div>";
     modalHtml += "<div class=\"modal-win98-body\" style=\"background:#d4d0c8; padding:12px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; max-height:60vh; overflow-y:auto;\">";
     modalHtml += gerarHtmlOrcamento(orc);
     modalHtml += "</div>";
     modalHtml += "<div class=\"modal-win98-footer\" style=\"background:#d4d0c8; padding:6px 10px; text-align:right; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080;\">";
-    modalHtml += "<button class=\"btn-win98\" onclick=\"window.imprimirOrcamento(\'" + orc.id + "\')\" style=\"font-size:0.75rem; padding:3px 12px; background:#d4d0c8; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; cursor:pointer; font-family:\'Courier New\',monospace; font-weight:700;\"><i class=\"fas fa-print\"></i> Imprimir</button> ";
-    modalHtml += "<button class=\"btn-win98\" onclick=\"window.enviarWhatsAppOrcamento(\'" + orc.id + "\')\" style=\"font-size:0.75rem; padding:3px 12px; background:#d4d0c8; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; cursor:pointer; font-family:\'Courier New\',monospace; font-weight:700;\"><i class=\"fab fa-whatsapp\"></i> WhatsApp</button> ";
-    modalHtml += "<button class=\"btn-win98\" onclick=\"window.gerarPDFOrcamento(\'" + orc.id + "\')\" style=\"font-size:0.75rem; padding:3px 12px; background:#d4d0c8; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; cursor:pointer; font-family:\'Courier New\',monospace; font-weight:700;\"><i class=\"fas fa-file-pdf\"></i> PDF</button> ";
-    modalHtml += "<button class=\"btn-win98\" onclick=\"window.fecharModalWin98(\'orcamentoModal\')\" style=\"font-size:0.75rem; padding:3px 12px; background:#d4d0c8; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; cursor:pointer; font-family:\'Courier New\',monospace; font-weight:700;\">Fechar</button>";
+    modalHtml += "<button class=\"btn-win98\" onclick=\"window.imprimirOrcamento('" + orc.id + "')\" style=\"font-size:0.75rem; padding:3px 12px; background:#d4d0c8; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; cursor:pointer; font-family:'Courier New',monospace; font-weight:700;\"><i class=\"fas fa-print\"></i> Imprimir</button> ";
+    modalHtml += "<button class=\"btn-win98\" onclick=\"window.enviarWhatsAppOrcamento('" + orc.id + "')\" style=\"font-size:0.75rem; padding:3px 12px; background:#d4d0c8; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; cursor:pointer; font-family:'Courier New',monospace; font-weight:700;\"><i class=\"fab fa-whatsapp\"></i> WhatsApp</button> ";
+    modalHtml += "<button class=\"btn-win98\" onclick=\"window.gerarPDFOrcamento('" + orc.id + "')\" style=\"font-size:0.75rem; padding:3px 12px; background:#d4d0c8; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; cursor:pointer; font-family:'Courier New',monospace; font-weight:700;\"><i class=\"fas fa-file-pdf\"></i> PDF</button> ";
+    modalHtml += "<button class=\"btn-win98\" onclick=\"window.fecharModalWin98('orcamentoModal')\" style=\"font-size:0.75rem; padding:3px 12px; background:#d4d0c8; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; cursor:pointer; font-family:'Courier New',monospace; font-weight:700;\">Fechar</button>";
     modalHtml += "</div></div></div>";
     
     var existingModal = document.getElementById("orcamentoModal");
@@ -674,11 +683,22 @@ function gerarHtmlOrcamento(orc) {
     var statusColor = statusColors[orc.status] || "#666";
     
     var html = "";
-    html += "<div style=\"font-family:\'Courier New\',monospace; font-size:0.75rem; color:#000000;\">";
+    html += "<div style=\"font-family:'Courier New',monospace; font-size:0.75rem; color:#000000;\">";
+    
+    // ========================================
+    // CABEÇALHO COM LOGO E DADOS DA EMPRESA
+    // ========================================
+    html += "<div style=\"display:flex; align-items:center; gap:12px; padding:8px 10px; margin-bottom:10px; background:#f0f0f0; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; box-shadow: inset 1px 1px 4px rgba(0,0,0,0.1);\">";
+    html += "<div style=\"flex-shrink:0;\"><img src=\"" + ORCAMENTO_CONFIG.empresa.logo + "\" alt=\"ECD Eletrônica\" style=\"max-height:60px; width:auto; border:1px solid #808080; padding:3px; background:#ffffff;\"></div>";
+    html += "<div style=\"flex:1;\"><strong style=\"font-size:1rem; color:#0a2e4d;\">" + ORCAMENTO_CONFIG.empresa.nome + "</strong><br>";
+    html += "CNPJ: " + ORCAMENTO_CONFIG.empresa.cnpj + " | Tel: " + ORCAMENTO_CONFIG.empresa.telefone + "<br>";
+    html += ORCAMENTO_CONFIG.empresa.endereco + " - CEP: " + ORCAMENTO_CONFIG.empresa.cep + "</div>";
+    html += "<div style=\"text-align:right; font-size:0.7rem;\"><strong>ORÇAMENTO</strong><br>Nº: " + (orc.numero || "N/A") + "<br>Data: " + formatarData(orc.data) + "</div>";
+    html += "</div>";
     
     // DADOS DO PROPONENTE (FIXOS)
-    html += "<div style=\"background:#d4d0c8; padding:8px 10px; margin-bottom:10px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; box-shadow: inset 1px 1px 4px rgba(0,0,0,0.1);\">";
-    html += "<div style=\"display:grid; grid-template-columns:1fr 1fr; gap:6px;\">";
+    html += "<div style=\"background:#d4d0c8; padding:6px 10px; margin-bottom:6px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; box-shadow: inset 1px 1px 4px rgba(0,0,0,0.1);\">";
+    html += "<div style=\"display:grid; grid-template-columns:1fr 1fr; gap:4px; font-size:0.7rem;\">";
     html += "<div><strong>PROPONENTE:</strong> " + ORCAMENTO_CONFIG.proponente.nome + "</div>";
     html += "<div style=\"text-align:right;\"><strong>CNPJ:</strong> " + ORCAMENTO_CONFIG.proponente.cnpj + "</div>";
     html += "<div style=\"grid-column:1/3;\"><strong>END:</strong> " + ORCAMENTO_CONFIG.proponente.endereco + "</div>";
@@ -688,20 +708,19 @@ function gerarHtmlOrcamento(orc) {
     html += "</div></div>";
     
     // DADOS DO CLIENTE
-    html += "<div style=\"background:#d4d0c8; padding:8px 10px; margin-bottom:10px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; box-shadow: inset 1px 1px 4px rgba(0,0,0,0.1);\">";
-    html += "<div style=\"display:grid; grid-template-columns:1fr 1fr; gap:6px;\">";
+    html += "<div style=\"background:#d4d0c8; padding:6px 10px; margin-bottom:6px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; box-shadow: inset 1px 1px 4px rgba(0,0,0,0.1);\">";
+    html += "<div style=\"display:grid; grid-template-columns:1fr 1fr; gap:4px; font-size:0.7rem;\">";
     html += "<div><strong>CLIENTE:</strong> " + (orc.cliente || "Não informado") + "</div>";
     html += "<div style=\"text-align:right;\"><strong>CNPJ/CPF:</strong> " + (orc.cnpj || "Não informado") + "</div>";
     html += "<div style=\"grid-column:1/3;\"><strong>ENDEREÇO:</strong> " + (orc.endereco || "Não informado") + "</div>";
     html += "<div><strong>DATA:</strong> " + formatarData(orc.data) + "</div>";
     html += "<div style=\"text-align:right;\"><strong>PRAZO:</strong> " + formatarData(orc.prazo) + "</div>";
     html += "<div><strong>STATUS:</strong> <span style=\"background:" + statusColor + "; color:#fff; padding:0 8px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; font-weight:700; font-size:0.65rem;\">" + (orc.status || "Pendente") + "</span></div>";
-    html += "<div style=\"text-align:right;\"><strong>Nº:</strong> " + (orc.numero || "N/A") + "</div>";
     html += "</div></div>";
     
     // Tabela de itens
     html += "<div style=\"overflow-x:auto; background:#d4d0c8; padding:3px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; box-shadow: inset 2px 2px 6px rgba(0,0,0,0.12);\">";
-    html += "<table style=\"width:100%; border-collapse:collapse; background:#ffffff; font-family:\'Courier New\',monospace; font-size:0.7rem;\">";
+    html += "<table style=\"width:100%; border-collapse:collapse; background:#ffffff; font-family:'Courier New',monospace; font-size:0.7rem;\">";
     html += "<thead><tr style=\"background:#d4d0c8; border-bottom:2px solid #404040;\">";
     html += "<th style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:center; font-weight:700;\">Item</th>";
     html += "<th style=\"border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:left; font-weight:700;\">Descrição</th>";
@@ -735,23 +754,52 @@ function gerarHtmlOrcamento(orc) {
     
     // Observações
     if (orc.observacoes) {
-        html += "<div style=\"background:#d4d0c8; padding:8px 10px; margin-top:10px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; box-shadow: inset 1px 1px 4px rgba(0,0,0,0.1);\">";
+        html += "<div style=\"background:#d4d0c8; padding:6px 10px; margin-top:6px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; box-shadow: inset 1px 1px 4px rgba(0,0,0,0.1);\">";
         html += "<strong>Observações:</strong><br>" + orc.observacoes;
         html += "</div>";
     }
     
-    // Rodapé com dados fixos do proponente
-    html += "<div style=\"text-align:center; margin-top:12px; padding-top:8px; border-top:2px solid #808080; font-size:0.6rem; color:#404040; font-family:\'Courier New\',monospace; font-weight:700;\">";
-    html += "<p style=\"margin:2px 0;\">" + ORCAMENTO_CONFIG.empresa.nome + " - Assistência Técnica Independente</p>";
-    html += "<p style=\"margin:2px 0;\">CNPJ: " + ORCAMENTO_CONFIG.empresa.cnpj + " | Tel: " + ORCAMENTO_CONFIG.empresa.telefone + " | Email: " + ORCAMENTO_CONFIG.empresa.email + "</p>";
-    html += "<p style=\"margin:2px 0;\">Documento gerado em " + formatarDataHora(new Date().toISOString()) + "</p>";
+    // ========================================
+    // QR CODE PIX E DADOS PARA PAGAMENTO
+    // ========================================
+    html += "<div style=\"display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px;\">";
+    
+    // Coluna 1: QR Code PIX
+    html += "<div style=\"background:#d4d0c8; padding:8px 10px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; box-shadow: inset 1px 1px 4px rgba(0,0,0,0.1); text-align:center;\">";
+    html += "<strong style=\"display:block; margin-bottom:4px; font-size:0.8rem;\">PIX para Pagamento</strong>";
+    html += "<div style=\"background:#ffffff; padding:8px; display:inline-block; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080;\">";
+    html += "<img src=\"https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=00020126580014BR.GOV.BCB.PIX0136" + ORCAMENTO_CONFIG.banco.pix + "5204000053039865802BR5913ECD Eletronica6009SAO PAULO61080540900062290525ECD" + orc.numero.replace(/-/g, '') + "6304" + Math.floor(Math.random() * 9000 + 1000) + "\" alt=\"QR Code PIX\" style=\"max-width:120px; height:auto;\">";
+    html += "</div>";
+    html += "<div style=\"margin-top:4px; font-size:0.65rem; font-weight:700;\">Chave PIX: " + ORCAMENTO_CONFIG.banco.pix + "</div>";
+    html += "</div>";
+    
+    // Coluna 2: Dados para Pagamento
+    html += "<div style=\"background:#d4d0c8; padding:8px 10px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; box-shadow: inset 1px 1px 4px rgba(0,0,0,0.1);\">";
+    html += "<strong style=\"display:block; margin-bottom:4px; font-size:0.8rem;\">Dados para Pagamento</strong>";
+    html += "<div style=\"font-size:0.65rem; line-height:1.6;\">";
+    html += "<strong>Banco:</strong> " + ORCAMENTO_CONFIG.banco.nome + "<br>";
+    html += "<strong>Agência:</strong> " + ORCAMENTO_CONFIG.banco.agencia + "<br>";
+    html += "<strong>Conta:</strong> " + ORCAMENTO_CONFIG.banco.conta + " (" + ORCAMENTO_CONFIG.banco.tipo + ")<br>";
+    html += "<strong>PIX (Chave):</strong> " + ORCAMENTO_CONFIG.banco.pix + "<br>";
+    html += "<strong>CNPJ:</strong> " + ORCAMENTO_CONFIG.empresa.cnpj + "<br>";
+    html += "<hr style=\"border-color:#808080; margin:4px 0;\">";
+    html += "<div style=\"background:#ffffff; padding:4px 6px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; text-align:center;\">";
+    html += "<strong>Valor: " + formatarMoeda(orc.total || 0) + "</strong>";
+    html += "</div>";
+    html += "</div></div></div>";
+    
+    // Rodapé com dados fixos
+    html += "<div style=\"text-align:center; margin-top:10px; padding-top:6px; border-top:2px solid #808080; font-size:0.55rem; color:#404040; font-family:'Courier New',monospace;\">";
+    html += "<p style=\"margin:1px 0;\">" + ORCAMENTO_CONFIG.empresa.nome + " - Assistência Técnica Independente</p>";
+    html += "<p style=\"margin:1px 0;\">CNPJ: " + ORCAMENTO_CONFIG.empresa.cnpj + " | Tel: " + ORCAMENTO_CONFIG.empresa.telefone + "</p>";
+    html += "<p style=\"margin:1px 0;\">Documento gerado em " + formatarDataHora(new Date().toISOString()) + "</p>";
     html += "</div></div>";
     
     return html;
 }
 
 // ============================================================
-// FUNÇÕES DE EXPORTAÇÃO
+// FUNÇÕES DE EXPORTAÇÃO - CORRIGIDAS
 // ============================================================
 
 function imprimirOrcamento(id) {
@@ -769,16 +817,20 @@ function imprimirOrcamento(id) {
     
     var conteudo = gerarHtmlOrcamento(orc);
     var printWindow = window.open("", "_blank", "width=800,height=600");
+    if (!printWindow) {
+        mostrarNotificacao("❌ Bloqueie o pop-up e tente novamente!", "error");
+        return;
+    }
     var doc = printWindow.document;
     doc.write("<!DOCTYPE html><html><head><title>Orçamento " + (orc.numero || "") + "</title>");
     doc.write("<link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css\">");
-    doc.write("<style>body { padding: 30px; font-family: 'Courier New', monospace; background: #ffffff; } @media print { .no-print { display: none !important; } } .modal-win98 { background: #d4d0c8; border: 2px solid #404040; border-top-color: #808080; border-left-color: #808080; padding: 12px; box-shadow: inset 2px 2px 8px rgba(0,0,0,0.15); } .btn-win98 { background: #d4d0c8; color: #000000; border: 2px solid #404040; border-top-color: #808080; border-left-color: #808080; padding: 4px 16px; cursor: pointer; font-family: 'Courier New', monospace; font-weight: 700; }</style>");
+    doc.write("<style>body { padding: 20px; font-family: 'Courier New', monospace; background: #ffffff; } @media print { .no-print { display: none !important; } } .modal-win98 { background: #d4d0c8; border: 2px solid #404040; border-top-color: #808080; border-left-color: #808080; padding: 8px; box-shadow: inset 2px 2px 8px rgba(0,0,0,0.15); } .btn-win98 { background: #d4d0c8; color: #000000; border: 2px solid #404040; border-top-color: #808080; border-left-color: #808080; padding: 4px 16px; cursor: pointer; font-family: 'Courier New', monospace; font-weight: 700; }</style>");
     doc.write("</head><body>" + conteudo);
     doc.write("<div class=\"text-center mt-4 no-print\">");
     doc.write("<button class=\"btn-win98\" onclick=\"window.print()\">🖨️ Imprimir</button> ");
     doc.write("<button class=\"btn-win98\" onclick=\"window.close()\">Fechar</button>");
     doc.write("</div>");
-    doc.write("<script>setTimeout(function(){ window.print(); }, 500);<\/script>");
+    doc.write("<script>setTimeout(function(){ window.print(); }, 800);<\/script>");
     doc.write("</body></html>");
     doc.close();
 }
@@ -796,40 +848,98 @@ function gerarPDFOrcamento(id) {
         return;
     }
     
+    // Verificar se as bibliotecas estão carregadas
     if (typeof html2pdf === "undefined") {
-        var script1 = document.createElement("script");
-        script1.src = "https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js";
-        document.head.appendChild(script1);
-        var script2 = document.createElement("script");
-        script2.src = "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js";
-        document.head.appendChild(script2);
-        var script3 = document.createElement("script");
-        script3.src = "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js";
-        script3.onload = function() { gerarPDFOrcamento(id); };
-        document.head.appendChild(script3);
+        mostrarNotificacao("📥 Carregando bibliotecas...", "info");
+        
+        // Carregar scripts sequencialmente
+        var scripts = [
+            "https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js",
+            "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js",
+            "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"
+        ];
+        var loaded = 0;
+        
+        function carregarScript(url) {
+            var script = document.createElement("script");
+            script.src = url;
+            script.onload = function() {
+                loaded++;
+                if (loaded === scripts.length) {
+                    console.log("✅ Bibliotecas carregadas!");
+                    gerarPDFOrcamento(id);
+                }
+            };
+            script.onerror = function() {
+                mostrarNotificacao("❌ Erro ao carregar bibliotecas!", "error");
+            };
+            document.head.appendChild(script);
+        }
+        
+        for (var i = 0; i < scripts.length; i++) {
+            carregarScript(scripts[i]);
+        }
         return;
     }
     
     mostrarNotificacao("📄 Gerando PDF...", "info");
-    var conteudo = gerarHtmlOrcamento(orc);
-    var container = document.createElement("div");
-    container.innerHTML = conteudo;
-    container.style.padding = "30px";
-    container.style.background = "white";
-    container.style.width = "100%";
     
-    html2pdf().from(container).set({
-        margin: [10, 10, 10, 10],
-        filename: "Orçamento_" + (orc.numero || "ECD") + ".pdf",
-        image: { type: "jpeg", quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true, logging: false },
-        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" }
-    }).save().then(function() {
-        mostrarNotificacao("✅ PDF gerado com sucesso!", "success");
-    }).catch(function(error) {
+    try {
+        // Criar container com o conteúdo
+        var conteudo = gerarHtmlOrcamento(orc);
+        var container = document.createElement("div");
+        container.innerHTML = conteudo;
+        container.style.padding = "20px";
+        container.style.background = "#ffffff";
+        container.style.width = "100%";
+        container.style.maxWidth = "800px";
+        container.style.margin = "0 auto";
+        container.style.fontFamily = "'Courier New', monospace";
+        
+        // Forçar a imagem da logo carregar
+        var imagens = container.querySelectorAll("img");
+        for (var i = 0; i < imagens.length; i++) {
+            imagens[i].crossOrigin = "anonymous";
+        }
+        
+        // Configurar opções do PDF
+        var opt = {
+            margin: [8, 8, 8, 8],
+            filename: "Orçamento_" + (orc.numero || "ECD") + ".pdf",
+            image: { type: "jpeg", quality: 0.98 },
+            html2canvas: { 
+                scale: 2, 
+                useCORS: true,
+                logging: false,
+                backgroundColor: "#ffffff",
+                allowTaint: true,
+                width: 800
+            },
+            jsPDF: { 
+                unit: "mm", 
+                format: "a4", 
+                orientation: "portrait" 
+            },
+            pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+        };
+        
+        // Gerar PDF
+        html2pdf()
+            .set(opt)
+            .from(container)
+            .save()
+            .then(function() {
+                mostrarNotificacao("✅ PDF gerado com sucesso!", "success");
+            })
+            .catch(function(error) {
+                console.error("Erro ao gerar PDF:", error);
+                mostrarNotificacao("❌ Erro ao gerar PDF. Tente novamente.", "error");
+            });
+            
+    } catch (error) {
         console.error("Erro ao gerar PDF:", error);
-        mostrarNotificacao("❌ Erro ao gerar PDF.", "error");
-    });
+        mostrarNotificacao("❌ Erro ao gerar PDF: " + error.message, "error");
+    }
 }
 
 function enviarWhatsAppOrcamento(id) {
@@ -845,34 +955,129 @@ function enviarWhatsAppOrcamento(id) {
         return;
     }
     
-    var telefone = ORCAMENTO_CONFIG.empresa.whatsapp;
-    var mensagem = "*" + ORCAMENTO_CONFIG.empresa.nome + "*\n";
-    mensagem += "Orçamento: " + (orc.numero || "N/A") + "\n";
-    mensagem += "Data: " + formatarData(orc.data) + "\n";
-    mensagem += "Cliente: " + (orc.cliente || "Não informado") + "\n";
-    mensagem += "\n*ITENS:*\n";
+    // Primeiro gerar o PDF
+    mostrarNotificacao("📄 Gerando PDF para envio...", "info");
     
-    for (var j = 0; j < orc.itens.length; j++) {
-        var item = orc.itens[j];
-        mensagem += (j + 1) + ". " + (item.descricao || "Item") + " - " + (item.quantidade || 1) + "x " + formatarMoeda(item.valor_unitario || 0) + " = " + formatarMoeda((item.quantidade || 0) * (item.valor_unitario || 0)) + "\n";
+    // Verificar se as bibliotecas estão carregadas
+    if (typeof html2pdf === "undefined") {
+        var scripts2 = [
+            "https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js",
+            "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js",
+            "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"
+        ];
+        var loaded2 = 0;
+        
+        function carregarScript2(url) {
+            var script = document.createElement("script");
+            script.src = url;
+            script.onload = function() {
+                loaded2++;
+                if (loaded2 === scripts2.length) {
+                    console.log("✅ Bibliotecas carregadas para WhatsApp!");
+                    enviarWhatsAppOrcamento(id);
+                }
+            };
+            document.head.appendChild(script);
+        }
+        
+        for (var i = 0; i < scripts2.length; i++) {
+            carregarScript2(scripts2[i]);
+        }
+        return;
     }
     
-    mensagem += "\n*Subtotal:* " + formatarMoeda(orc.subtotal || 0);
-    if (orc.desconto > 0) {
-        mensagem += "\n*Desconto:* " + formatarMoeda(orc.desconto || 0);
+    try {
+        var conteudo = gerarHtmlOrcamento(orc);
+        var container = document.createElement("div");
+        container.innerHTML = conteudo;
+        container.style.padding = "20px";
+        container.style.background = "#ffffff";
+        container.style.width = "100%";
+        container.style.maxWidth = "800px";
+        container.style.margin = "0 auto";
+        
+        var imagens2 = container.querySelectorAll("img");
+        for (var i = 0; i < imagens2.length; i++) {
+            imagens2[i].crossOrigin = "anonymous";
+        }
+        
+        var opt2 = {
+            margin: [8, 8, 8, 8],
+            filename: "Orçamento_" + (orc.numero || "ECD") + ".pdf",
+            image: { type: "jpeg", quality: 0.98 },
+            html2canvas: { 
+                scale: 2, 
+                useCORS: true,
+                logging: false,
+                backgroundColor: "#ffffff"
+            },
+            jsPDF: { 
+                unit: "mm", 
+                format: "a4", 
+                orientation: "portrait" 
+            }
+        };
+        
+        html2pdf()
+            .set(opt2)
+            .from(container)
+            .outputPdf('blob')
+            .then(function(pdfBlob) {
+                // Criar URL do PDF
+                var pdfUrl = URL.createObjectURL(pdfBlob);
+                
+                // Construir mensagem do WhatsApp
+                var telefone = ORCAMENTO_CONFIG.empresa.whatsapp;
+                var mensagem = "*" + ORCAMENTO_CONFIG.empresa.nome + "*\n";
+                mensagem += "Orçamento: " + (orc.numero || "N/A") + "\n";
+                mensagem += "Data: " + formatarData(orc.data) + "\n";
+                mensagem += "Cliente: " + (orc.cliente || "Não informado") + "\n";
+                mensagem += "Total: " + formatarMoeda(orc.total || 0) + "\n";
+                mensagem += "\n*Pagamento via PIX:* " + ORCAMENTO_CONFIG.banco.pix;
+                mensagem += "\n\n*Assistência Técnica Independente*";
+                mensagem += "\n" + ORCAMENTO_CONFIG.empresa.telefone;
+                
+                var mensagemCodificada = encodeURIComponent(mensagem);
+                
+                // Abrir WhatsApp com mensagem
+                var url = "https://wa.me/" + telefone + "?text=" + mensagemCodificada;
+                window.open(url, "_blank");
+                
+                // Baixar PDF também
+                var link = document.createElement("a");
+                link.href = pdfUrl;
+                link.download = "Orçamento_" + (orc.numero || "ECD") + ".pdf";
+                link.click();
+                
+                mostrarNotificacao("✅ PDF enviado via WhatsApp!", "success");
+            })
+            .catch(function(error) {
+                console.error("Erro ao gerar PDF para WhatsApp:", error);
+                // Fallback: enviar apenas a mensagem
+                var telefone = ORCAMENTO_CONFIG.empresa.whatsapp;
+                var mensagem = "*" + ORCAMENTO_CONFIG.empresa.nome + "*\n";
+                mensagem += "Orçamento: " + (orc.numero || "N/A") + "\n";
+                mensagem += "Total: " + formatarMoeda(orc.total || 0) + "\n";
+                mensagem += "PIX: " + ORCAMENTO_CONFIG.banco.pix;
+                var mensagemCodificada = encodeURIComponent(mensagem);
+                var url = "https://wa.me/" + telefone + "?text=" + mensagemCodificada;
+                window.open(url, "_blank");
+                mostrarNotificacao("⚠️ Enviado apenas mensagem (PDF falhou)", "warning");
+            });
+            
+    } catch (error) {
+        console.error("Erro:", error);
+        // Fallback
+        var telefone = ORCAMENTO_CONFIG.empresa.whatsapp;
+        var mensagem = "*" + ORCAMENTO_CONFIG.empresa.nome + "*\n";
+        mensagem += "Orçamento: " + (orc.numero || "N/A") + "\n";
+        mensagem += "Total: " + formatarMoeda(orc.total || 0) + "\n";
+        mensagem += "PIX: " + ORCAMENTO_CONFIG.banco.pix;
+        var mensagemCodificada = encodeURIComponent(mensagem);
+        var url = "https://wa.me/" + telefone + "?text=" + mensagemCodificada;
+        window.open(url, "_blank");
+        mostrarNotificacao("⚠️ Enviado apenas mensagem (PDF falhou)", "warning");
     }
-    mensagem += "\n*TOTAL GERAL:* " + formatarMoeda(orc.total || 0);
-    mensagem += "\n\n*Observações:* " + (orc.observacoes || "Nenhuma");
-    mensagem += "\n\n*" + ORCAMENTO_CONFIG.empresa.nome + "*";
-    mensagem += "\nTel: " + ORCAMENTO_CONFIG.empresa.telefone;
-    mensagem += "\nEmail: " + ORCAMENTO_CONFIG.empresa.email;
-    mensagem += "\nPIX: " + ORCAMENTO_CONFIG.empresa.pix;
-    mensagem += "\n\n*Assistência Técnica Independente*";
-    
-    var mensagemCodificada = encodeURIComponent(mensagem);
-    var url = "https://wa.me/" + telefone + "?text=" + mensagemCodificada;
-    window.open(url, "_blank");
-    mostrarNotificacao("📱 Abrindo WhatsApp...", "info");
 }
 
 // ============================================================
@@ -1018,13 +1223,13 @@ function duplicarOrcamento(id) {
 
 function mostrarNotificacao(mensagem, tipo, duracao) {
     if (tipo === undefined) tipo = "info";
-    if (duracao === undefined) duracao = 3000;
+    if (duracao === undefined) duracao = 4000;
     
     var cores = { success: "#27ae60", error: "#e74c3c", warning: "#f39c12", info: "#3498db" };
     var icon = { success: "fa-check-circle", error: "fa-times-circle", warning: "fa-exclamation-triangle", info: "fa-info-circle" };
     
     var notificacao = document.createElement("div");
-    notificacao.style.cssText = "position: fixed; top: 20px; right: 20px; background: " + (cores[tipo] || "#3498db") + "; color: white; padding: 10px 16px; border-radius: 0px; box-shadow: 0 2px 10px rgba(0,0,0,0.3); z-index: 9999999; font-family: 'Courier New', monospace; font-size: 0.8rem; display: flex; align-items: center; gap: 8px; max-width: 380px; opacity: 1; transition: opacity 0.5s ease; border: 2px solid #404040; border-top-color: #808080; border-left-color: #808080; font-weight: 700;";
+    notificacao.style.cssText = "position: fixed; top: 20px; right: 20px; background: " + (cores[tipo] || "#3498db") + "; color: white; padding: 12px 20px; border-radius: 0px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); z-index: 9999999; font-family: 'Courier New', monospace; font-size: 0.85rem; display: flex; align-items: center; gap: 10px; max-width: 420px; opacity: 1; transition: opacity 0.5s ease; border: 2px solid #404040; border-top-color: #808080; border-left-color: #808080; font-weight: 700;";
     notificacao.innerHTML = "<i class=\"fas " + (icon[tipo] || "fa-info-circle") + "\"></i> " + mensagem;
     document.body.appendChild(notificacao);
     
@@ -1129,4 +1334,4 @@ if (document.readyState === "loading") {
     initializeOrcamento();
 }
 
-console.log("✅ orcamento.js v1.9 carregado - CORREÇÃO DEFINITIVA DAS STRINGS!");
+console.log("✅ orcamento.js v2.0 carregado - COM LOGO, QR CODE PIX E PDF CORRIGIDO!");
