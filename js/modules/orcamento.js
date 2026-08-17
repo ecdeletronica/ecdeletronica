@@ -1,8 +1,8 @@
 // js/modules/orcamento.js - Sistema de Orçamento para ECD Eletrônica
-// ✅ Versão ESTÁVEL v1.1 - LAYOUT WINDOWS 98
+// ✅ Versão ESTÁVEL v1.2 - LAYOUT WINDOWS 98 ESCURO
 // ✅ Funcionalidades: CRUD, PDF, WhatsApp, Imprimir, Storage Local
 
-console.log('✅ orcamento.js carregado - Versão ESTÁVEL v1.1 (Windows 98)');
+console.log('✅ orcamento.js carregado - Versão ESTÁVEL v1.2 (Windows 98 Escuro)');
 
 // ============================================================
 // CONFIGURAÇÕES
@@ -32,7 +32,7 @@ window.orcamentoEditandoId = null;
 window.orcamentoItens = [];
 
 // ============================================================
-// FUNÇÕES DE STORAGE (localStorage)
+// FUNÇÕES DE STORAGE
 // ============================================================
 
 function salvarOrcamentos() {
@@ -122,35 +122,36 @@ function adicionarItemLinha() {
     const linha = document.createElement('tr');
     const index = window.orcamentoItens.length;
     
-    linha.style.border = '1px solid #808080';
-    linha.style.borderTop = '1px solid #ffffff';
-    linha.style.borderLeft = '1px solid #ffffff';
+    linha.style.border = '2px solid #404040';
+    linha.style.borderTop = '2px solid #808080';
+    linha.style.borderLeft = '2px solid #808080';
+    linha.style.background = '#ffffff';
     
     linha.innerHTML = `
-        <td style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:2px 4px; text-align:center; background:#f0f0f0;">${index + 1}</td>
-        <td style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:2px 4px;">
+        <td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 6px; text-align:center; background:#d4d0c8; font-weight:700; font-size:0.8rem;">${index + 1}</td>
+        <td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px;">
             <input type="text" class="item-descricao" 
                    placeholder="Descrição do serviço" 
                    data-index="${index}"
-                   style="border:1px solid #808080; border-top-color:#404040; border-left-color:#404040; padding:2px 4px; width:100%; background:#ffffff; font-family:'Courier New',monospace; font-size:0.85rem;">
+                   style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; width:100%; background:#ffffff; font-family:'Courier New',monospace; font-size:0.8rem; color:#000000; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.1);">
         </td>
-        <td style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:2px 4px;">
+        <td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px;">
             <input type="text" class="item-unidade" value="UN" data-index="${index}"
-                   style="border:1px solid #808080; border-top-color:#404040; border-left-color:#404040; padding:2px 4px; width:60px; background:#ffffff; font-family:'Courier New',monospace; font-size:0.85rem;">
+                   style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 4px; width:50px; background:#ffffff; font-family:'Courier New',monospace; font-size:0.8rem; color:#000000; text-align:center; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.1);">
         </td>
-        <td style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:2px 4px;">
+        <td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px;">
             <input type="number" class="item-quantidade" value="1" min="1" data-index="${index}"
-                   style="border:1px solid #808080; border-top-color:#404040; border-left-color:#404040; padding:2px 4px; width:60px; background:#ffffff; font-family:'Courier New',monospace; font-size:0.85rem;">
+                   style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 4px; width:50px; background:#ffffff; font-family:'Courier New',monospace; font-size:0.8rem; color:#000000; text-align:center; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.1);">
         </td>
-        <td style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:2px 4px;">
+        <td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px;">
             <input type="text" class="item-valor" value="0,00" data-index="${index}"
-                   style="border:1px solid #808080; border-top-color:#404040; border-left-color:#404040; padding:2px 4px; width:100px; background:#ffffff; font-family:'Courier New',monospace; font-size:0.85rem;">
+                   style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 4px; width:100px; background:#ffffff; font-family:'Courier New',monospace; font-size:0.8rem; color:#000000; text-align:right; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.1);">
         </td>
         <td class="item-subtotal" data-index="${index}" 
-            style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:2px 4px; text-align:right; background:#f0f0f0; font-family:'Courier New',monospace; font-size:0.85rem;">R$ 0,00</td>
-        <td style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:2px 4px; text-align:center; background:#f0f0f0;">
+            style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:right; background:#f0f0f0; font-family:'Courier New',monospace; font-size:0.8rem; font-weight:700;">R$ 0,00</td>
+        <td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; text-align:center; background:#d4d0c8;">
             <button type="button" class="remover-item" data-index="${index}"
-                    style="background:#ece9d8; color:#000000; border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:1px 6px; cursor:pointer; font-size:0.75rem;">
+                    style="background:#d4d0c8; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:1px 8px; cursor:pointer; font-size:0.7rem; font-family:'Courier New',monospace; font-weight:700;">
                 <i class="fas fa-trash" style="color:#000000;"></i>
             </button>
         </td>
@@ -393,34 +394,35 @@ function carregarOrcamentoParaEdicao(id) {
         tbody.innerHTML = '';
         window.orcamentoItens.forEach((item, index) => {
             const linha = document.createElement('tr');
-            linha.style.border = '1px solid #808080';
-            linha.style.borderTop = '1px solid #ffffff';
-            linha.style.borderLeft = '1px solid #ffffff';
+            linha.style.border = '2px solid #404040';
+            linha.style.borderTop = '2px solid #808080';
+            linha.style.borderLeft = '2px solid #808080';
+            linha.style.background = '#ffffff';
             linha.innerHTML = `
-                <td style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:2px 4px; text-align:center; background:#f0f0f0;">${index + 1}</td>
-                <td style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:2px 4px;">
+                <td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 6px; text-align:center; background:#d4d0c8; font-weight:700; font-size:0.8rem;">${index + 1}</td>
+                <td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px;">
                     <input type="text" class="item-descricao" value="${item.descricao || ''}" data-index="${index}"
-                           style="border:1px solid #808080; border-top-color:#404040; border-left-color:#404040; padding:2px 4px; width:100%; background:#ffffff; font-family:'Courier New',monospace; font-size:0.85rem;">
+                           style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; width:100%; background:#ffffff; font-family:'Courier New',monospace; font-size:0.8rem; color:#000000; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.1);">
                 </td>
-                <td style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:2px 4px;">
+                <td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px;">
                     <input type="text" class="item-unidade" value="${item.unidade || 'UN'}" data-index="${index}"
-                           style="border:1px solid #808080; border-top-color:#404040; border-left-color:#404040; padding:2px 4px; width:60px; background:#ffffff; font-family:'Courier New',monospace; font-size:0.85rem;">
+                           style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 4px; width:50px; background:#ffffff; font-family:'Courier New',monospace; font-size:0.8rem; color:#000000; text-align:center; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.1);">
                 </td>
-                <td style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:2px 4px;">
+                <td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px;">
                     <input type="number" class="item-quantidade" value="${item.quantidade || 1}" min="1" data-index="${index}"
-                           style="border:1px solid #808080; border-top-color:#404040; border-left-color:#404040; padding:2px 4px; width:60px; background:#ffffff; font-family:'Courier New',monospace; font-size:0.85rem;">
+                           style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 4px; width:50px; background:#ffffff; font-family:'Courier New',monospace; font-size:0.8rem; color:#000000; text-align:center; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.1);">
                 </td>
-                <td style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:2px 4px;">
+                <td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px;">
                     <input type="text" class="item-valor" value="${formatarMoeda(item.valor_unitario || 0).replace('R$ ', '')}" data-index="${index}"
-                           style="border:1px solid #808080; border-top-color:#404040; border-left-color:#404040; padding:2px 4px; width:100px; background:#ffffff; font-family:'Courier New',monospace; font-size:0.85rem;">
+                           style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 4px; width:100px; background:#ffffff; font-family:'Courier New',monospace; font-size:0.8rem; color:#000000; text-align:right; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.1);">
                 </td>
                 <td class="item-subtotal" data-index="${index}" 
-                    style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:2px 4px; text-align:right; background:#f0f0f0; font-family:'Courier New',monospace; font-size:0.85rem;">
+                    style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:right; background:#f0f0f0; font-family:'Courier New',monospace; font-size:0.8rem; font-weight:700;">
                     ${formatarMoeda((item.quantidade || 0) * (item.valor_unitario || 0))}
                 </td>
-                <td style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:2px 4px; text-align:center; background:#f0f0f0;">
+                <td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; text-align:center; background:#d4d0c8;">
                     <button type="button" class="remover-item" data-index="${index}"
-                            style="background:#ece9d8; color:#000000; border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:1px 6px; cursor:pointer; font-size:0.75rem;">
+                            style="background:#d4d0c8; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:1px 8px; cursor:pointer; font-size:0.7rem; font-family:'Courier New',monospace; font-weight:700;">
                         <i class="fas fa-trash" style="color:#000000;"></i>
                     </button>
                 </td>
@@ -540,9 +542,9 @@ function listarOrcamentos() {
     
     if (!window.orcamentos || window.orcamentos.length === 0) {
         container.innerHTML = `
-            <div style="text-align:center; padding:30px 0; background:#ece9d8; border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff;">
-                <i class="fas fa-file-invoice" style="font-size:2.5rem; color:#808080;"></i>
-                <p style="margin-top:12px; color:#666;">Nenhum orçamento cadastrado.</p>
+            <div style="text-align:center; padding:30px 0; background:#d4d0c8; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; box-shadow: inset 2px 2px 8px rgba(0,0,0,0.15);">
+                <i class="fas fa-file-invoice" style="font-size:2.5rem; color:#404040;"></i>
+                <p style="margin-top:12px; color:#404040; font-family:'Courier New',monospace; font-weight:700;">Nenhum orçamento cadastrado.</p>
                 <button class="btn-win98" onclick="switchOrcamentoTab('form')" style="margin-top:8px;">
                     <i class="fas fa-plus"></i> Criar Primeiro Orçamento
                 </button>
@@ -552,16 +554,16 @@ function listarOrcamentos() {
     }
     
     let html = `
-        <div style="overflow-x:auto; background:#ece9d8; border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:4px;">
-            <table style="width:100%; border-collapse:collapse; background:#ffffff; font-family:'Courier New',monospace; font-size:0.85rem;">
+        <div style="overflow-x:auto; background:#d4d0c8; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:4px; box-shadow: inset 2px 2px 8px rgba(0,0,0,0.15);">
+            <table style="width:100%; border-collapse:collapse; background:#ffffff; font-family:'Courier New',monospace; font-size:0.8rem;">
                 <thead>
-                    <tr style="background:#ece9d8; border-bottom:2px solid #808080;">
-                        <th style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:4px 8px; text-align:left; color:#000000;">Nº</th>
-                        <th style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:4px 8px; text-align:left; color:#000000;">Cliente</th>
-                        <th style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:4px 8px; text-align:left; color:#000000;">Data</th>
-                        <th style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:4px 8px; text-align:left; color:#000000;">Status</th>
-                        <th style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:4px 8px; text-align:right; color:#000000;">Total</th>
-                        <th style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:4px 8px; text-align:center; color:#000000;">Ações</th>
+                    <tr style="background:#d4d0c8; border-bottom:2px solid #404040;">
+                        <th style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:4px 8px; text-align:left; color:#000000; font-weight:700;">Nº</th>
+                        <th style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:4px 8px; text-align:left; color:#000000; font-weight:700;">Cliente</th>
+                        <th style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:4px 8px; text-align:left; color:#000000; font-weight:700;">Data</th>
+                        <th style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:4px 8px; text-align:left; color:#000000; font-weight:700;">Status</th>
+                        <th style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:4px 8px; text-align:right; color:#000000; font-weight:700;">Total</th>
+                        <th style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:4px 8px; text-align:center; color:#000000; font-weight:700;">Ações</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -577,14 +579,14 @@ function listarOrcamentos() {
         
         html += `
             <tr style="border-bottom:1px solid #808080;">
-                <td style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:4px 8px;"><strong>${orc.numero || 'N/A'}</strong></td>
-                <td style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:4px 8px;">${orc.cliente || 'Sem cliente'}</td>
-                <td style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:4px 8px;">${formatarData(orc.data)}</td>
-                <td style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:4px 8px;">
-                    <span style="background:${statusColor}; color:#fff; padding:2px 8px; border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; font-size:0.7rem;">${orc.status || 'Pendente'}</span>
+                <td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:4px 8px;"><strong>${orc.numero || 'N/A'}</strong></td>
+                <td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:4px 8px;">${orc.cliente || 'Sem cliente'}</td>
+                <td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:4px 8px;">${formatarData(orc.data)}</td>
+                <td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:4px 8px;">
+                    <span style="background:${statusColor}; color:#fff; padding:2px 10px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; font-size:0.7rem; font-weight:700;">${orc.status || 'Pendente'}</span>
                 </td>
-                <td style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:4px 8px; text-align:right;"><strong>${formatarMoeda(orc.total || 0)}</strong></td>
-                <td style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:4px 8px; text-align:center;">
+                <td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:4px 8px; text-align:right;"><strong>${formatarMoeda(orc.total || 0)}</strong></td>
+                <td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:4px 8px; text-align:center;">
                     <button class="btn-win98-sm" onclick="verOrcamento('${orc.id}')" title="Visualizar"><i class="fas fa-eye"></i></button>
                     <button class="btn-win98-sm" onclick="carregarOrcamentoParaEdicao('${orc.id}')" title="Editar"><i class="fas fa-edit"></i></button>
                     <button class="btn-win98-sm" onclick="duplicarOrcamento('${orc.id}')" title="Duplicar"><i class="fas fa-copy"></i></button>
@@ -598,7 +600,7 @@ function listarOrcamentos() {
                 </tbody>
             </table>
         </div>
-        <div style="margin-top:8px; font-size:0.75rem; color:#666; font-family:'Courier New',monospace;">
+        <div style="margin-top:8px; font-size:0.7rem; color:#404040; font-family:'Courier New',monospace; font-weight:700;">
             <i class="fas fa-info-circle"></i> Total: ${window.orcamentos.length} orçamento(s)
         </div>
     `;
@@ -619,15 +621,15 @@ function verOrcamento(id) {
     
     const modalHtml = `
         <div class="modal-win98" id="orcamentoModal">
-            <div class="modal-win98-content">
-                <div class="modal-win98-header">
-                    <span class="modal-win98-title"><i class="fas fa-file-invoice"></i> Orçamento ${orc.numero || ''}</span>
-                    <button class="modal-win98-close" onclick="fecharModalWin98('orcamentoModal')">×</button>
+            <div class="modal-win98-content" style="max-width:850px; width:95%;">
+                <div class="modal-win98-header" style="background:#000080; color:#ffffff; padding:6px 12px; display:flex; justify-content:space-between; align-items:center; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080;">
+                    <span class="modal-win98-title" style="font-family:'Courier New',monospace; font-weight:700; font-size:0.9rem;"><i class="fas fa-file-invoice"></i> Orçamento ${orc.numero || ''}</span>
+                    <button class="modal-win98-close" onclick="fecharModalWin98('orcamentoModal')" style="background:#c0c0c0; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:0 8px; cursor:pointer; font-size:1rem; font-weight:700;">×</button>
                 </div>
-                <div class="modal-win98-body">
+                <div class="modal-win98-body" style="background:#d4d0c8; padding:16px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080;">
                     ${gerarHtmlOrcamento(orc)}
                 </div>
-                <div class="modal-win98-footer">
+                <div class="modal-win98-footer" style="background:#d4d0c8; padding:8px 12px; text-align:right; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080;">
                     <button class="btn-win98" onclick="enviarWhatsAppOrcamento('${orc.id}')"><i class="fab fa-whatsapp"></i> WhatsApp</button>
                     <button class="btn-win98" onclick="imprimirOrcamento('${orc.id}')"><i class="fas fa-print"></i> Imprimir</button>
                     <button class="btn-win98" onclick="gerarPDFOrcamento('${orc.id}')"><i class="fas fa-file-pdf"></i> PDF</button>
@@ -660,8 +662,8 @@ function gerarHtmlOrcamento(orc) {
     const statusColor = statusColors[orc.status] || '#666';
     
     let html = `
-        <div style="font-family:'Courier New',monospace; font-size:0.85rem;">
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px; background:#ece9d8; padding:12px; border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff;">
+        <div style="font-family:'Courier New',monospace; font-size:0.8rem; color:#000000;">
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px; background:#d4d0c8; padding:12px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; box-shadow: inset 2px 2px 8px rgba(0,0,0,0.15);">
                 <div>
                     <strong>${ORCAMENTO_CONFIG.empresa.nome}</strong><br>
                     CNPJ: ${ORCAMENTO_CONFIG.empresa.cnpj}<br>
@@ -671,31 +673,31 @@ function gerarHtmlOrcamento(orc) {
                     PIX: ${ORCAMENTO_CONFIG.empresa.pix}
                 </div>
                 <div style="text-align:right;">
-                    <h3 style="margin:0 0 8px 0; color:#0a2e4d;">ORÇAMENTO</h3>
+                    <h3 style="margin:0 0 8px 0; color:#000080; font-weight:700;">ORÇAMENTO</h3>
                     <p><strong>Nº:</strong> ${orc.numero || 'N/A'}</p>
                     <p><strong>Data:</strong> ${formatarData(orc.data)}</p>
                     <p><strong>Prazo:</strong> ${formatarData(orc.prazo)}</p>
-                    <p><span style="background:${statusColor}; color:#fff; padding:2px 12px; border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff;">${orc.status || 'Pendente'}</span></p>
+                    <p><span style="background:${statusColor}; color:#fff; padding:2px 12px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; font-weight:700;">${orc.status || 'Pendente'}</span></p>
                 </div>
             </div>
             
-            <div style="background:#ece9d8; padding:12px; margin-bottom:12px; border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff;">
+            <div style="background:#d4d0c8; padding:12px; margin-bottom:12px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; box-shadow: inset 2px 2px 8px rgba(0,0,0,0.15);">
                 <strong>CLIENTE</strong><br>
                 ${orc.cliente || 'Não informado'}<br>
                 ${orc.cnpj ? 'CNPJ: ' + orc.cnpj : ''}<br>
                 ${orc.endereco || ''}
             </div>
             
-            <div style="overflow-x:auto; background:#ece9d8; padding:4px; border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff;">
-                <table style="width:100%; border-collapse:collapse; background:#ffffff; font-family:'Courier New',monospace; font-size:0.85rem;">
+            <div style="overflow-x:auto; background:#d4d0c8; padding:4px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; box-shadow: inset 2px 2px 8px rgba(0,0,0,0.15);">
+                <table style="width:100%; border-collapse:collapse; background:#ffffff; font-family:'Courier New',monospace; font-size:0.8rem;">
                     <thead>
-                        <tr style="background:#ece9d8; border-bottom:2px solid #808080;">
-                            <th style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:4px 8px; text-align:left;">Item</th>
-                            <th style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:4px 8px; text-align:left;">Descrição</th>
-                            <th style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:4px 8px; text-align:left;">UN</th>
-                            <th style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:4px 8px; text-align:center;">Quant.</th>
-                            <th style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:4px 8px; text-align:right;">Valor Unit.</th>
-                            <th style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:4px 8px; text-align:right;">Subtotal</th>
+                        <tr style="background:#d4d0c8; border-bottom:2px solid #404040;">
+                            <th style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:4px 8px; text-align:left; font-weight:700;">Item</th>
+                            <th style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:4px 8px; text-align:left; font-weight:700;">Descrição</th>
+                            <th style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:4px 8px; text-align:left; font-weight:700;">UN</th>
+                            <th style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:4px 8px; text-align:center; font-weight:700;">Quant.</th>
+                            <th style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:4px 8px; text-align:right; font-weight:700;">Valor Unit.</th>
+                            <th style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:4px 8px; text-align:right; font-weight:700;">Subtotal</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -705,12 +707,12 @@ function gerarHtmlOrcamento(orc) {
         const subtotal = (item.quantidade || 0) * (item.valor_unitario || 0);
         html += `
             <tr>
-                <td style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:4px 8px;">${index + 1}</td>
-                <td style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:4px 8px;">${item.descricao || ''}</td>
-                <td style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:4px 8px;">${item.unidade || 'UN'}</td>
-                <td style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:4px 8px; text-align:center;">${item.quantidade || 1}</td>
-                <td style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:4px 8px; text-align:right;">${formatarMoeda(item.valor_unitario || 0)}</td>
-                <td style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:4px 8px; text-align:right;">${formatarMoeda(subtotal)}</td>
+                <td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:4px 8px;">${index + 1}</td>
+                <td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:4px 8px;">${item.descricao || ''}</td>
+                <td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:4px 8px;">${item.unidade || 'UN'}</td>
+                <td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:4px 8px; text-align:center;">${item.quantidade || 1}</td>
+                <td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:4px 8px; text-align:right;">${formatarMoeda(item.valor_unitario || 0)}</td>
+                <td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:4px 8px; text-align:right;">${formatarMoeda(subtotal)}</td>
             </tr>
         `;
     });
@@ -719,29 +721,29 @@ function gerarHtmlOrcamento(orc) {
                     </tbody>
                     <tfoot>
                         <tr>
-                            <td colspan="5" style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:4px 8px; text-align:right;"><strong>Subtotal</strong></td>
-                            <td style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:4px 8px; text-align:right;"><strong>${formatarMoeda(orc.subtotal || 0)}</strong></td>
+                            <td colspan="5" style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:4px 8px; text-align:right; background:#f0f0f0;"><strong>Subtotal</strong></td>
+                            <td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:4px 8px; text-align:right; background:#f0f0f0;"><strong>${formatarMoeda(orc.subtotal || 0)}</strong></td>
                         </tr>
                         <tr>
-                            <td colspan="5" style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:4px 8px; text-align:right;"><strong>Desconto</strong></td>
-                            <td style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:4px 8px; text-align:right;"><strong>${formatarMoeda(orc.desconto || 0)}</strong></td>
+                            <td colspan="5" style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:4px 8px; text-align:right; background:#f0f0f0;"><strong>Desconto</strong></td>
+                            <td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:4px 8px; text-align:right; background:#f0f0f0;"><strong>${formatarMoeda(orc.desconto || 0)}</strong></td>
                         </tr>
                         <tr style="background:#d4e6f1;">
-                            <td colspan="5" style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:4px 8px; text-align:right;"><strong>TOTAL GERAL</strong></td>
-                            <td style="border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff; padding:4px 8px; text-align:right;"><strong>${formatarMoeda(orc.total || 0)}</strong></td>
+                            <td colspan="5" style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:4px 8px; text-align:right; font-weight:700; font-size:0.9rem;"><strong>TOTAL GERAL</strong></td>
+                            <td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:4px 8px; text-align:right; font-weight:700; font-size:0.9rem;"><strong>${formatarMoeda(orc.total || 0)}</strong></td>
                         </tr>
                     </tfoot>
                 </table>
             </div>
             
             ${orc.observacoes ? `
-            <div style="background:#ece9d8; padding:12px; margin-top:12px; border:1px solid #808080; border-top-color:#ffffff; border-left-color:#ffffff;">
+            <div style="background:#d4d0c8; padding:12px; margin-top:12px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; box-shadow: inset 2px 2px 8px rgba(0,0,0,0.15);">
                 <strong>Observações:</strong><br>
                 ${orc.observacoes}
             </div>
             ` : ''}
             
-            <div style="text-align:center; margin-top:16px; font-size:0.7rem; color:#666; font-family:'Courier New',monospace;">
+            <div style="text-align:center; margin-top:16px; font-size:0.65rem; color:#404040; font-family:'Courier New',monospace; font-weight:700;">
                 <p>${ORCAMENTO_CONFIG.empresa.nome} - Assistência Técnica Independente</p>
                 <p>Documento gerado em ${formatarDataHora(new Date().toISOString())}</p>
             </div>
@@ -774,8 +776,8 @@ function imprimirOrcamento(id) {
             <style>
                 body { padding: 30px; font-family: 'Courier New', monospace; background: #ffffff; }
                 @media print { .no-print { display: none !important; } }
-                .modal-win98 { background: #ece9d8; border: 1px solid #808080; border-top-color: #ffffff; border-left-color: #ffffff; padding: 12px; }
-                .btn-win98 { background: #ece9d8; color: #000000; border: 1px solid #808080; border-top-color: #ffffff; border-left-color: #ffffff; padding: 4px 16px; cursor: pointer; font-family: 'Courier New', monospace; }
+                .modal-win98 { background: #d4d0c8; border: 2px solid #404040; border-top-color: #808080; border-left-color: #808080; padding: 12px; box-shadow: inset 2px 2px 8px rgba(0,0,0,0.15); }
+                .btn-win98 { background: #d4d0c8; color: #000000; border: 2px solid #404040; border-top-color: #808080; border-left-color: #808080; padding: 4px 16px; cursor: pointer; font-family: 'Courier New', monospace; font-weight: 700; }
             </style>
         </head>
         <body>
@@ -956,21 +958,22 @@ function mostrarNotificacao(mensagem, tipo = 'info', duracao = 3000) {
         right: 20px;
         background: ${cores[tipo] || '#3498db'};
         color: white;
-        padding: 15px 25px;
+        padding: 12px 20px;
         border-radius: 0px;
         box-shadow: 0 2px 10px rgba(0,0,0,0.3);
         z-index: 9999999;
         font-family: 'Courier New', monospace;
-        font-size: 0.9rem;
+        font-size: 0.85rem;
         display: flex;
         align-items: center;
         gap: 10px;
         max-width: 400px;
         opacity: 1;
         transition: opacity 0.5s ease;
-        border: 1px solid #808080;
-        border-top-color: #ffffff;
-        border-left-color: #ffffff;
+        border: 2px solid #404040;
+        border-top-color: #808080;
+        border-left-color: #808080;
+        font-weight: 700;
     `;
     
     notificacao.innerHTML = `<i class="fas ${icon[tipo] || 'fa-info-circle'}"></i> ${mensagem}`;
@@ -1070,4 +1073,4 @@ window.duplicarOrcamento = duplicarOrcamento;
 window.mostrarNotificacao = mostrarNotificacao;
 window.fecharModalWin98 = fecharModalWin98;
 
-console.log('✅ orcamento.js v1.1 carregado - Layout Windows 98!');
+console.log('✅ orcamento.js v1.2 carregado - Layout Windows 98 Escuro!');
