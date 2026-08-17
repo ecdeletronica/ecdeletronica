@@ -94,24 +94,24 @@
         }
 
         /* ============================================
-                   HEADER - MAIOR (Referência do anexo)
+                   HEADER - DOBRADO (2x maior!)
                    ============================================ */
         header {
-            background: rgba(255,255,255,0.92);
-            backdrop-filter: blur(12px);
-            box-shadow: var(--shadow-sm);
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(16px);
+            box-shadow: 0 4px 30px rgba(0,0,0,0.08);
             position: fixed;
             width: 100%;
             top: 0;
             z-index: 1000;
-            border-bottom: 2px solid rgba(230, 126, 34, 0.15);
-            padding: 12px 0;
+            border-bottom: 3px solid var(--secondary);
+            padding: 20px 0;
         }
         header .container {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 24px;
+            padding: 0 32px;
             max-width: 1400px;
             margin: 0 auto;
         }
@@ -119,92 +119,93 @@
         .logo-area {
             display: flex;
             align-items: center;
-            gap: 1.5rem;
+            gap: 2rem;
         }
 
-        /* LOGO MAIOR - 2x (96px) */
+        /* LOGO - DOBRADA (192px) */
         .logo-image {
-            width: 96px;
+            width: 192px;
             height: auto;
-            max-height: 96px;
-            border-radius: 16px;
+            max-height: 192px;
+            border-radius: 24px;
             object-fit: contain;
             background: white;
-            padding: 6px;
-            box-shadow: 0 6px 15px rgba(10, 46, 77, 0.15);
-            transition: transform 0.3s ease;
+            padding: 12px;
+            box-shadow: 0 8px 25px rgba(10, 46, 77, 0.2);
+            transition: transform 0.4s ease;
         }
         .logo-image:hover {
             transform: scale(1.05);
         }
 
         .logo-text h1 {
-            font-size: 1.8rem;
+            font-size: 3rem;
             line-height: 1.2;
             color: var(--primary);
             font-weight: 800;
-            letter-spacing: -0.5px;
+            letter-spacing: -1px;
         }
         .logo-text h1 span {
             color: var(--secondary);
         }
         .logo-text .slogan {
-            font-size: 0.75rem;
+            font-size: 1.2rem;
             color: var(--gray-600);
             font-weight: 400;
-            letter-spacing: 0.3px;
+            letter-spacing: 0.5px;
             display: block;
-            margin-top: -2px;
+            margin-top: -4px;
         }
 
-        /* QR CODE NO HEADER - MAIOR */
+        /* QR CODE NO HEADER - DOBRADO */
         .qrcode-header {
             display: flex;
             align-items: center;
-            gap: 0.8rem;
-            background: rgba(230, 126, 34, 0.06);
-            padding: 0.6rem 1.5rem;
+            gap: 1.2rem;
+            background: rgba(230, 126, 34, 0.08);
+            padding: 1rem 2rem;
             border-radius: 100px;
-            border: 1px solid rgba(230, 126, 34, 0.15);
-            transition: all 0.3s ease;
+            border: 2px solid rgba(230, 126, 34, 0.2);
+            transition: all 0.4s ease;
             text-decoration: none;
         }
         .qrcode-header:hover {
-            background: rgba(230, 126, 34, 0.1);
-            transform: scale(1.02);
-            box-shadow: var(--shadow-sm);
+            background: rgba(230, 126, 34, 0.15);
+            transform: scale(1.03);
+            box-shadow: 0 8px 30px rgba(230, 126, 34, 0.15);
             border-color: var(--secondary);
         }
         .qrcode-header img {
-            width: 44px;
-            height: 44px;
-            border-radius: 12px;
+            width: 72px;
+            height: 72px;
+            border-radius: 16px;
             background: white;
-            padding: 4px;
+            padding: 6px;
             object-fit: contain;
         }
         .qrcode-header .qr-text {
             display: flex;
             flex-direction: column;
-            line-height: 1.2;
+            line-height: 1.3;
         }
         .qrcode-header .qr-text span {
-            font-size: 0.9rem;
-            font-weight: 600;
+            font-size: 1.4rem;
+            font-weight: 700;
             color: var(--primary);
         }
         .qrcode-header .qr-text span i {
             color: var(--secondary);
-            margin-right: 4px;
+            margin-right: 8px;
         }
         .qrcode-header .qr-text small {
             color: var(--gray-600);
-            font-size: 0.7rem;
+            font-size: 1rem;
+            font-weight: 400;
         }
 
         .nav-links {
             display: flex;
-            gap: 32px;
+            gap: 48px;
             list-style: none;
             align-items: center;
         }
@@ -213,7 +214,7 @@
             text-decoration: none;
             font-weight: 600;
             transition: 0.3s;
-            font-size: 0.95rem;
+            font-size: 1.2rem;
         }
         .nav-links a:hover {
             color: var(--primary);
@@ -221,9 +222,10 @@
         .nav-cta {
             background: var(--secondary);
             color: var(--white) !important;
-            padding: 10px 28px;
+            padding: 14px 36px;
             border-radius: 50px;
             font-weight: 700;
+            font-size: 1.2rem !important;
         }
         .nav-cta:hover {
             background: var(--accent);
@@ -233,14 +235,14 @@
         .menu-toggle {
             display: none;
             flex-direction: column;
-            gap: 5px;
+            gap: 6px;
             background: none;
             border: none;
             cursor: pointer;
         }
         .menu-toggle span {
-            width: 28px;
-            height: 3px;
+            width: 36px;
+            height: 4px;
             background: var(--primary);
             border-radius: 4px;
             transition: 0.3s;
@@ -251,7 +253,7 @@
                    ============================================ */
         .hero {
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-            padding: 160px 0 80px;
+            padding: 200px 0 100px;
             color: var(--white);
         }
         .hero .container {
@@ -261,7 +263,7 @@
             align-items: center;
         }
         .hero h1 {
-            font-size: 3rem;
+            font-size: 3.5rem;
             font-weight: 800;
             line-height: 1.1;
         }
@@ -269,7 +271,7 @@
             color: var(--secondary);
         }
         .hero p {
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             color: rgba(255,255,255,0.8);
             margin: 24px 0 32px;
         }
@@ -308,8 +310,8 @@
             transform: scale(1.03);
         }
         .hero-card .logo-frame-big img {
-            max-width: 180px;
-            max-height: 110px;
+            max-width: 220px;
+            max-height: 140px;
             width: auto;
             height: auto;
             border-radius: 10px;
@@ -655,6 +657,41 @@
         /* ============================================
                    RESPONSIVIDADE
                    ============================================ */
+        @media (max-width: 1200px) {
+            .logo-image {
+                width: 140px;
+                max-height: 140px;
+            }
+            .logo-text h1 {
+                font-size: 2.2rem;
+            }
+            .logo-text .slogan {
+                font-size: 0.9rem;
+            }
+            .qrcode-header {
+                padding: 0.8rem 1.5rem;
+            }
+            .qrcode-header img {
+                width: 56px;
+                height: 56px;
+            }
+            .qrcode-header .qr-text span {
+                font-size: 1.1rem;
+            }
+            .qrcode-header .qr-text small {
+                font-size: 0.8rem;
+            }
+            .nav-links {
+                gap: 32px;
+            }
+            .nav-links a {
+                font-size: 1rem;
+            }
+            .nav-cta {
+                padding: 10px 28px;
+                font-size: 1rem !important;
+            }
+        }
         @media (max-width: 992px) {
             .hero .container,
             .about .container,
@@ -672,11 +709,14 @@
                 display: none;
             }
             .logo-image {
-                width: 72px;
-                max-height: 72px;
+                width: 120px;
+                max-height: 120px;
             }
             .logo-text h1 {
-                font-size: 1.4rem;
+                font-size: 1.8rem;
+            }
+            .logo-text .slogan {
+                font-size: 0.8rem;
             }
         }
         @media (max-width: 768px) {
@@ -701,27 +741,27 @@
                 display: flex;
             }
             .hero {
-                padding: 140px 0 60px;
+                padding: 180px 0 60px;
             }
             .hero h1 {
-                font-size: 2rem;
+                font-size: 2.2rem;
             }
             .section-title {
                 font-size: 1.8rem;
             }
             .hero-card .logo-frame-big img {
-                max-width: 140px;
-                max-height: 90px;
+                max-width: 160px;
+                max-height: 100px;
             }
             .logo-text h1 {
-                font-size: 1.2rem;
+                font-size: 1.4rem;
             }
             .logo-text .slogan {
-                font-size: 0.6rem;
+                font-size: 0.65rem;
             }
             .logo-image {
-                width: 56px;
-                max-height: 56px;
+                width: 90px;
+                max-height: 90px;
             }
             .contact-form {
                 padding: 24px;
@@ -734,21 +774,24 @@
                 width: 100px;
                 height: 100px;
             }
+            header {
+                padding: 14px 0;
+            }
         }
         @media (max-width: 480px) {
             .hero-card .logo-frame-big img {
-                max-width: 120px;
-                max-height: 75px;
+                max-width: 130px;
+                max-height: 80px;
             }
             .logo-text h1 {
-                font-size: 1rem;
+                font-size: 1.1rem;
             }
             .logo-text .slogan {
                 font-size: 0.5rem;
             }
             .logo-image {
-                width: 44px;
-                max-height: 44px;
+                width: 70px;
+                max-height: 70px;
             }
             .hero h1 {
                 font-size: 1.6rem;
@@ -771,13 +814,16 @@
                 width: 32px;
                 height: 32px;
             }
+            .hero p {
+                font-size: 1rem;
+            }
         }
     </style>
 </head>
 <body>
 
     <!-- ==========================================
-    HEADER - MAIOR (COM LOGO 96px)
+    HEADER - DOBRADO (2x maior)
     ========================================== -->
     <header>
         <div class="container">
