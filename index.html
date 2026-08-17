@@ -258,11 +258,79 @@
         }
 
         /* ============================================
+                   TICKER / PLACAR ROLANTE HORIZONTAL
+                   ============================================ */
+        .ticker-container {
+            background: var(--primary);
+            padding: 14px 0;
+            border-bottom: 3px solid var(--secondary);
+            overflow: hidden;
+            position: relative;
+            margin-top: 120px;
+        }
+        .ticker-container::before,
+        .ticker-container::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 60px;
+            z-index: 2;
+            pointer-events: none;
+        }
+        .ticker-container::before {
+            left: 0;
+            background: linear-gradient(to right, var(--primary), transparent);
+        }
+        .ticker-container::after {
+            right: 0;
+            background: linear-gradient(to left, var(--primary), transparent);
+        }
+
+        .ticker-track {
+            display: flex;
+            animation: ticker-scroll 30s linear infinite;
+            width: max-content;
+        }
+
+        .ticker-track:hover {
+            animation-play-state: paused;
+        }
+
+        .ticker-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 40px;
+            white-space: nowrap;
+            color: rgba(255,255,255,0.9);
+            font-weight: 600;
+            font-size: 1rem;
+            letter-spacing: 0.5px;
+        }
+        .ticker-item i {
+            font-size: 1.6rem;
+            color: var(--secondary);
+            min-width: 32px;
+            text-align: center;
+        }
+        .ticker-item .separator {
+            color: rgba(255,255,255,0.15);
+            font-size: 1.2rem;
+            margin-left: 20px;
+        }
+
+        @keyframes ticker-scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* ============================================
                    HERO
                    ============================================ */
         .hero {
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-            padding: 180px 0 80px;
+            padding: 60px 0 80px;
             color: var(--white);
         }
         .hero .container {
@@ -692,9 +760,6 @@
             margin-top: 16px;
         }
 
-        /* ============================================
-                   MARCAS LEGAIS - FUNDO AZUL CLARO
-                   ============================================ */
         .legal-brands {
             margin-top: 12px;
             padding: 18px 24px;
@@ -732,10 +797,6 @@
         }
         .legal-brands .brand-name:hover {
             color: var(--secondary);
-        }
-        .legal-brands .icon-legal {
-            color: var(--secondary);
-            margin-right: 6px;
         }
 
         .developer-credits {
@@ -802,6 +863,16 @@
             .legal-brands {
                 padding: 14px 16px;
             }
+            .ticker-container {
+                margin-top: 100px;
+            }
+            .ticker-item {
+                font-size: 0.85rem;
+                padding: 0 20px;
+            }
+            .ticker-item i {
+                font-size: 1.3rem;
+            }
         }
         @media (max-width: 768px) {
             .nav-links {
@@ -825,7 +896,7 @@
                 display: flex;
             }
             .hero {
-                padding: 160px 0 60px;
+                padding: 40px 0 60px;
             }
             .hero h1 {
                 font-size: 2rem;
@@ -888,6 +959,22 @@
             .legal-brands {
                 padding: 12px 14px;
             }
+            .ticker-container {
+                margin-top: 90px;
+                padding: 10px 0;
+            }
+            .ticker-item {
+                font-size: 0.75rem;
+                padding: 0 16px;
+                gap: 8px;
+            }
+            .ticker-item i {
+                font-size: 1.1rem;
+                min-width: 24px;
+            }
+            .ticker-item .separator {
+                margin-left: 12px;
+            }
         }
         @media (max-width: 480px) {
             .hero-card .logo-wrapper-hero img {
@@ -937,6 +1024,22 @@
             .legal-brands {
                 padding: 10px 12px;
             }
+            .ticker-container {
+                margin-top: 80px;
+                padding: 8px 0;
+            }
+            .ticker-item {
+                font-size: 0.65rem;
+                padding: 0 12px;
+                gap: 6px;
+            }
+            .ticker-item i {
+                font-size: 0.9rem;
+                min-width: 20px;
+            }
+            .ticker-item .separator {
+                margin-left: 8px;
+            }
         }
     </style>
 </head>
@@ -975,6 +1078,80 @@
             </ul>
         </div>
     </header>
+
+    <!-- ==========================================
+    PLACAR ROLANTE HORIZONTAL (TICKER)
+    ========================================== -->
+    <div class="ticker-container">
+        <div class="ticker-track">
+            <!-- Primeira duplicata -->
+            <div class="ticker-item">
+                <i class="fas fa-washing-machine"></i> Placas de Lavadoras
+                <span class="separator">|</span>
+            </div>
+            <div class="ticker-item">
+                <i class="fas fa-ice-cream"></i> Placas de Geladeiras
+                <span class="separator">|</span>
+            </div>
+            <div class="ticker-item">
+                <i class="fas fa-snowflake"></i> Placas de Ar-Condicionado
+                <span class="separator">|</span>
+            </div>
+            <div class="ticker-item">
+                <i class="fas fa-micro-wave"></i> Placas de Micro-ondas
+                <span class="separator">|</span>
+            </div>
+            <div class="ticker-item">
+                <i class="fas fa-bolt"></i> Placas Inverter
+                <span class="separator">|</span>
+            </div>
+            <div class="ticker-item">
+                <i class="fas fa-plug"></i> Inversores / Nobreaks
+                <span class="separator">|</span>
+            </div>
+            <div class="ticker-item">
+                <i class="fas fa-heartbeat"></i> Equipamentos Médicos
+                <span class="separator">|</span>
+            </div>
+            <div class="ticker-item">
+                <i class="fas fa-battery-three-quarters"></i> Fontes Chaveadas
+                <span class="separator">|</span>
+            </div>
+            <!-- Segunda duplicata para loop infinito -->
+            <div class="ticker-item">
+                <i class="fas fa-washing-machine"></i> Placas de Lavadoras
+                <span class="separator">|</span>
+            </div>
+            <div class="ticker-item">
+                <i class="fas fa-ice-cream"></i> Placas de Geladeiras
+                <span class="separator">|</span>
+            </div>
+            <div class="ticker-item">
+                <i class="fas fa-snowflake"></i> Placas de Ar-Condicionado
+                <span class="separator">|</span>
+            </div>
+            <div class="ticker-item">
+                <i class="fas fa-micro-wave"></i> Placas de Micro-ondas
+                <span class="separator">|</span>
+            </div>
+            <div class="ticker-item">
+                <i class="fas fa-bolt"></i> Placas Inverter
+                <span class="separator">|</span>
+            </div>
+            <div class="ticker-item">
+                <i class="fas fa-plug"></i> Inversores / Nobreaks
+                <span class="separator">|</span>
+            </div>
+            <div class="ticker-item">
+                <i class="fas fa-heartbeat"></i> Equipamentos Médicos
+                <span class="separator">|</span>
+            </div>
+            <div class="ticker-item">
+                <i class="fas fa-battery-three-quarters"></i> Fontes Chaveadas
+                <span class="separator">|</span>
+            </div>
+        </div>
+    </div>
 
     <!-- ==========================================
     HERO
@@ -1178,9 +1355,7 @@
                 </div>
             </div>
 
-            <!-- ==========================================
-            MARCAS LEGAIS - FUNDO AZUL CLARO
-            ========================================== -->
+            <!-- MARCAS LEGAIS -->
             <div class="legal-brands">
                 <p>
                     <span class="highlight-red-strong">⚠️ ATENÇÃO:</span>
