@@ -1,6 +1,6 @@
 // js/modules/orcamento.js - Sistema de Orçamento para ECD Eletrônica
-// ✅ Versão ESTÁVEL v3.1 - CORREÇÃO: Botão acesso, ícone Admin, título centralizado
-console.log('✅ orcamento.js carregado - Versão ESTÁVEL v3.1');
+// ✅ Versão ESTÁVEL v3.2 - CORREÇÃO: Botão acesso, ícone Admin, título centralizado
+console.log('✅ orcamento.js carregado - Versão ESTÁVEL v3.2');
 
 // ============================================================
 // CONFIGURAÇÕES
@@ -1366,41 +1366,63 @@ function switchOrcamentoTab(tab) {
 }
 
 // ============================================================
-// FUNÇÃO TOGGLE DO PAINEL - CORRIGIDA (centralizada e com ícone)
+// FUNÇÃO TOGGLE DO PAINEL - CORRIGIDA
 // ============================================================
 
 function toggleOrcamentoPanel() {
-    var password = prompt("🔒 Acesso ao Painel de Orçamentos\n\nDigite a senha:");
-    if (!password) return;
-    if (password !== ORCAMENTO_CONFIG.password) {
-        alert("❌ Senha incorreta!");
-        return;
-    }
+    console.log("🔑 [ORCAMENTO] Botão clicado! Solicitando senha...");
+    
+    // Verificar se o painel existe
     var panel = document.getElementById("orcamentoPanel");
     if (!panel) {
         console.error("[ORCAMENTO] ❌ Painel não encontrado!");
+        alert("Erro: Painel de orçamentos não encontrado!");
         return;
     }
+    
+    // Se o painel já está aberto, fechar
     if (panel.style.display === "block") {
         panel.style.display = "none";
         return;
     }
+    
+    // Solicitar senha
+    var password = prompt("🔒 Acesso ao Painel de Orçamentos\n\nDigite a senha:");
+    
+    if (password === null) {
+        console.log("[ORCAMENTO] Usuário cancelou a senha.");
+        return;
+    }
+    
+    if (password === "") {
+        alert("⚠️ Digite a senha para acessar.");
+        return;
+    }
+    
+    if (password !== ORCAMENTO_CONFIG.password) {
+        alert("❌ Senha incorreta! Tente novamente.");
+        console.log("[ORCAMENTO] ❌ Senha incorreta fornecida.");
+        return;
+    }
+    
+    console.log("[ORCAMENTO] ✅ Senha correta! Abrindo painel...");
+    
+    // Abrir o painel
     panel.style.display = "block";
     resetOrcamentoForm();
     listarOrcamentos();
     switchOrcamentoTab("list");
     
-    // FORÇAR centralização do título
-    var titulo = panel.querySelector("h3, .panel-title, [style*='font-family']");
+    // Centralizar título
+    var titulo = panel.querySelector("h3");
     if (titulo) {
         titulo.style.textAlign = "center";
         titulo.style.width = "100%";
-        titulo.style.display = "block";
     }
     
     setTimeout(function() {
         panel.scrollIntoView({ behavior: "smooth", block: "start" });
-    }, 100);
+    }, 200);
 }
 
 // ============================================================
@@ -1585,4 +1607,10 @@ if (document.readyState === "loading") {
     initializeOrcamento();
 }
 
-console.log("✅ orcamento.js v3.1 carregado - CORREÇÕES: Botão acesso, ícone Admin, título centralizado!");
+// ============================================================
+// GARANTIR QUE A FUNÇÃO ESTEJA NO WINDOW
+// ============================================================
+
+window.toggleOrcamentoPanel = toggleOrcamentoPanel;
+
+console.log("✅ orcamento.js v3.2 carregado - Correção do botão de acesso!");
