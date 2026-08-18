@@ -1716,5 +1716,24 @@
         }
     </script>
 
+    <!-- ==========================================
+    SCRIPT PARA INICIALIZAR O BOTÃO DE ORÇAMENTOS
+    ========================================== -->
+    <script>
+        (function() {
+            var toggleBtn = document.getElementById('orcamentoToggleBtn');
+            if (toggleBtn) {
+                toggleBtn.onclick = function() {
+                    if (typeof window.toggleOrcamentoPanel === 'function') {
+                        window.toggleOrcamentoPanel();
+                    } else {
+                        alert('⚠️ Sistema de orçamentos não carregado. Aguarde um momento e tente novamente.');
+                        console.log('⏳ orcamento.js pode estar carregando...');
+                    }
+                };
+            }
+        })();
+    </script>
+    
 </body>
 </html>
