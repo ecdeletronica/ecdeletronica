@@ -1,6 +1,6 @@
 // js/modules/orcamento.js - Sistema de Orçamento para ECD Eletrônica
-// Versao ESTAVEL v4.3 - CORRECAO: carregarOrcamentoParaEdicao, botoes e duplicacao
-console.log('orcamento.js carregado - Versao ESTAVEL v4.3');
+// Versao ESTAVEL v4.4 - CORRECAO: WhatsApp e PDF do Recibo, Dados Pagamento
+console.log('orcamento.js carregado - Versao ESTAVEL v4.4');
 
 // ============================================================
 // CONFIGURACOES
@@ -492,7 +492,7 @@ function recalcularTotais() {
 }
 
 // ============================================================
-// FUNCOES DO FORMULARIO - CORRIGIDAS
+// FUNCOES DO FORMULARIO
 // ============================================================
 
 function resetOrcamentoForm() {
@@ -526,15 +526,10 @@ function resetOrcamentoForm() {
     adicionarItemLinha();
     
     window.orcamentoEditandoId = null;
-    console.log('orcamentoEditandoId resetado para null');
     
-    // Atualizar titulo e botoes para modo NOVO
     var tituloEl = document.getElementById("orcamentoFormTitle");
     if (tituloEl) {
         tituloEl.textContent = "Novo Orçamento";
-        console.log('Titulo alterado para: Novo Orçamento');
-    } else {
-        console.warn('Elemento orcamentoFormTitle não encontrado');
     }
     
     var submitBtn = document.getElementById("orcamentoSubmitBtn");
@@ -543,9 +538,6 @@ function resetOrcamentoForm() {
         submitBtn.style.background = "#27ae60";
         submitBtn.style.color = "#ffffff";
         submitBtn.title = "Criar novo orçamento";
-        console.log('Botão alterado para: Criar Orçamento');
-    } else {
-        console.warn('Elemento orcamentoSubmitBtn não encontrado');
     }
     
     var cancelBtn = document.getElementById("orcamentoCancelBtn");
@@ -583,7 +575,6 @@ function carregarOrcamentoParaEdicao(id) {
     
     switchOrcamentoTab("form");
     
-    // Preencher campos
     document.getElementById("orcamentoCliente").value = orcamento.cliente || "";
     document.getElementById("orcamentoCnpj").value = orcamento.cnpj || "";
     document.getElementById("orcamentoEndereco").value = orcamento.endereco || "";
@@ -593,7 +584,6 @@ function carregarOrcamentoParaEdicao(id) {
     document.getElementById("orcamentoStatus").value = orcamento.status || "Pendente";
     document.getElementById("orcamentoDesconto").value = orcamento.desconto ? formatarMoedaGlobal(orcamento.desconto).replace("R$ ", "") : "0,00";
     
-    // Carregar itens
     window.orcamentoItens = [];
     if (orcamento.itens) {
         for (var j = 0; j < orcamento.itens.length; j++) {
@@ -634,13 +624,9 @@ function carregarOrcamentoParaEdicao(id) {
         atualizarIndicesItens();
     }
     
-    // Atualizar titulo e botoes para modo EDIÇÃO
     var tituloEl = document.getElementById("orcamentoFormTitle");
     if (tituloEl) {
         tituloEl.textContent = "Editando: " + (orcamento.numero || "Orçamento");
-        console.log('Titulo alterado para: Editando: ' + orcamento.numero);
-    } else {
-        console.warn('Elemento orcamentoFormTitle não encontrado!');
     }
     
     var submitBtn = document.getElementById("orcamentoSubmitBtn");
@@ -649,9 +635,6 @@ function carregarOrcamentoParaEdicao(id) {
         submitBtn.style.background = "#f39c12";
         submitBtn.style.color = "#ffffff";
         submitBtn.title = "Salvar alterações no orçamento";
-        console.log('Botão alterado para: Atualizar Orçamento');
-    } else {
-        console.warn('Elemento orcamentoSubmitBtn não encontrado!');
     }
     
     var cancelBtn = document.getElementById("orcamentoCancelBtn");
@@ -668,7 +651,6 @@ function carregarOrcamentoParaEdicao(id) {
         };
     }
     
-    // IMPORTANTE: Definir o ID de edição ANTES de qualquer operação
     window.orcamentoEditandoId = id;
     console.log('orcamentoEditandoId definido como:', id);
     
@@ -737,9 +719,6 @@ function salvarOrcamento() {
         console.log('Total de itens:', itens.length);
         console.log('orcamentoEditandoId atual:', window.orcamentoEditandoId);
         
-        // ============================================================
-        // MODO EDICAO - ATUALIZAR ORCAMENTO EXISTENTE
-        // ============================================================
         if (window.orcamentoEditandoId) {
             var index = -1;
             for (var j = 0; j < window.orcamentos.length; j++) {
@@ -751,9 +730,6 @@ function salvarOrcamento() {
             
             if (index !== -1) {
                 console.log('Atualizando orçamento no índice:', index);
-                console.log('Orçamento original:', window.orcamentos[index]);
-                
-                // Mantem o numero e data de criacao originais
                 var original = window.orcamentos[index];
                 window.orcamentos[index] = {
                     id: original.id,
@@ -773,9 +749,7 @@ function salvarOrcamento() {
                     updated_at: orcamentoData.updated_at
                 };
                 
-                console.log('Orçamento atualizado:', window.orcamentos[index]);
-                console.log('Total de itens após atualização:', window.orcamentos[index].itens.length);
-                
+                console.log('Orçamento atualizado, itens:', window.orcamentos[index].itens.length);
                 salvarOrcamentos();
                 mostrarNotificacao("Orçamento atualizado com sucesso!", "success");
                 listarOrcamentos();
@@ -783,14 +757,9 @@ function salvarOrcamento() {
                 switchOrcamentoTab("list");
                 window.orcamentoEditandoId = null;
             } else {
-                console.error('Orçamento não encontrado para atualizar! ID:', window.orcamentoEditandoId);
                 mostrarNotificacao("Erro: Orçamento não encontrado para atualizar!", "error");
             }
-        } 
-        // ============================================================
-        // MODO CRIACAO - NOVO ORCAMENTO
-        // ============================================================
-        else {
+        } else {
             console.log('Criando novo orçamento');
             var novoOrcamento = {
                 id: "orc_" + Date.now(),
@@ -809,8 +778,7 @@ function salvarOrcamento() {
                 created_at: new Date().toISOString(),
                 updated_at: orcamentoData.updated_at
             };
-            console.log('Novo orçamento criado:', novoOrcamento);
-            console.log('Total de itens:', novoOrcamento.itens.length);
+            console.log('Novo orçamento criado, itens:', novoOrcamento.itens.length);
             
             window.orcamentos.unshift(novoOrcamento);
             salvarOrcamentos();
@@ -891,7 +859,7 @@ function listarOrcamentos() {
 }
 
 // ============================================================
-// FUNCAO GERAR RECIBO
+// FUNCAO GERAR RECIBO - CORRIGIDA COM BOTOES FUNCIONAIS
 // ============================================================
 
 function gerarRecibo(id) {
@@ -915,6 +883,7 @@ function gerarRecibo(id) {
         return;
     }
     var doc = printWindow.document;
+    
     doc.write('<!DOCTYPE html><html><head><title>NOTA DE RECIBO ' + (orc.numero || "") + '</title>');
     doc.write('<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">');
     doc.write('<style>body { padding: 20px; font-family: \'Courier New\', monospace; background: #f0f0f0; } ');
@@ -938,7 +907,99 @@ function gerarRecibo(id) {
     doc.write('.no-print { display: inline-block; } ');
     doc.write('@media print { body { background: #ffffff; } .recibo-container { box-shadow: none; } .no-print { display: none !important; } }');
     doc.write('</style>');
-    doc.write('</head><body>' + conteudo + '</body></html>');
+    doc.write('</head><body>');
+    doc.write(conteudo);
+    
+    // ========================================
+    // SCRIPT EMBUTIDO COM FUNCOES DO RECIBO
+    // ========================================
+    doc.write('<script>');
+    doc.write('var ORC_ID = "' + orc.id + '";');
+    doc.write('var ORC_NUMERO = "' + (orc.numero || "N/A") + '";');
+    doc.write('var ORC_CLIENTE = "' + (orc.cliente || "Não informado") + '";');
+    doc.write('var ORC_TOTAL = ' + (orc.total || 0) + ';');
+    doc.write('var ORC_DATA = "' + (orc.data || "") + '";');
+    doc.write('var ORC_ITENS = ' + JSON.stringify(orc.itens) + ';');
+    doc.write('var EMPRESA_NOME = "' + ORCAMENTO_CONFIG.empresa.nome + '";');
+    doc.write('var EMPRESA_WHATSAPP = "' + ORCAMENTO_CONFIG.empresa.whatsapp + '";');
+    doc.write('var EMPRESA_TELEFONE = "' + ORCAMENTO_CONFIG.empresa.telefone + '";');
+    doc.write('var PROPONENTE_PIX = "' + ORCAMENTO_CONFIG.proponente.pix + '";');
+    
+    doc.write('function formatarMoedaLocal(valor) { if (!valor && valor !== 0) return "R$ 0,00"; return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(valor); }');
+    doc.write('function formatarDataLocal(data) { if (!data) return ""; try { var d = new Date(data); return d.toLocaleDateString("pt-BR"); } catch(e) { return data; } }');
+    
+    doc.write('function converterValorPorExtensoLocal(valor) {');
+    doc.write('  if (!valor || valor === 0) return "Zero reais";');
+    doc.write('  var unidades = ["", "um", "dois", "tres", "quatro", "cinco", "seis", "sete", "oito", "nove"];');
+    doc.write('  var especiais = ["dez", "onze", "doze", "treze", "catorze", "quinze", "dezesseis", "dezessete", "dezoito", "dezenove"];');
+    doc.write('  var dezenas = ["", "", "vinte", "trinta", "quarenta", "cinquenta", "sessenta", "setenta", "oitenta", "noventa"];');
+    doc.write('  var centenas = ["", "cento", "duzentos", "trezentos", "quatrocentos", "quinhentos", "seiscentos", "setecentos", "oitocentos", "novecentos"];');
+    doc.write('  function numeroPorExtenso(num) {');
+    doc.write('    if (num === 0) return "zero"; if (num === 100) return "cem";');
+    doc.write('    if (num >= 1000) { var milhares = Math.floor(num / 1000); var resto = num % 1000; var ext = milhares === 1 ? "mil" : numeroPorExtenso(milhares) + " mil"; if (resto > 0) ext += " e " + numeroPorExtenso(resto); return ext; }');
+    doc.write('    if (num >= 100) { var centena = Math.floor(num / 100); var resto = num % 100; if (centena === 1 && resto === 0) return "cem"; var ext = centenas[centena]; if (resto > 0) ext += " e " + numeroPorExtenso(resto); return ext; }');
+    doc.write('    if (num >= 20) { var dezena = Math.floor(num / 10); var unidade = num % 10; var ext = dezenas[dezena]; if (unidade > 0) ext += " e " + unidades[unidade]; return ext; }');
+    doc.write('    if (num >= 10) return especiais[num - 10]; return unidades[num];');
+    doc.write('  }');
+    doc.write('  var partes = valor.toFixed(2).split("."); var reais = parseInt(partes[0]); var centavos = parseInt(partes[1]); var extenso = "";');
+    doc.write('  if (reais > 0) extenso = numeroPorExtenso(reais) + " reais";');
+    doc.write('  if (centavos > 0) { if (extenso) extenso += " e "; extenso += numeroPorExtenso(centavos) + " centavos"; }');
+    doc.write('  return extenso.charAt(0).toUpperCase() + extenso.slice(1);');
+    doc.write('}');
+    
+    // Funcao ENVIAR WHATSAPP DO RECIBO
+    doc.write('function enviarReciboWhatsApp() {');
+    doc.write('  var telefone = EMPRESA_WHATSAPP;');
+    doc.write('  var mensagem = "*" + EMPRESA_NOME + "*\\n";');
+    doc.write('  mensagem += "NOTA DE RECIBO: " + ORC_NUMERO + "\\n";');
+    doc.write('  mensagem += "Data: " + formatarDataLocal(ORC_DATA) + "\\n";');
+    doc.write('  mensagem += "Cliente: " + ORC_CLIENTE + "\\n";');
+    doc.write('  mensagem += "Valor: " + formatarMoedaLocal(ORC_TOTAL) + "\\n";');
+    doc.write('  mensagem += "Por Extenso: " + converterValorPorExtensoLocal(ORC_TOTAL) + "\\n";');
+    doc.write('  mensagem += "\\n*ITENS:*\\n";');
+    doc.write('  for (var i = 0; i < ORC_ITENS.length; i++) {');
+    doc.write('    var item = ORC_ITENS[i];');
+    doc.write('    mensagem += (i+1) + ". " + (item.descricao || "Item") + " - " + (item.quantidade || 1) + "x " + formatarMoedaLocal(item.valor_unitario || 0) + " = " + formatarMoedaLocal((item.quantidade || 0) * (item.valor_unitario || 0)) + "\\n";');
+    doc.write('  }');
+    doc.write('  mensagem += "\\n*PIX:* " + PROPONENTE_PIX;');
+    doc.write('  mensagem += "\\n\\n*Assistência Técnica Independente*";');
+    doc.write('  mensagem += "\\n" + EMPRESA_TELEFONE;');
+    doc.write('  var url = "https://wa.me/" + telefone + "?text=" + encodeURIComponent(mensagem);');
+    doc.write('  window.open(url, "_blank");');
+    doc.write('}');
+    
+    // Funcao GERAR PDF DO RECIBO
+    doc.write('function gerarReciboPDF() {');
+    doc.write('  var container = document.querySelector(".recibo-container");');
+    doc.write('  if (typeof html2pdf !== "undefined") {');
+    doc.write('    var botoes = container.querySelectorAll(".no-print");');
+    doc.write('    for (var i = 0; i < botoes.length; i++) { botoes[i].style.display = "none"; }');
+    doc.write('    html2pdf().from(container).set({');
+    doc.write('      margin: [10, 10, 10, 10],');
+    doc.write('      filename: "Recibo_" + ORC_NUMERO.replace(/\\//g, "-") + ".pdf",');
+    doc.write('      image: { type: "jpeg", quality: 0.95 },');
+    doc.write('      html2canvas: { scale: 2, useCORS: true, logging: false, backgroundColor: "#ffffff" },');
+    doc.write('      jsPDF: { unit: "mm", format: "a4", orientation: "portrait" }');
+    doc.write('    }).save().then(function() {');
+    doc.write('      alert("PDF do Recibo gerado com sucesso!");');
+    doc.write('    }).catch(function(error) {');
+    doc.write('      alert("Erro ao gerar PDF: " + error);');
+    doc.write('    });');
+    doc.write('  } else {');
+    doc.write('    alert("Para gerar o PDF do Recibo, utilize a opção Imprimir e selecione \'Salvar como PDF\' no destino da impressão.");');
+    doc.write('  }');
+    doc.write('}');
+    doc.write('</script>');
+    
+    // BOTOES DO RECIBO
+    doc.write('<div class="text-center no-print" style="margin-top:15px; text-align:center;">');
+    doc.write('<button class="btn-win98" onclick="window.print()"><i class="fas fa-print"></i> Imprimir</button> ');
+    doc.write('<button class="btn-win98" onclick="enviarReciboWhatsApp()" style="background:#25D366; color:#ffffff; border:2px solid #1da851; border-top-color:#2ecc71; border-left-color:#2ecc71;"><i class="fab fa-whatsapp"></i> WhatsApp</button> ');
+    doc.write('<button class="btn-win98" onclick="gerarReciboPDF()"><i class="fas fa-file-pdf"></i> PDF</button> ');
+    doc.write('<button class="btn-win98" onclick="window.close()">Fechar</button>');
+    doc.write('</div>');
+    
+    doc.write('</body></html>');
     doc.close();
 }
 
@@ -961,11 +1022,15 @@ function gerarHtmlRecibo(orc) {
     
     var html = "";
     html += '<div class="recibo-container">';
+    
+    // CABECALHO
     html += '<div class="recibo-header">';
     html += '<h1>NOTA DE RECIBO</h1>';
     html += '<div class="numero"><strong>N:</strong> ' + orcNumero + ' | <strong>Data:</strong> ' + formatarDataGlobal(orcData) + '</div>';
     html += '<div style="font-size:0.75rem; color:#666;">' + ORCAMENTO_CONFIG.empresa.nome + ' - CNPJ: ' + ORCAMENTO_CONFIG.empresa.cnpj + '</div>';
     html += '</div>';
+    
+    // CORPO
     html += '<div class="recibo-corpo">';
     html += '<p style="text-align:center; font-size:0.85rem; margin-bottom:8px;"><strong>RECEBEMOS DE:</strong></p>';
     html += '<div class="recibo-linha"><span class="label">CLIENTE:</span><span class="valor">' + orcCliente + '</span></div>';
@@ -982,6 +1047,8 @@ function gerarHtmlRecibo(orc) {
     html += '<p style="font-weight:700; margin-bottom:4px; font-size:0.7rem;">REFERENTE A:</p>';
     html += itensHtml;
     html += '</div>';
+    
+    // DADOS DO PRESTADOR
     html += '<div style="margin:8px 0; padding:6px; background:#f0f4f8; border:1px solid #d4d0c8;">';
     html += '<p style="font-weight:700; margin-bottom:3px; font-size:0.7rem;">DADOS DO PRESTADOR:</p>';
     html += '<div style="font-size:0.65rem;">';
@@ -990,24 +1057,24 @@ function gerarHtmlRecibo(orc) {
     html += '<strong>ENDEREÇO:</strong> ' + ORCAMENTO_CONFIG.proponente.endereco + '<br>';
     html += '<strong>PIX:</strong> ' + ORCAMENTO_CONFIG.proponente.pix;
     html += '</div></div>';
+    
+    // ASSINATURAS
     html += '<div class="recibo-assinaturas">';
     html += '<div><div class="linha"></div><strong>Recebedor</strong><br><span style="font-size:0.6rem;">' + ORCAMENTO_CONFIG.proponente.nome + '</span></div>';
     html += '<div><div class="linha"></div><strong>Cliente</strong><br><span style="font-size:0.6rem;">' + orcCliente + '</span></div>';
     html += '</div>';
+    
+    // DISPOSITIVO LEGAL
     html += '<div class="recibo-legal">';
     html += '<p><strong>DISPOSITIVO LEGAL:</strong></p>';
     html += '<p>O presente recibo tem validade como documento de quitação de prestação de serviços, nos termos do Art. 320 do Código Civil Brasileiro (Lei n 10.406/2002), e do Art. 6, inciso III, da Lei n 8.078/1990 (Código de Defesa do Consumidor).</p>';
     html += '</div>';
+    
+    // RODAPE
     html += '<div class="recibo-footer">';
     html += '<p>' + ORCAMENTO_CONFIG.empresa.nome + ' - Assistência Técnica Independente</p>';
     html += '<p>CNPJ: ' + ORCAMENTO_CONFIG.empresa.cnpj + ' | Tel: ' + ORCAMENTO_CONFIG.empresa.telefone + ' | Site: ' + ORCAMENTO_CONFIG.empresa.site + '</p>';
     html += '<p>Documento gerado em ' + formatarDataHoraGlobal(new Date().toISOString()) + '</p>';
-    html += '</div>';
-    html += '<div class="text-center no-print" style="margin-top:15px; text-align:center;">';
-    html += '<button class="btn-win98" onclick="window.print()"><i class="fas fa-print"></i> Imprimir</button> ';
-    html += '<button class="btn-win98" onclick="window.enviarWhatsAppRecibo(\'' + orc.id + '\')" style="background:#25D366; color:#ffffff; border:2px solid #1da851; border-top-color:#2ecc71; border-left-color:#2ecc71;"><i class="fab fa-whatsapp"></i> WhatsApp</button> ';
-    html += '<button class="btn-win98" onclick="window.gerarPDFRecibo(\'' + orc.id + '\')"><i class="fas fa-file-pdf"></i> PDF</button> ';
-    html += '<button class="btn-win98" onclick="window.close()">Fechar</button>';
     html += '</div>';
     html += '</div>';
     
@@ -1180,6 +1247,36 @@ function gerarHtmlOrcamento(orc) {
     html += '<tr style="background:#d4e6f1;"><td colspan="5" style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:right; font-weight:700; font-size:0.8rem;"><strong>TOTAL GERAL</strong></td>';
     html += '<td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:right; font-weight:700; font-size:0.8rem;"><strong>' + formatarMoedaGlobal(orc.total || 0) + '</strong></td></tr>';
     html += '</tfoot></table></div>';
+    
+    // ========================================
+    // QR CODE PIX E DADOS PARA PAGAMENTO
+    // ========================================
+    html += '<div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px;">';
+    
+    // Coluna 1: QR Code PIX
+    html += '<div style="background:#d4d0c8; padding:6px 10px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; box-shadow: inset 1px 1px 4px rgba(0,0,0,0.1); text-align:center;">';
+    html += '<strong style="display:block; margin-bottom:4px; font-size:0.7rem;">PIX para Pagamento</strong>';
+    html += '<div style="background:#ffffff; padding:6px; display:inline-block; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080;">';
+    html += '<img src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=00020126580014BR.GOV.BCB.PIX0136' + ORCAMENTO_CONFIG.banco.pix + '5204000053039865802BR5913ECD Eletronica6009SAO PAULO61080540900062290525ECD' + orc.numero.replace(/-/g, '') + '6304' + Math.floor(Math.random() * 9000 + 1000) + '" alt="QR Code PIX" style="max-width:100px; height:auto;" crossorigin="anonymous">';
+    html += '</div>';
+    html += '<div style="margin-top:4px; font-size:0.6rem; font-weight:700;">Chave PIX: ' + ORCAMENTO_CONFIG.banco.pix + '</div>';
+    html += '</div>';
+    
+    // Coluna 2: Dados para Pagamento
+    html += '<div style="background:#d4d0c8; padding:6px 10px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; box-shadow: inset 1px 1px 4px rgba(0,0,0,0.1);">';
+    html += '<strong style="display:block; margin-bottom:4px; font-size:0.7rem;">Dados para Pagamento</strong>';
+    html += '<div style="font-size:0.6rem; line-height:1.5;">';
+    html += '<strong>Banco:</strong> ' + ORCAMENTO_CONFIG.banco.nome + '<br>';
+    html += '<strong>Agência:</strong> ' + ORCAMENTO_CONFIG.banco.agencia + '<br>';
+    html += '<strong>Conta:</strong> ' + ORCAMENTO_CONFIG.banco.conta + ' (' + ORCAMENTO_CONFIG.banco.tipo + ')<br>';
+    html += '<strong>PIX (Chave):</strong> ' + ORCAMENTO_CONFIG.banco.pix + '<br>';
+    html += '<strong>CNPJ:</strong> ' + ORCAMENTO_CONFIG.empresa.cnpj + '<br>';
+    html += '<hr style="border-color:#808080; margin:4px 0;">';
+    html += '<div style="background:#ffffff; padding:3px 6px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; text-align:center;">';
+    html += '<strong>Valor: ' + formatarMoedaGlobal(orc.total || 0) + '</strong>';
+    html += '</div>';
+    html += '</div></div></div>';
+    
     if (orc.observacoes) {
         html += '<div style="background:#d4d0c8; padding:4px 10px; margin-top:6px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; box-shadow: inset 1px 1px 4px rgba(0,0,0,0.1);">';
         html += '<strong>Observações:</strong><br>' + orc.observacoes;
@@ -1271,7 +1368,6 @@ function gerarPDFOrcamento(id) {
                 mostrarNotificacao("Erro ao gerar PDF.", "error");
             });
         } else {
-            // Fallback: imprimir e salvar como PDF
             var printWindow = window.open("", "_blank", "width=800,height=600");
             if (printWindow) {
                 var doc = printWindow.document;
@@ -1597,7 +1693,7 @@ window.gerarRecibo = gerarRecibo;
 window.enviarWhatsAppRecibo = enviarWhatsAppRecibo;
 window.gerarPDFRecibo = gerarPDFRecibo;
 
-console.log('orcamento.js v4.3 carregado - CORRECAO: carregarOrcamentoParaEdicao, botoes e duplicacao!');
+console.log('orcamento.js v4.4 carregado - RECIBO CORRIGIDO, DADOS PAGAMENTO OK!');
 
 // ============================================================
 // INICIALIZAR
