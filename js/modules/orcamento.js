@@ -1,6 +1,6 @@
 // js/modules/orcamento.js - Sistema de Orçamento para ECD Eletrônica
-// Versao ESTAVEL v4.2 - CORRECAO: Acentuacao, Botao Atualizar, Duplicacao
-console.log('orcamento.js carregado - Versao ESTAVEL v4.2');
+// Versao ESTAVEL v4.3 - CORRECAO: carregarOrcamentoParaEdicao, botoes e duplicacao
+console.log('orcamento.js carregado - Versao ESTAVEL v4.3');
 
 // ============================================================
 // CONFIGURACOES
@@ -492,43 +492,60 @@ function recalcularTotais() {
 }
 
 // ============================================================
-// FUNCOES DO FORMULARIO - CORRIGIDAS (acentuacao e botoes)
+// FUNCOES DO FORMULARIO - CORRIGIDAS
 // ============================================================
 
 function resetOrcamentoForm() {
+    console.log('resetOrcamentoForm chamado');
+    
     var ids = ["orcamentoCliente", "orcamentoCnpj", "orcamentoEndereco", "orcamentoData", "orcamentoPrazo", "orcamentoObservacoes", "orcamentoDesconto"];
     for (var i = 0; i < ids.length; i++) {
         var el = document.getElementById(ids[i]);
         if (el) el.value = "";
     }
+    
     var statusSelect = document.getElementById("orcamentoStatus");
     if (statusSelect) statusSelect.value = "Pendente";
+    
     var dataEl = document.getElementById("orcamentoData");
     if (dataEl) {
         var hoje = new Date().toISOString().split("T")[0];
         dataEl.value = hoje;
     }
+    
     var prazoEl = document.getElementById("orcamentoPrazo");
     if (prazoEl) {
         var prazo = new Date();
         prazo.setDate(prazo.getDate() + 7);
         prazoEl.value = prazo.toISOString().split("T")[0];
     }
+    
     window.orcamentoItens = [];
     var tbody = document.getElementById("orcamentoItemsBody");
     if (tbody) tbody.innerHTML = "";
     adicionarItemLinha();
-    window.orcamentoEditandoId = null;
     
-    var titulo = document.getElementById("orcamentoFormTitle");
-    if (titulo) titulo.textContent = "Novo Orçamento";
+    window.orcamentoEditandoId = null;
+    console.log('orcamentoEditandoId resetado para null');
+    
+    // Atualizar titulo e botoes para modo NOVO
+    var tituloEl = document.getElementById("orcamentoFormTitle");
+    if (tituloEl) {
+        tituloEl.textContent = "Novo Orçamento";
+        console.log('Titulo alterado para: Novo Orçamento');
+    } else {
+        console.warn('Elemento orcamentoFormTitle não encontrado');
+    }
     
     var submitBtn = document.getElementById("orcamentoSubmitBtn");
     if (submitBtn) {
-        submitBtn.innerHTML = '<i class="fas fa-save"></i> Criar Orçamento';
+        submitBtn.innerHTML = '<i class="fas fa-plus"></i> Criar Orçamento';
         submitBtn.style.background = "#27ae60";
         submitBtn.style.color = "#ffffff";
         submitBtn.title = "Criar novo orçamento";
+        console.log('Botão alterado para: Criar Orçamento');
+    } else {
+        console.warn('Elemento orcamentoSubmitBtn não encontrado');
     }
     
     var cancelBtn = document.getElementById("orcamentoCancelBtn");
@@ -543,6 +560,7 @@ function resetOrcamentoForm() {
 
 function carregarOrcamentoParaEdicao(id) {
     console.log('carregarOrcamentoParaEdicao chamado para id:', id);
+    
     var orcamento = null;
     for (var i = 0; i < window.orcamentos.length; i++) {
         if (window.orcamentos[i].id === id) {
@@ -550,17 +568,22 @@ function carregarOrcamentoParaEdicao(id) {
             break;
         }
     }
+    
     if (!orcamento) {
         mostrarNotificacao("Orçamento não encontrado!", "error");
         return;
     }
     
+    console.log('Orçamento encontrado:', orcamento);
+    
     var panel = document.getElementById("orcamentoPanel");
     if (panel && panel.style.display !== "block") {
         panel.style.display = "block";
     }
+    
     switchOrcamentoTab("form");
     
+    // Preencher campos
     document.getElementById("orcamentoCliente").value = orcamento.cliente || "";
     document.getElementById("orcamentoCnpj").value = orcamento.cnpj || "";
     document.getElementById("orcamentoEndereco").value = orcamento.endereco || "";
@@ -570,6 +593,7 @@ function carregarOrcamentoParaEdicao(id) {
     document.getElementById("orcamentoStatus").value = orcamento.status || "Pendente";
     document.getElementById("orcamentoDesconto").value = orcamento.desconto ? formatarMoedaGlobal(orcamento.desconto).replace("R$ ", "") : "0,00";
     
+    // Carregar itens
     window.orcamentoItens = [];
     if (orcamento.itens) {
         for (var j = 0; j < orcamento.itens.length; j++) {
@@ -581,6 +605,7 @@ function carregarOrcamentoParaEdicao(id) {
             });
         }
     }
+    console.log('Itens carregados:', window.orcamentoItens.length);
     
     var tbody = document.getElementById("orcamentoItemsBody");
     if (tbody) {
@@ -599,15 +624,24 @@ function carregarOrcamentoParaEdicao(id) {
             linha.innerHTML = html;
             tbody.appendChild(linha);
         }
+        
         if (window.orcamentoItens.length === 0) {
             adicionarItemLinha();
         }
+        
         configurarEventosItens();
         configurarFormatacaoValor();
         atualizarIndicesItens();
     }
     
-    document.getElementById("orcamentoFormTitle").textContent = "Editando: " + (orcamento.numero || "Orçamento");
+    // Atualizar titulo e botoes para modo EDIÇÃO
+    var tituloEl = document.getElementById("orcamentoFormTitle");
+    if (tituloEl) {
+        tituloEl.textContent = "Editando: " + (orcamento.numero || "Orçamento");
+        console.log('Titulo alterado para: Editando: ' + orcamento.numero);
+    } else {
+        console.warn('Elemento orcamentoFormTitle não encontrado!');
+    }
     
     var submitBtn = document.getElementById("orcamentoSubmitBtn");
     if (submitBtn) {
@@ -615,6 +649,9 @@ function carregarOrcamentoParaEdicao(id) {
         submitBtn.style.background = "#f39c12";
         submitBtn.style.color = "#ffffff";
         submitBtn.title = "Salvar alterações no orçamento";
+        console.log('Botão alterado para: Atualizar Orçamento');
+    } else {
+        console.warn('Elemento orcamentoSubmitBtn não encontrado!');
     }
     
     var cancelBtn = document.getElementById("orcamentoCancelBtn");
@@ -631,7 +668,10 @@ function carregarOrcamentoParaEdicao(id) {
         };
     }
     
+    // IMPORTANTE: Definir o ID de edição ANTES de qualquer operação
     window.orcamentoEditandoId = id;
+    console.log('orcamentoEditandoId definido como:', id);
+    
     configurarFormatacaoDesconto();
     recalcularTotais();
     console.log('Orçamento carregado para edição, itens:', window.orcamentoItens.length);
@@ -695,6 +735,7 @@ function salvarOrcamento() {
         
         console.log('Dados do orçamento:', orcamentoData);
         console.log('Total de itens:', itens.length);
+        console.log('orcamentoEditandoId atual:', window.orcamentoEditandoId);
         
         // ============================================================
         // MODO EDICAO - ATUALIZAR ORCAMENTO EXISTENTE
@@ -1556,7 +1597,7 @@ window.gerarRecibo = gerarRecibo;
 window.enviarWhatsAppRecibo = enviarWhatsAppRecibo;
 window.gerarPDFRecibo = gerarPDFRecibo;
 
-console.log('orcamento.js v4.2 carregado - ACENTUACAO, BOTAO ATUALIZAR, DUPLICACAO CORRIGIDOS!');
+console.log('orcamento.js v4.3 carregado - CORRECAO: carregarOrcamentoParaEdicao, botoes e duplicacao!');
 
 // ============================================================
 // INICIALIZAR
