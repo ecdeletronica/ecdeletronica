@@ -1,6 +1,6 @@
 // js/modules/orcamento.js - Sistema de Orçamento para ECD Eletrônica
-// Versao ESTAVEL v3.7 - RECIBO COM WHATSAPP E PDF FUNCIONAIS
-console.log('orcamento.js carregado - Versao ESTAVEL v3.7');
+// Versao ESTAVEL v3.8 - CORRECAO: CPF/CNPJ, Adicionar Item, Salvar, Ordem de execucao
+console.log('orcamento.js carregado - Versao ESTAVEL v3.8');
 
 // ============================================================
 // CONFIGURACOES
@@ -169,7 +169,7 @@ function calcularTotalItens(itens) {
 }
 
 // ============================================================
-// FUNCAO DE FORMATACAO CPF/CNPJ
+// FUNCAO DE FORMATACAO CPF/CNPJ - CORRIGIDA
 // ============================================================
 
 function formatarCpfCnpj(valor) {
@@ -196,12 +196,13 @@ function configurarFormatacaoCpfCnpj() {
         return;
     }
     
+    // Remove eventos antigos clonando o elemento
     var novoInput = input.cloneNode(true);
     input.parentNode.replaceChild(novoInput, input);
     input = document.getElementById('orcamentoCnpj');
     
+    // Evento durante a digitação
     input.addEventListener('input', function(e) {
-        var pos = this.selectionStart || 0;
         var raw = this.value.replace(/\D/g, '');
         if (raw.length === 0) {
             this.value = '';
@@ -209,11 +210,9 @@ function configurarFormatacaoCpfCnpj() {
         }
         var formatted = formatarCpfCnpj(raw);
         this.value = formatted;
-        var newPos = formatted.length - (raw.length - pos);
-        if (newPos < 0) newPos = 0;
-        this.setSelectionRange(newPos, newPos);
     });
     
+    // Evento ao perder o foco
     input.addEventListener('blur', function() {
         var raw = this.value.replace(/\D/g, '');
         if (raw.length > 0) {
@@ -239,15 +238,8 @@ function configurarFormatacaoDesconto() {
         var num = parseFloat(raw);
         if (!isNaN(num) && num > 0) {
             this.value = num.toFixed(2).replace('.', ',');
-        } else if (this.value.trim() === '' || this.value === '0' || this.value === '0,00') {
-            this.value = '0,00';
         } else {
-            var onlyNum = parseFloat(this.value.replace(/[^\d,]/g, '').replace(',', '.'));
-            if (!isNaN(onlyNum) && onlyNum > 0) {
-                this.value = onlyNum.toFixed(2).replace('.', ',');
-            } else {
-                this.value = '0,00';
-            }
+            this.value = '0,00';
         }
         recalcularTotais();
     });
@@ -271,7 +263,7 @@ function configurarFormatacaoValor() {
                 var num = parseFloat(raw);
                 if (!isNaN(num) && num > 0) {
                     this.value = num.toFixed(2).replace('.', ',');
-                } else if (this.value.trim() === '') {
+                } else {
                     this.value = '0,00';
                 }
                 var idx = parseInt(this.dataset.index);
@@ -637,7 +629,8 @@ function salvarOrcamento() {
         var descontoInput = document.getElementById("orcamentoDesconto");
         var desconto = 0;
         if (descontoInput) {
-            desconto = parseFloat(descontoInput.value.replace(/[^\d,]/g, "").replace(",", ".")) || 0;
+            var descontoStr = descontoInput.value.replace(/[^\d,]/g, "").replace(",", ".");
+            desconto = parseFloat(descontoStr) || 0;
         }
         
         console.log('Cliente:', cliente, 'Itens:', window.orcamentoItens.length);
@@ -805,7 +798,7 @@ function listarOrcamentos() {
 }
 
 // ============================================================
-// FUNCAO GERAR RECIBO - COM BOTOES WHATSAPP E PDF
+// FUNCAO GERAR RECIBO
 // ============================================================
 
 function gerarRecibo(id) {
@@ -920,43 +913,14 @@ function gerarHtmlRecibo(orc) {
     html += '<p>Documento gerado em ' + formatarDataHoraGlobal(new Date().toISOString()) + '</p>';
     html += '</div>';
     
-    // ========================================
-    // BOTOES DO RECIBO - COM WHATSAPP E PDF FUNCIONAIS
-    // ========================================
     html += '<div class="text-center no-print" style="margin-top:15px; text-align:center;">';
-    html += '<button class="btn-win98" onclick="window.imprimirRecibo(\'' + orcId + '\')"><i class="fas fa-print"></i> Imprimir</button> ';
+    html += '<button class="btn-win98" onclick="window.print()"><i class="fas fa-print"></i> Imprimir</button> ';
     html += '<button class="btn-win98" onclick="window.enviarWhatsAppRecibo(\'' + orcId + '\')" style="background:#25D366; color:#ffffff; border:2px solid #1da851; border-top-color:#2ecc71; border-left-color:#2ecc71;"><i class="fab fa-whatsapp"></i> WhatsApp</button> ';
     html += '<button class="btn-win98" onclick="window.gerarPDFRecibo(\'' + orcId + '\')"><i class="fas fa-file-pdf"></i> PDF</button> ';
     html += '<button class="btn-win98" onclick="window.close()">Fechar</button>';
     html += '</div>';
     
-    // ========================================
-    // SCRIPT EMBUTIDO PARA FUNCOES DO RECIBO
-    // ========================================
     html += '<script>';
-    html += 'window.imprimirRecibo = function(id) {';
-    html += '  window.print();';
-    html += '};';
-    
-    html += 'window.gerarPDFRecibo = function(id) {';
-    html += '  if (typeof html2pdf !== "undefined") {';
-    html += '    var container = document.querySelector(".recibo-container");';
-    html += '    html2pdf().from(container).set({';
-    html += '      margin: [10, 10, 10, 10],';
-    html += '      filename: "Recibo_' + orcNumero.replace(/\//g, '-') + '.pdf",';
-    html += '      image: { type: "jpeg", quality: 0.95 },';
-    html += '      html2canvas: { scale: 2, useCORS: true, logging: false, backgroundColor: "#ffffff" },';
-    html += '      jsPDF: { unit: "mm", format: "a4", orientation: "portrait" }';
-    html += '    }).save().then(function() {';
-    html += '      alert("PDF gerado com sucesso!");';
-    html += '    }).catch(function(error) {';
-    html += '      alert("Erro ao gerar PDF: " + error);';
-    html += '    });';
-    html += '  } else {';
-    html += '    alert("Carregando bibliotecas... Utilize Imprimir e salve como PDF.");';
-    html += '  }';
-    html += '};';
-    
     html += 'window.enviarWhatsAppRecibo = function(id) {';
     html += '  var telefone = "' + ORCAMENTO_CONFIG.empresa.whatsapp + '";';
     html += '  var mensagem = "*' + ORCAMENTO_CONFIG.empresa.nome + '*\\n";';
@@ -966,17 +930,18 @@ function gerarHtmlRecibo(orc) {
     html += '  mensagem += "Valor: ' + formatarMoedaGlobal(orcTotal) + '\\n";';
     html += '  mensagem += "Por Extenso: ' + valorPorExtenso + '\\n";';
     html += '  mensagem += "\\n*ITENS:*\\n";';
-    var itensMsg = "";
     for (var i = 0; i < orc.itens.length; i++) {
         var item = orc.itens[i];
-        itensMsg += (i+1) + '. ' + (item.descricao || "Item") + ' - ' + (item.quantidade || 1) + 'x ' + formatarMoedaGlobal(item.valor_unitario || 0) + ' = ' + formatarMoedaGlobal((item.quantidade || 0) * (item.valor_unitario || 0)) + '\\n';
+        html += '  mensagem += "' + (i+1) + '. ' + (item.descricao || "Item") + ' - ' + (item.quantidade || 1) + 'x ' + formatarMoedaGlobal(item.valor_unitario || 0) + ' = ' + formatarMoedaGlobal((item.quantidade || 0) * (item.valor_unitario || 0)) + '\\n";';
     }
-    html += '  mensagem += "' + itensMsg.replace(/"/g, '\\"') + '";';
     html += '  mensagem += "\\n*PIX:* ' + ORCAMENTO_CONFIG.proponente.pix + '";';
     html += '  mensagem += "\\n\\n*Assistencia Tecnica Independente*";';
     html += '  mensagem += "\\n' + ORCAMENTO_CONFIG.empresa.telefone + '";';
     html += '  var url = "https://wa.me/" + telefone + "?text=" + encodeURIComponent(mensagem);';
     html += '  window.open(url, "_blank");';
+    html += '};';
+    html += 'window.gerarPDFRecibo = function(id) {';
+    html += '  alert("Para gerar o PDF, utilize a opcao Imprimir e selecione \"Salvar como PDF\" no destino da impressao.");';
     html += '};';
     html += '</script>';
     
@@ -1598,10 +1563,8 @@ window.duplicarOrcamento = duplicarOrcamento;
 window.mostrarNotificacao = mostrarNotificacao;
 window.fecharModalWin98 = fecharModalWin98;
 window.gerarRecibo = gerarRecibo;
-window.gerarPDFRecibo = gerarPDFRecibo;
-window.enviarWhatsAppRecibo = enviarWhatsAppRecibo;
 
-console.log('orcamento.js v3.7 carregado - RECIBO COM WHATSAPP E PDF FUNCIONAIS!');
+console.log('orcamento.js v3.8 carregado - CORRECAO: CPF/CNPJ, Adicionar, Salvar!');
 
 // ============================================================
 // INICIALIZAR
