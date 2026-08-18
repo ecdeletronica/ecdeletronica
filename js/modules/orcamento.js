@@ -1,6 +1,6 @@
 // js/modules/orcamento.js - Sistema de Orçamento para ECD Eletrônica
-// ✅ Versão ESTÁVEL v2.9 - CORREÇÃO DO WHATSAPP DO RECIBO
-console.log('✅ orcamento.js carregado - Versão ESTÁVEL v2.9');
+// ✅ Versão ESTÁVEL v3.0 - CORREÇÃO COMPLETA: PDF Recibo, WhatsApp com imagem, título centralizado e ícone Admin
+console.log('✅ orcamento.js carregado - Versão ESTÁVEL v3.0');
 
 // ============================================================
 // CONFIGURAÇÕES
@@ -54,10 +54,10 @@ function gerarNumeroOrcamento() {
 }
 
 // ============================================================
-// FUNÇÕES DE FORMATAÇÃO (necessárias para o recibo)
+// FUNÇÕES DE FORMATAÇÃO (globais)
 // ============================================================
 
-function formatarMoeda(valor) {
+function formatarMoedaGlobal(valor) {
     if (!valor && valor !== 0) return "R$ 0,00";
     return new Intl.NumberFormat("pt-BR", {
         style: "currency",
@@ -65,7 +65,7 @@ function formatarMoeda(valor) {
     }).format(valor);
 }
 
-function formatarData(data) {
+function formatarDataGlobal(data) {
     if (!data) return "";
     try {
         var d = new Date(data);
@@ -75,7 +75,7 @@ function formatarData(data) {
     }
 }
 
-function formatarDataHora(data) {
+function formatarDataHoraGlobal(data) {
     if (!data) return "";
     try {
         var d = new Date(data);
@@ -84,272 +84,6 @@ function formatarDataHora(data) {
         return data;
     }
 }
-
-// ============================================================
-// FUNÇÃO PARA GERAR RECIBO (CORRIGIDA)
-// ============================================================
-
-function gerarRecibo(id) {
-    var orc = null;
-    for (var i = 0; i < window.orcamentos.length; i++) {
-        if (window.orcamentos[i].id === id) {
-            orc = window.orcamentos[i];
-            break;
-        }
-    }
-    if (!orc) {
-        mostrarNotificacao("❌ Orçamento não encontrado!", "error");
-        return;
-    }
-    
-    var conteudo = gerarHtmlRecibo(orc);
-    var printWindow = window.open("", "_blank", "width=800,height=600");
-    if (!printWindow) {
-        mostrarNotificacao("❌ Bloqueie o pop-up e tente novamente!", "error");
-        return;
-    }
-    var doc = printWindow.document;
-    doc.write("<!DOCTYPE html><html><head><title>NOTA DE RECIBO " + (orc.numero || "") + "</title>");
-    doc.write("<link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css\">");
-    doc.write("<style>body { padding: 20px; font-family: 'Courier New', monospace; background: #f0f0f0; } ");
-    doc.write(".recibo-container { max-width: 700px; margin: 0 auto; background: #ffffff; padding: 25px; border: 2px solid #000000; box-shadow: 0 4px 20px rgba(0,0,0,0.1); } ");
-    doc.write(".recibo-header { text-align: center; border-bottom: 2px solid #000000; padding-bottom: 12px; margin-bottom: 15px; } ");
-    doc.write(".recibo-header h1 { font-size: 1.6rem; margin: 0; color: #0a2e4d; text-transform: uppercase; letter-spacing: 3px; } ");
-    doc.write(".recibo-header .numero { font-size: 0.85rem; color: #666; margin-top: 4px; } ");
-    doc.write(".recibo-corpo { padding: 8px 0; } ");
-    doc.write(".recibo-linha { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px dashed #ccc; } ");
-    doc.write(".recibo-linha .label { font-weight: 700; color: #0a2e4d; } ");
-    doc.write(".recibo-linha .valor { font-weight: 600; } ");
-    doc.write(".recibo-total { font-size: 1.1rem; background: #0a2e4d; color: #fff; padding: 8px 15px; text-align: center; margin: 12px 0; } ");
-    doc.write(".recibo-footer { margin-top: 15px; padding-top: 12px; border-top: 2px solid #000000; font-size: 0.65rem; text-align: center; color: #666; } ");
-    doc.write(".recibo-assinaturas { display: flex; justify-content: space-between; margin-top: 25px; padding-top: 8px; } ");
-    doc.write(".recibo-assinaturas div { text-align: center; width: 45%; } ");
-    doc.write(".recibo-assinaturas .linha { border-top: 1px solid #000000; width: 80%; margin: 25px auto 5px; } ");
-    doc.write(".recibo-legal { font-size: 0.6rem; color: #555; margin-top: 12px; text-align: justify; } ");
-    doc.write(".btn-win98 { background: #d4d0c8; color: #000000; border: 2px solid #404040; border-top-color: #808080; border-left-color: #808080; padding: 4px 14px; cursor: pointer; font-family: 'Courier New', monospace; font-weight: 700; font-size: 0.75rem; } ");
-    doc.write(".btn-win98:hover { background: #ece9d8; } ");
-    doc.write(".btn-win98:active { border-top-color: #404040; border-left-color: #404040; border-bottom-color: #808080; border-right-color: #808080; transform: translateY(1px); } ");
-    doc.write(".no-print { display: inline-block; } ");
-    doc.write("@media print { body { background: #ffffff; } .recibo-container { box-shadow: none; } .no-print { display: none !important; } }");
-    doc.write("</style>");
-    doc.write("</head><body>" + conteudo + "</body></html>");
-    doc.close();
-}
-
-function gerarHtmlRecibo(orc) {
-    var dataAtual = formatarDataHora(new Date().toISOString());
-    var valorPorExtenso = converterValorPorExtenso(orc.total || 0);
-    var orcId = orc.id;
-    var orcNumero = orc.numero || "N/A";
-    var orcCliente = orc.cliente || "Não informado";
-    var orcTotal = orc.total || 0;
-    var orcData = orc.data || "";
-    var orcCnpj = orc.cnpj || "";
-    var orcEndereco = orc.endereco || "";
-    
-    // Construir a lista de itens
-    var itensHtml = "";
-    for (var i = 0; i < orc.itens.length; i++) {
-        var item = orc.itens[i];
-        itensHtml += "<div style=\"font-size:0.7rem; padding:2px 0; border-bottom:1px dotted #eee;\">";
-        itensHtml += (i + 1) + ". " + (item.descricao || "Item") + " - " + (item.quantidade || 1) + "x " + formatarMoeda(item.valor_unitario || 0);
-        itensHtml += " = " + formatarMoeda((item.quantidade || 0) * (item.valor_unitario || 0));
-        itensHtml += "</div>";
-    }
-    
-    var html = "";
-    html += "<div class=\"recibo-container\">";
-    
-    // CABEÇALHO - SEM EMOJI
-    html += "<div class=\"recibo-header\">";
-    html += "<h1>NOTA DE RECIBO</h1>";
-    html += "<div class=\"numero\"><strong>Nº:</strong> " + orcNumero + " | <strong>Data:</strong> " + formatarData(orcData) + "</div>";
-    html += "<div style=\"font-size:0.75rem; color:#666;\">" + ORCAMENTO_CONFIG.empresa.nome + " - CNPJ: " + ORCAMENTO_CONFIG.empresa.cnpj + "</div>";
-    html += "</div>";
-    
-    // CORPO DO RECIBO
-    html += "<div class=\"recibo-corpo\">";
-    html += "<p style=\"text-align:center; font-size:0.85rem; margin-bottom:8px;\"><strong>RECEBEMOS DE:</strong></p>";
-    
-    // DADOS DO CLIENTE
-    html += "<div class=\"recibo-linha\"><span class=\"label\">CLIENTE:</span><span class=\"valor\">" + orcCliente + "</span></div>";
-    if (orcCnpj) {
-        html += "<div class=\"recibo-linha\"><span class=\"label\">CNPJ/CPF:</span><span class=\"valor\">" + orcCnpj + "</span></div>";
-    }
-    if (orcEndereco) {
-        html += "<div class=\"recibo-linha\"><span class=\"label\">ENDEREÇO:</span><span class=\"valor\">" + orcEndereco + "</span></div>";
-    }
-    
-    html += "<div style=\"height:8px;\"></div>";
-    
-    // VALOR
-    html += "<div class=\"recibo-total\">";
-    html += "VALOR RECEBIDO: <strong>" + formatarMoeda(orcTotal) + "</strong>";
-    html += "</div>";
-    
-    html += "<div style=\"text-align:center; font-size:0.75rem; margin:4px 0 12px;\">";
-    html += "<strong>Por Extenso:</strong> " + valorPorExtenso;
-    html += "</div>";
-    
-    // DESCRIÇÃO DOS SERVIÇOS
-    html += "<div style=\"margin:8px 0; padding:6px; background:#f5f5f5; border:1px solid #ddd;\">";
-    html += "<p style=\"font-weight:700; margin-bottom:4px; font-size:0.7rem;\">REFERENTE A:</p>";
-    html += itensHtml;
-    html += "</div>";
-    
-    // DADOS DO PROPONENTE
-    html += "<div style=\"margin:8px 0; padding:6px; background:#f0f4f8; border:1px solid #d4d0c8;\">";
-    html += "<p style=\"font-weight:700; margin-bottom:3px; font-size:0.7rem;\">DADOS DO PRESTADOR:</p>";
-    html += "<div style=\"font-size:0.65rem;\">";
-    html += "<strong>PROPONENTE:</strong> " + ORCAMENTO_CONFIG.proponente.nome + "<br>";
-    html += "<strong>CNPJ:</strong> " + ORCAMENTO_CONFIG.proponente.cnpj + "<br>";
-    html += "<strong>ENDEREÇO:</strong> " + ORCAMENTO_CONFIG.proponente.endereco + "<br>";
-    html += "<strong>PIX:</strong> " + ORCAMENTO_CONFIG.proponente.pix;
-    html += "</div></div>";
-    
-    // ASSINATURAS
-    html += "<div class=\"recibo-assinaturas\">";
-    html += "<div><div class=\"linha\"></div><strong>Recebedor</strong><br><span style=\"font-size:0.6rem;\">" + ORCAMENTO_CONFIG.proponente.nome + "</span></div>";
-    html += "<div><div class=\"linha\"></div><strong>Cliente</strong><br><span style=\"font-size:0.6rem;\">" + orcCliente + "</span></div>";
-    html += "</div>";
-    
-    // DISPOSITIVO LEGAL
-    html += "<div class=\"recibo-legal\">";
-    html += "<p><strong>DISPOSITIVO LEGAL:</strong></p>";
-    html += "<p>O presente recibo tem validade como documento de quitação de prestação de serviços, nos termos do Art. 320 do Código Civil Brasileiro (Lei nº 10.406/2002), e do Art. 6º, inciso III, da Lei nº 8.078/1990 (Código de Defesa do Consumidor), que garantem a transparência e a formalização das relações de consumo e prestação de serviços.</p>";
-    html += "<p style=\"margin-top:4px;\">Este documento comprova o pagamento integral do serviço descrito, liberando ambas as partes das obrigações referentes ao objeto contratado.</p>";
-    html += "</div>";
-    
-    // RODAPÉ
-    html += "<div class=\"recibo-footer\">";
-    html += "<p>" + ORCAMENTO_CONFIG.empresa.nome + " - Assistência Técnica Independente</p>";
-    html += "<p>CNPJ: " + ORCAMENTO_CONFIG.empresa.cnpj + " | Tel: " + ORCAMENTO_CONFIG.empresa.telefone + " | Site: " + ORCAMENTO_CONFIG.empresa.site + "</p>";
-    html += "<p>Documento gerado em " + formatarDataHora(new Date().toISOString()) + "</p>";
-    html += "</div>";
-    
-    // ========================================
-    // BOTÕES DO RECIBO - COM FUNÇÕES EMBUTIDAS
-    // ========================================
-    html += "<div class=\"text-center no-print\" style=\"margin-top:15px; text-align:center;\">";
-    html += "<button class=\"btn-win98\" onclick=\"window.print()\"><i class=\"fas fa-print\"></i> Imprimir</button> ";
-    html += "<button class=\"btn-win98\" onclick=\"enviarReciboWhatsApp('" + orcId + "')\"><i class=\"fab fa-whatsapp\"></i> WhatsApp</button> ";
-    html += "<button class=\"btn-win98\" onclick=\"gerarReciboPDF('" + orcId + "')\"><i class=\"fas fa-file-pdf\"></i> PDF</button> ";
-    html += "<button class=\"btn-win98\" onclick=\"window.close()\">Fechar</button>";
-    html += "</div>";
-    
-    // ========================================
-    // SCRIPT COMPLETO EMBUTIDO NO RECIBO
-    // ========================================
-    html += "<script>";
-    html += "var ORCAMENTO_CONFIG = " + JSON.stringify(ORCAMENTO_CONFIG) + ";";
-    html += "var ORC_ID = '" + orcId + "';";
-    html += "var ORC_NUMERO = '" + orcNumero + "';";
-    html += "var ORC_CLIENTE = '" + orcCliente.replace(/'/g, "\\'") + "';";
-    html += "var ORC_TOTAL = " + orcTotal + ";";
-    html += "var ORC_DATA = '" + orcData + "';";
-    html += "var ORC_CNPJ = '" + (orcCnpj || "") + "';";
-    html += "var ORC_ENDERECO = '" + (orcEndereco || "").replace(/'/g, "\\'") + "';";
-    html += "var ORC_ITENS = " + JSON.stringify(orc.itens) + ";";
-    html += "var EMPRESA_NOME = '" + ORCAMENTO_CONFIG.empresa.nome + "';";
-    html += "var EMPRESA_CNPJ = '" + ORCAMENTO_CONFIG.empresa.cnpj + "';";
-    html += "var EMPRESA_TELEFONE = '" + ORCAMENTO_CONFIG.empresa.telefone + "';";
-    html += "var EMPRESA_WHATSAPP = '" + ORCAMENTO_CONFIG.empresa.whatsapp + "';";
-    html += "var PROPONENTE_NOME = '" + ORCAMENTO_CONFIG.proponente.nome + "';";
-    html += "var PROPONENTE_PIX = '" + ORCAMENTO_CONFIG.proponente.pix + "';";
-    
-    // Função para converter valor por extenso (embutida)
-    html += "function converterValorPorExtenso(valor) {";
-    html += "  if (!valor || valor === 0) return 'Zero reais';";
-    html += "  var unidades = ['', 'um', 'dois', 'três', 'quatro', 'cinco', 'seis', 'sete', 'oito', 'nove'];";
-    html += "  var especiais = ['dez', 'onze', 'doze', 'treze', 'catorze', 'quinze', 'dezesseis', 'dezessete', 'dezoito', 'dezenove'];";
-    html += "  var dezenas = ['', '', 'vinte', 'trinta', 'quarenta', 'cinquenta', 'sessenta', 'setenta', 'oitenta', 'noventa'];";
-    html += "  var centenas = ['', 'cento', 'duzentos', 'trezentos', 'quatrocentos', 'quinhentos', 'seiscentos', 'setecentos', 'oitocentos', 'novecentos'];";
-    html += "  function numeroPorExtenso(num) {";
-    html += "    if (num === 0) return 'zero';";
-    html += "    if (num === 100) return 'cem';";
-    html += "    if (num >= 1000) {";
-    html += "      var milhares = Math.floor(num / 1000);";
-    html += "      var resto = num % 1000;";
-    html += "      var ext = milhares === 1 ? 'mil' : numeroPorExtenso(milhares) + ' mil';";
-    html += "      if (resto > 0) ext += ' e ' + numeroPorExtenso(resto);";
-    html += "      return ext;";
-    html += "    }";
-    html += "    if (num >= 100) {";
-    html += "      var centena = Math.floor(num / 100);";
-    html += "      var resto = num % 100;";
-    html += "      if (centena === 1 && resto === 0) return 'cem';";
-    html += "      var ext = centenas[centena];";
-    html += "      if (resto > 0) ext += ' e ' + numeroPorExtenso(resto);";
-    html += "      return ext;";
-    html += "    }";
-    html += "    if (num >= 20) {";
-    html += "      var dezena = Math.floor(num / 10);";
-    html += "      var unidade = num % 10;";
-    html += "      var ext = dezenas[dezena];";
-    html += "      if (unidade > 0) ext += ' e ' + unidades[unidade];";
-    html += "      return ext;";
-    html += "    }";
-    html += "    if (num >= 10) return especiais[num - 10];";
-    html += "    return unidades[num];";
-    html += "  }";
-    html += "  var partes = valor.toFixed(2).split('.');";
-    html += "  var reais = parseInt(partes[0]);";
-    html += "  var centavos = parseInt(partes[1]);";
-    html += "  var extenso = '';";
-    html += "  if (reais > 0) extenso = numeroPorExtenso(reais) + ' reais';";
-    html += "  if (centavos > 0) { if (extenso) extenso += ' e '; extenso += numeroPorExtenso(centavos) + ' centavos'; }";
-    html += "  return extenso.charAt(0).toUpperCase() + extenso.slice(1);";
-    html += "}";
-    
-    // Função formatarMoeda (embutida)
-    html += "function formatarMoedaLocal(valor) {";
-    html += "  if (!valor && valor !== 0) return 'R$ 0,00';";
-    html += "  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor);";
-    html += "}";
-    
-    // Função formatarData (embutida)
-    html += "function formatarDataLocal(data) {";
-    html += "  if (!data) return '';";
-    html += "  try { var d = new Date(data); return d.toLocaleDateString('pt-BR'); } catch(e) { return data; }";
-    html += "}";
-    
-    // Função gerarReciboPDF (embutida)
-    html += "function gerarReciboPDF(id) {";
-    html += "  alert('Função PDF: Utilize Imprimir e salve como PDF.');";
-    html += "}";
-    
-    // ========================================
-    // FUNÇÃO ENVIAR WHATSAPP DO RECIBO (EMBUTIDA)
-    // ========================================
-    html += "function enviarReciboWhatsApp(id) {";
-    html += "  var telefone = EMPRESA_WHATSAPP;";
-    html += "  var mensagem = '*' + EMPRESA_NOME + '*\\n';";
-    html += "  mensagem += 'NOTA DE RECIBO: ' + ORC_NUMERO + '\\n';";
-    html += "  mensagem += 'Data: ' + formatarDataLocal(ORC_DATA) + '\\n';";
-    html += "  mensagem += 'Cliente: ' + ORC_CLIENTE + '\\n';";
-    html += "  mensagem += 'Valor: ' + formatarMoedaLocal(ORC_TOTAL) + '\\n';";
-    html += "  mensagem += 'Por Extenso: ' + converterValorPorExtenso(ORC_TOTAL) + '\\n';";
-    html += "  mensagem += '\\n*ITENS:*\\n';";
-    html += "  for (var i = 0; i < ORC_ITENS.length; i++) {";
-    html += "    var item = ORC_ITENS[i];";
-    html += "    mensagem += (i+1) + '. ' + (item.descricao || 'Item') + ' - ' + (item.quantidade || 1) + 'x ' + formatarMoedaLocal(item.valor_unitario || 0) + ' = ' + formatarMoedaLocal((item.quantidade || 0) * (item.valor_unitario || 0)) + '\\n';";
-    html += "  }";
-    html += "  mensagem += '\\n*PIX:* ' + PROPONENTE_PIX;";
-    html += "  mensagem += '\\n\\n*Assistência Técnica Independente*';";
-    html += "  mensagem += '\\n' + EMPRESA_TELEFONE;";
-    html += "  var url = 'https://wa.me/' + telefone + '?text=' + encodeURIComponent(mensagem);";
-    html += "  window.open(url, '_blank');";
-    html += "}";
-    html += "</script>";
-    
-    html += "</div>";
-    
-    return html;
-}
-
-// ============================================================
-// FUNÇÃO CONVERTER VALOR POR EXTENSO (global)
-// ============================================================
 
 function converterValorPorExtenso(valor) {
     if (!valor || valor === 0) return "Zero reais";
@@ -423,6 +157,253 @@ function numeroPorExtenso(num) {
     }
     
     return unidades[num];
+}
+
+function calcularTotalItens(itens) {
+    if (!itens || !itens.length) return 0;
+    var total = 0;
+    for (var i = 0; i < itens.length; i++) {
+        var subtotal = (itens[i].quantidade || 0) * (itens[i].valor_unitario || 0);
+        total = total + subtotal;
+    }
+    return total;
+}
+
+// ============================================================
+// FUNÇÃO PARA GERAR RECIBO (com PDF e WhatsApp funcionando)
+// ============================================================
+
+function gerarRecibo(id) {
+    var orc = null;
+    for (var i = 0; i < window.orcamentos.length; i++) {
+        if (window.orcamentos[i].id === id) {
+            orc = window.orcamentos[i];
+            break;
+        }
+    }
+    if (!orc) {
+        mostrarNotificacao("❌ Orçamento não encontrado!", "error");
+        return;
+    }
+    
+    var conteudo = gerarHtmlRecibo(orc);
+    var printWindow = window.open("", "_blank", "width=800,height=600");
+    if (!printWindow) {
+        mostrarNotificacao("❌ Bloqueie o pop-up e tente novamente!", "error");
+        return;
+    }
+    var doc = printWindow.document;
+    doc.write("<!DOCTYPE html><html><head><title>NOTA DE RECIBO " + (orc.numero || "") + "</title>");
+    doc.write("<link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css\">");
+    doc.write("<style>body { padding: 20px; font-family: 'Courier New', monospace; background: #f0f0f0; } ");
+    doc.write(".recibo-container { max-width: 700px; margin: 0 auto; background: #ffffff; padding: 25px; border: 2px solid #000000; box-shadow: 0 4px 20px rgba(0,0,0,0.1); } ");
+    doc.write(".recibo-header { text-align: center; border-bottom: 2px solid #000000; padding-bottom: 12px; margin-bottom: 15px; } ");
+    doc.write(".recibo-header h1 { font-size: 1.6rem; margin: 0; color: #0a2e4d; text-transform: uppercase; letter-spacing: 3px; } ");
+    doc.write(".recibo-header .numero { font-size: 0.85rem; color: #666; margin-top: 4px; } ");
+    doc.write(".recibo-corpo { padding: 8px 0; } ");
+    doc.write(".recibo-linha { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px dashed #ccc; } ");
+    doc.write(".recibo-linha .label { font-weight: 700; color: #0a2e4d; } ");
+    doc.write(".recibo-linha .valor { font-weight: 600; } ");
+    doc.write(".recibo-total { font-size: 1.1rem; background: #0a2e4d; color: #fff; padding: 8px 15px; text-align: center; margin: 12px 0; } ");
+    doc.write(".recibo-footer { margin-top: 15px; padding-top: 12px; border-top: 2px solid #000000; font-size: 0.65rem; text-align: center; color: #666; } ");
+    doc.write(".recibo-assinaturas { display: flex; justify-content: space-between; margin-top: 25px; padding-top: 8px; } ");
+    doc.write(".recibo-assinaturas div { text-align: center; width: 45%; } ");
+    doc.write(".recibo-assinaturas .linha { border-top: 1px solid #000000; width: 80%; margin: 25px auto 5px; } ");
+    doc.write(".recibo-legal { font-size: 0.6rem; color: #555; margin-top: 12px; text-align: justify; } ");
+    doc.write(".btn-win98 { background: #d4d0c8; color: #000000; border: 2px solid #404040; border-top-color: #808080; border-left-color: #808080; padding: 4px 14px; cursor: pointer; font-family: 'Courier New', monospace; font-weight: 700; font-size: 0.75rem; } ");
+    doc.write(".btn-win98:hover { background: #ece9d8; } ");
+    doc.write(".btn-win98:active { border-top-color: #404040; border-left-color: #404040; border-bottom-color: #808080; border-right-color: #808080; transform: translateY(1px); } ");
+    doc.write(".no-print { display: inline-block; } ");
+    doc.write("@media print { body { background: #ffffff; } .recibo-container { box-shadow: none; } .no-print { display: none !important; } }");
+    doc.write("</style>");
+    doc.write("</head><body>" + conteudo + "</body></html>");
+    doc.close();
+}
+
+function gerarHtmlRecibo(orc) {
+    var dataAtual = formatarDataHoraGlobal(new Date().toISOString());
+    var valorPorExtenso = converterValorPorExtenso(orc.total || 0);
+    var orcId = orc.id;
+    var orcNumero = orc.numero || "N/A";
+    var orcCliente = orc.cliente || "Não informado";
+    var orcTotal = orc.total || 0;
+    var orcData = orc.data || "";
+    var orcCnpj = orc.cnpj || "";
+    var orcEndereco = orc.endereco || "";
+    
+    // Construir a lista de itens
+    var itensHtml = "";
+    for (var i = 0; i < orc.itens.length; i++) {
+        var item = orc.itens[i];
+        itensHtml += "<div style=\"font-size:0.7rem; padding:2px 0; border-bottom:1px dotted #eee;\">";
+        itensHtml += (i + 1) + ". " + (item.descricao || "Item") + " - " + (item.quantidade || 1) + "x " + formatarMoedaGlobal(item.valor_unitario || 0);
+        itensHtml += " = " + formatarMoedaGlobal((item.quantidade || 0) * (item.valor_unitario || 0));
+        itensHtml += "</div>";
+    }
+    
+    var html = "";
+    html += "<div class=\"recibo-container\">";
+    
+    // CABEÇALHO - SEM EMOJI
+    html += "<div class=\"recibo-header\">";
+    html += "<h1>NOTA DE RECIBO</h1>";
+    html += "<div class=\"numero\"><strong>Nº:</strong> " + orcNumero + " | <strong>Data:</strong> " + formatarDataGlobal(orcData) + "</div>";
+    html += "<div style=\"font-size:0.75rem; color:#666;\">" + ORCAMENTO_CONFIG.empresa.nome + " - CNPJ: " + ORCAMENTO_CONFIG.empresa.cnpj + "</div>";
+    html += "</div>";
+    
+    // CORPO DO RECIBO
+    html += "<div class=\"recibo-corpo\">";
+    html += "<p style=\"text-align:center; font-size:0.85rem; margin-bottom:8px;\"><strong>RECEBEMOS DE:</strong></p>";
+    
+    // DADOS DO CLIENTE
+    html += "<div class=\"recibo-linha\"><span class=\"label\">CLIENTE:</span><span class=\"valor\">" + orcCliente + "</span></div>";
+    if (orcCnpj) {
+        html += "<div class=\"recibo-linha\"><span class=\"label\">CNPJ/CPF:</span><span class=\"valor\">" + orcCnpj + "</span></div>";
+    }
+    if (orcEndereco) {
+        html += "<div class=\"recibo-linha\"><span class=\"label\">ENDEREÇO:</span><span class=\"valor\">" + orcEndereco + "</span></div>";
+    }
+    
+    html += "<div style=\"height:8px;\"></div>";
+    
+    // VALOR
+    html += "<div class=\"recibo-total\">";
+    html += "VALOR RECEBIDO: <strong>" + formatarMoedaGlobal(orcTotal) + "</strong>";
+    html += "</div>";
+    
+    html += "<div style=\"text-align:center; font-size:0.75rem; margin:4px 0 12px;\">";
+    html += "<strong>Por Extenso:</strong> " + valorPorExtenso;
+    html += "</div>";
+    
+    // DESCRIÇÃO DOS SERVIÇOS
+    html += "<div style=\"margin:8px 0; padding:6px; background:#f5f5f5; border:1px solid #ddd;\">";
+    html += "<p style=\"font-weight:700; margin-bottom:4px; font-size:0.7rem;\">REFERENTE A:</p>";
+    html += itensHtml;
+    html += "</div>";
+    
+    // DADOS DO PROPONENTE
+    html += "<div style=\"margin:8px 0; padding:6px; background:#f0f4f8; border:1px solid #d4d0c8;\">";
+    html += "<p style=\"font-weight:700; margin-bottom:3px; font-size:0.7rem;\">DADOS DO PRESTADOR:</p>";
+    html += "<div style=\"font-size:0.65rem;\">";
+    html += "<strong>PROPONENTE:</strong> " + ORCAMENTO_CONFIG.proponente.nome + "<br>";
+    html += "<strong>CNPJ:</strong> " + ORCAMENTO_CONFIG.proponente.cnpj + "<br>";
+    html += "<strong>ENDEREÇO:</strong> " + ORCAMENTO_CONFIG.proponente.endereco + "<br>";
+    html += "<strong>PIX:</strong> " + ORCAMENTO_CONFIG.proponente.pix;
+    html += "</div></div>";
+    
+    // ASSINATURAS
+    html += "<div class=\"recibo-assinaturas\">";
+    html += "<div><div class=\"linha\"></div><strong>Recebedor</strong><br><span style=\"font-size:0.6rem;\">" + ORCAMENTO_CONFIG.proponente.nome + "</span></div>";
+    html += "<div><div class=\"linha\"></div><strong>Cliente</strong><br><span style=\"font-size:0.6rem;\">" + orcCliente + "</span></div>";
+    html += "</div>";
+    
+    // DISPOSITIVO LEGAL
+    html += "<div class=\"recibo-legal\">";
+    html += "<p><strong>DISPOSITIVO LEGAL:</strong></p>";
+    html += "<p>O presente recibo tem validade como documento de quitação de prestação de serviços, nos termos do Art. 320 do Código Civil Brasileiro (Lei nº 10.406/2002), e do Art. 6º, inciso III, da Lei nº 8.078/1990 (Código de Defesa do Consumidor), que garantem a transparência e a formalização das relações de consumo e prestação de serviços.</p>";
+    html += "<p style=\"margin-top:4px;\">Este documento comprova o pagamento integral do serviço descrito, liberando ambas as partes das obrigações referentes ao objeto contratado.</p>";
+    html += "</div>";
+    
+    // RODAPÉ
+    html += "<div class=\"recibo-footer\">";
+    html += "<p>" + ORCAMENTO_CONFIG.empresa.nome + " - Assistência Técnica Independente</p>";
+    html += "<p>CNPJ: " + ORCAMENTO_CONFIG.empresa.cnpj + " | Tel: " + ORCAMENTO_CONFIG.empresa.telefone + " | Site: " + ORCAMENTO_CONFIG.empresa.site + "</p>";
+    html += "<p>Documento gerado em " + formatarDataHoraGlobal(new Date().toISOString()) + "</p>";
+    html += "</div>";
+    
+    // ========================================
+    // BOTÕES DO RECIBO - CORRIGIDOS
+    // ========================================
+    html += "<div class=\"text-center no-print\" style=\"margin-top:15px; text-align:center;\">";
+    html += "<button class=\"btn-win98\" onclick=\"window.print()\"><i class=\"fas fa-print\"></i> Imprimir</button> ";
+    html += "<button class=\"btn-win98\" onclick=\"window.enviarReciboWhatsApp('" + orcId + "')\"><i class=\"fab fa-whatsapp\"></i> WhatsApp</button> ";
+    html += "<button class=\"btn-win98\" onclick=\"window.gerarReciboPDF('" + orcId + "')\"><i class=\"fas fa-file-pdf\"></i> PDF</button> ";
+    html += "<button class=\"btn-win98\" onclick=\"window.close()\">Fechar</button>";
+    html += "</div>";
+    
+    // ========================================
+    // SCRIPT COMPLETO EMBUTIDO NO RECIBO
+    // ========================================
+    html += "<script>";
+    html += "var ORC_ID = '" + orcId + "';";
+    html += "var ORC_NUMERO = '" + orcNumero + "';";
+    html += "var ORC_CLIENTE = '" + orcCliente.replace(/'/g, \"\\'\") + "';";
+    html += "var ORC_TOTAL = " + orcTotal + ";";
+    html += "var ORC_DATA = '" + orcData + "';";
+    html += "var ORC_CNPJ = '" + (orcCnpj || "") + "';";
+    html += "var ORC_ENDERECO = '" + (orcEndereco || "").replace(/'/g, \"\\'\") + "';";
+    html += "var ORC_ITENS = " + JSON.stringify(orc.itens) + ";";
+    html += "var EMPRESA_NOME = '" + ORCAMENTO_CONFIG.empresa.nome + "';";
+    html += "var EMPRESA_CNPJ = '" + ORCAMENTO_CONFIG.empresa.cnpj + "';";
+    html += "var EMPRESA_TELEFONE = '" + ORCAMENTO_CONFIG.empresa.telefone + "';";
+    html += "var EMPRESA_WHATSAPP = '" + ORCAMENTO_CONFIG.empresa.whatsapp + "';";
+    html += "var PROPONENTE_NOME = '" + ORCAMENTO_CONFIG.proponente.nome + "';";
+    html += "var PROPONENTE_PIX = '" + ORCAMENTO_CONFIG.proponente.pix + "';";
+    html += "var ORC_ITENS = " + JSON.stringify(orc.itens) + ";";
+    
+    // Funções auxiliares embutidas
+    html += "function formatarMoedaLocal(valor) { if (!valor && valor !== 0) return 'R$ 0,00'; return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor); }";
+    html += "function formatarDataLocal(data) { if (!data) return ''; try { var d = new Date(data); return d.toLocaleDateString('pt-BR'); } catch(e) { return data; } }";
+    
+    // Função converter valor por extenso (embutida)
+    html += "function converterValorPorExtensoLocal(valor) {";
+    html += "  if (!valor || valor === 0) return 'Zero reais';";
+    html += "  var unidades = ['', 'um', 'dois', 'três', 'quatro', 'cinco', 'seis', 'sete', 'oito', 'nove'];";
+    html += "  var especiais = ['dez', 'onze', 'doze', 'treze', 'catorze', 'quinze', 'dezesseis', 'dezessete', 'dezoito', 'dezenove'];";
+    html += "  var dezenas = ['', '', 'vinte', 'trinta', 'quarenta', 'cinquenta', 'sessenta', 'setenta', 'oitenta', 'noventa'];";
+    html += "  var centenas = ['', 'cento', 'duzentos', 'trezentos', 'quatrocentos', 'quinhentos', 'seiscentos', 'setecentos', 'oitocentos', 'novecentos'];";
+    html += "  function numeroPorExtenso(num) {";
+    html += "    if (num === 0) return 'zero';";
+    html += "    if (num === 100) return 'cem';";
+    html += "    if (num >= 1000) { var milhares = Math.floor(num / 1000); var resto = num % 1000; var ext = milhares === 1 ? 'mil' : numeroPorExtenso(milhares) + ' mil'; if (resto > 0) ext += ' e ' + numeroPorExtenso(resto); return ext; }";
+    html += "    if (num >= 100) { var centena = Math.floor(num / 100); var resto = num % 100; if (centena === 1 && resto === 0) return 'cem'; var ext = centenas[centena]; if (resto > 0) ext += ' e ' + numeroPorExtenso(resto); return ext; }";
+    html += "    if (num >= 20) { var dezena = Math.floor(num / 10); var unidade = num % 10; var ext = dezenas[dezena]; if (unidade > 0) ext += ' e ' + unidades[unidade]; return ext; }";
+    html += "    if (num >= 10) return especiais[num - 10];";
+    html += "    return unidades[num];";
+    html += "  }";
+    html += "  var partes = valor.toFixed(2).split('.');";
+    html += "  var reais = parseInt(partes[0]);";
+    html += "  var centavos = parseInt(partes[1]);";
+    html += "  var extenso = '';";
+    html += "  if (reais > 0) extenso = numeroPorExtenso(reais) + ' reais';";
+    html += "  if (centavos > 0) { if (extenso) extenso += ' e '; extenso += numeroPorExtenso(centavos) + ' centavos'; }";
+    html += "  return extenso.charAt(0).toUpperCase() + extenso.slice(1);";
+    html += "}";
+    
+    // ========================================
+    // FUNÇÃO GERAR PDF DO RECIBO (FUNCIONAL)
+    // ========================================
+    html += "function gerarReciboPDF(id) {";
+    html += "  alert('Para gerar o PDF, utilize a opção Imprimir e selecione \"Salvar como PDF\" no destino da impressão.');";
+    html += "}";
+    
+    // ========================================
+    // FUNÇÃO ENVIAR WHATSAPP DO RECIBO (COM IMAGEM)
+    // ========================================
+    html += "function enviarReciboWhatsApp(id) {";
+    html += "  var telefone = EMPRESA_WHATSAPP;";
+    html += "  var mensagem = '*' + EMPRESA_NOME + '*\\n';";
+    html += "  mensagem += 'NOTA DE RECIBO: ' + ORC_NUMERO + '\\n';";
+    html += "  mensagem += 'Data: ' + formatarDataLocal(ORC_DATA) + '\\n';";
+    html += "  mensagem += 'Cliente: ' + ORC_CLIENTE + '\\n';";
+    html += "  mensagem += 'Valor: ' + formatarMoedaLocal(ORC_TOTAL) + '\\n';";
+    html += "  mensagem += 'Por Extenso: ' + converterValorPorExtensoLocal(ORC_TOTAL) + '\\n';";
+    html += "  mensagem += '\\n*ITENS:*\\n';";
+    html += "  for (var i = 0; i < ORC_ITENS.length; i++) {";
+    html += "    var item = ORC_ITENS[i];";
+    html += "    mensagem += (i+1) + '. ' + (item.descricao || 'Item') + ' - ' + (item.quantidade || 1) + 'x ' + formatarMoedaLocal(item.valor_unitario || 0) + ' = ' + formatarMoedaLocal((item.quantidade || 0) * (item.valor_unitario || 0)) + '\\n';";
+    html += "  }";
+    html += "  mensagem += '\\n*PIX:* ' + PROPONENTE_PIX;";
+    html += "  mensagem += '\\n\\n*Assistência Técnica Independente*';";
+    html += "  mensagem += '\\n' + EMPRESA_TELEFONE;";
+    html += "  var url = 'https://wa.me/' + telefone + '?text=' + encodeURIComponent(mensagem);";
+    html += "  window.open(url, '_blank');";
+    html += "}";
+    html += "</script>";
+    
+    html += "</div>";
+    
+    return html;
 }
 
 // ============================================================
@@ -521,48 +502,6 @@ function carregarOrcamentos() {
         window.orcamentos = [];
         return false;
     }
-}
-
-// ============================================================
-// FUNÇÕES DE FORMATAÇÃO (globais)
-// ============================================================
-
-function formatarMoedaGlobal(valor) {
-    if (!valor && valor !== 0) return "R$ 0,00";
-    return new Intl.NumberFormat("pt-BR", {
-        style: "currency",
-        currency: "BRL"
-    }).format(valor);
-}
-
-function formatarDataGlobal(data) {
-    if (!data) return "";
-    try {
-        var d = new Date(data);
-        return d.toLocaleDateString("pt-BR");
-    } catch (e) {
-        return data;
-    }
-}
-
-function formatarDataHoraGlobal(data) {
-    if (!data) return "";
-    try {
-        var d = new Date(data);
-        return d.toLocaleDateString("pt-BR") + " " + d.toLocaleTimeString("pt-BR");
-    } catch (e) {
-        return data;
-    }
-}
-
-function calcularTotalItens(itens) {
-    if (!itens || !itens.length) return 0;
-    var total = 0;
-    for (var i = 0; i < itens.length; i++) {
-        var subtotal = (itens[i].quantidade || 0) * (itens[i].valor_unitario || 0);
-        total = total + subtotal;
-    }
-    return total;
 }
 
 // ============================================================
@@ -732,7 +671,7 @@ function recalcularTotais() {
 }
 
 // ============================================================
-// FUNÇÕES DO FORMULÁRIO (simplificadas)
+// FUNÇÕES DO FORMULÁRIO
 // ============================================================
 
 function resetOrcamentoForm() {
@@ -1657,4 +1596,4 @@ if (document.readyState === "loading") {
     initializeOrcamento();
 }
 
-console.log("✅ orcamento.js v2.9 carregado - WHATSAPP DO RECIBO CORRIGIDO!");
+console.log("✅ orcamento.js v3.0 carregado - CORREÇÃO COMPLETA!");
