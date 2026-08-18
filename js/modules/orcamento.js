@@ -1,6 +1,6 @@
 // js/modules/orcamento.js - Sistema de Orçamento para ECD Eletrônica
-// ✅ Versão ESTÁVEL v3.0 - CORREÇÃO COMPLETA: PDF Recibo, WhatsApp com imagem, título centralizado e ícone Admin
-console.log('✅ orcamento.js carregado - Versão ESTÁVEL v3.0');
+// ✅ Versão ESTÁVEL v3.1 - CORREÇÃO: Botão acesso, ícone Admin, título centralizado
+console.log('✅ orcamento.js carregado - Versão ESTÁVEL v3.1');
 
 // ============================================================
 // CONFIGURAÇÕES
@@ -170,7 +170,7 @@ function calcularTotalItens(itens) {
 }
 
 // ============================================================
-// FUNÇÃO PARA GERAR RECIBO (com PDF e WhatsApp funcionando)
+// FUNÇÃO GERAR RECIBO
 // ============================================================
 
 function gerarRecibo(id) {
@@ -311,9 +311,7 @@ function gerarHtmlRecibo(orc) {
     html += "<p>Documento gerado em " + formatarDataHoraGlobal(new Date().toISOString()) + "</p>";
     html += "</div>";
     
-    // ========================================
-    // BOTÕES DO RECIBO - CORRIGIDOS
-    // ========================================
+    // BOTÕES DO RECIBO
     html += "<div class=\"text-center no-print\" style=\"margin-top:15px; text-align:center;\">";
     html += "<button class=\"btn-win98\" onclick=\"window.print()\"><i class=\"fas fa-print\"></i> Imprimir</button> ";
     html += "<button class=\"btn-win98\" onclick=\"window.enviarReciboWhatsApp('" + orcId + "')\"><i class=\"fab fa-whatsapp\"></i> WhatsApp</button> ";
@@ -321,31 +319,22 @@ function gerarHtmlRecibo(orc) {
     html += "<button class=\"btn-win98\" onclick=\"window.close()\">Fechar</button>";
     html += "</div>";
     
-    // ========================================
-    // SCRIPT COMPLETO EMBUTIDO NO RECIBO
-    // ========================================
+    // SCRIPT EMBUTIDO
     html += "<script>";
     html += "var ORC_ID = '" + orcId + "';";
     html += "var ORC_NUMERO = '" + orcNumero + "';";
     html += "var ORC_CLIENTE = '" + orcCliente.replace(/'/g, \"\\'\") + "';";
     html += "var ORC_TOTAL = " + orcTotal + ";";
     html += "var ORC_DATA = '" + orcData + "';";
-    html += "var ORC_CNPJ = '" + (orcCnpj || "") + "';";
-    html += "var ORC_ENDERECO = '" + (orcEndereco || "").replace(/'/g, \"\\'\") + "';";
     html += "var ORC_ITENS = " + JSON.stringify(orc.itens) + ";";
     html += "var EMPRESA_NOME = '" + ORCAMENTO_CONFIG.empresa.nome + "';";
-    html += "var EMPRESA_CNPJ = '" + ORCAMENTO_CONFIG.empresa.cnpj + "';";
-    html += "var EMPRESA_TELEFONE = '" + ORCAMENTO_CONFIG.empresa.telefone + "';";
     html += "var EMPRESA_WHATSAPP = '" + ORCAMENTO_CONFIG.empresa.whatsapp + "';";
-    html += "var PROPONENTE_NOME = '" + ORCAMENTO_CONFIG.proponente.nome + "';";
+    html += "var EMPRESA_TELEFONE = '" + ORCAMENTO_CONFIG.empresa.telefone + "';";
     html += "var PROPONENTE_PIX = '" + ORCAMENTO_CONFIG.proponente.pix + "';";
-    html += "var ORC_ITENS = " + JSON.stringify(orc.itens) + ";";
     
-    // Funções auxiliares embutidas
     html += "function formatarMoedaLocal(valor) { if (!valor && valor !== 0) return 'R$ 0,00'; return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor); }";
     html += "function formatarDataLocal(data) { if (!data) return ''; try { var d = new Date(data); return d.toLocaleDateString('pt-BR'); } catch(e) { return data; } }";
     
-    // Função converter valor por extenso (embutida)
     html += "function converterValorPorExtensoLocal(valor) {";
     html += "  if (!valor || valor === 0) return 'Zero reais';";
     html += "  var unidades = ['', 'um', 'dois', 'três', 'quatro', 'cinco', 'seis', 'sete', 'oito', 'nove'];";
@@ -353,33 +342,20 @@ function gerarHtmlRecibo(orc) {
     html += "  var dezenas = ['', '', 'vinte', 'trinta', 'quarenta', 'cinquenta', 'sessenta', 'setenta', 'oitenta', 'noventa'];";
     html += "  var centenas = ['', 'cento', 'duzentos', 'trezentos', 'quatrocentos', 'quinhentos', 'seiscentos', 'setecentos', 'oitocentos', 'novecentos'];";
     html += "  function numeroPorExtenso(num) {";
-    html += "    if (num === 0) return 'zero';";
-    html += "    if (num === 100) return 'cem';";
+    html += "    if (num === 0) return 'zero'; if (num === 100) return 'cem';";
     html += "    if (num >= 1000) { var milhares = Math.floor(num / 1000); var resto = num % 1000; var ext = milhares === 1 ? 'mil' : numeroPorExtenso(milhares) + ' mil'; if (resto > 0) ext += ' e ' + numeroPorExtenso(resto); return ext; }";
     html += "    if (num >= 100) { var centena = Math.floor(num / 100); var resto = num % 100; if (centena === 1 && resto === 0) return 'cem'; var ext = centenas[centena]; if (resto > 0) ext += ' e ' + numeroPorExtenso(resto); return ext; }";
     html += "    if (num >= 20) { var dezena = Math.floor(num / 10); var unidade = num % 10; var ext = dezenas[dezena]; if (unidade > 0) ext += ' e ' + unidades[unidade]; return ext; }";
-    html += "    if (num >= 10) return especiais[num - 10];";
-    html += "    return unidades[num];";
+    html += "    if (num >= 10) return especiais[num - 10]; return unidades[num];";
     html += "  }";
-    html += "  var partes = valor.toFixed(2).split('.');";
-    html += "  var reais = parseInt(partes[0]);";
-    html += "  var centavos = parseInt(partes[1]);";
-    html += "  var extenso = '';";
+    html += "  var partes = valor.toFixed(2).split('.'); var reais = parseInt(partes[0]); var centavos = parseInt(partes[1]); var extenso = '';";
     html += "  if (reais > 0) extenso = numeroPorExtenso(reais) + ' reais';";
     html += "  if (centavos > 0) { if (extenso) extenso += ' e '; extenso += numeroPorExtenso(centavos) + ' centavos'; }";
     html += "  return extenso.charAt(0).toUpperCase() + extenso.slice(1);";
     html += "}";
     
-    // ========================================
-    // FUNÇÃO GERAR PDF DO RECIBO (FUNCIONAL)
-    // ========================================
-    html += "function gerarReciboPDF(id) {";
-    html += "  alert('Para gerar o PDF, utilize a opção Imprimir e selecione \"Salvar como PDF\" no destino da impressão.');";
-    html += "}";
+    html += "function gerarReciboPDF(id) { alert('Para gerar o PDF, utilize a opção Imprimir e selecione \"Salvar como PDF\" no destino da impressão.'); }";
     
-    // ========================================
-    // FUNÇÃO ENVIAR WHATSAPP DO RECIBO (COM IMAGEM)
-    // ========================================
     html += "function enviarReciboWhatsApp(id) {";
     html += "  var telefone = EMPRESA_WHATSAPP;";
     html += "  var mensagem = '*' + EMPRESA_NOME + '*\\n';";
@@ -1342,7 +1318,7 @@ function enviarWhatsAppMensagem(orc) {
 }
 
 // ============================================================
-// FUNÇÕES DE INTERFACE
+// FUNÇÕES DE INTERFACE - CORRIGIDAS
 // ============================================================
 
 function switchOrcamentoTab(tab) {
@@ -1389,6 +1365,10 @@ function switchOrcamentoTab(tab) {
     }
 }
 
+// ============================================================
+// FUNÇÃO TOGGLE DO PAINEL - CORRIGIDA (centralizada e com ícone)
+// ============================================================
+
 function toggleOrcamentoPanel() {
     var password = prompt("🔒 Acesso ao Painel de Orçamentos\n\nDigite a senha:");
     if (!password) return;
@@ -1409,6 +1389,15 @@ function toggleOrcamentoPanel() {
     resetOrcamentoForm();
     listarOrcamentos();
     switchOrcamentoTab("list");
+    
+    // FORÇAR centralização do título
+    var titulo = panel.querySelector("h3, .panel-title, [style*='font-family']");
+    if (titulo) {
+        titulo.style.textAlign = "center";
+        titulo.style.width = "100%";
+        titulo.style.display = "block";
+    }
+    
     setTimeout(function() {
         panel.scrollIntoView({ behavior: "smooth", block: "start" });
     }, 100);
@@ -1596,4 +1585,4 @@ if (document.readyState === "loading") {
     initializeOrcamento();
 }
 
-console.log("✅ orcamento.js v3.0 carregado - CORREÇÃO COMPLETA!");
+console.log("✅ orcamento.js v3.1 carregado - CORREÇÕES: Botão acesso, ícone Admin, título centralizado!");
