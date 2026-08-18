@@ -1,6 +1,6 @@
 // js/modules/orcamento.js - Sistema de Orçamento para ECD Eletrônica
-// Versao ESTAVEL v3.4 - CORRECAO DE TODOS OS ERROS DE SINTAXE
-console.log('orcamento.js carregado - Versao ESTAVEL v3.4');
+// Versao ESTAVEL v3.5 - CORRECAO: CPF/CNPJ, Adicionar Item, Formatacao Valores, Salvar
+console.log('orcamento.js carregado - Versao ESTAVEL v3.5');
 
 // ============================================================
 // CONFIGURACOES
@@ -169,60 +169,95 @@ function calcularTotalItens(itens) {
 }
 
 // ============================================================
-// FUNCAO DE FORMATACAO CPF/CNPJ
+// FUNCAO DE FORMATACAO CPF/CNPJ - CORRIGIDA
 // ============================================================
 
 function formatarCpfCnpj(valor) {
     if (!valor) return '';
     var numeros = valor.replace(/\D/g, '');
     if (numeros.length <= 11) {
-        return numeros.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
+        // CPF: 000.000.000-00
+        if (numeros.length <= 3) return numeros;
+        if (numeros.length <= 6) return numeros.substring(0, 3) + '.' + numeros.substring(3);
+        if (numeros.length <= 9) return numeros.substring(0, 3) + '.' + numeros.substring(3, 6) + '.' + numeros.substring(6);
+        return numeros.substring(0, 3) + '.' + numeros.substring(3, 6) + '.' + numeros.substring(6, 9) + '-' + numeros.substring(9, 11);
     } else {
-        return numeros.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, "$1.$2.$3/$4-$5");
+        // CNPJ: 00.000.000/0000-00
+        if (numeros.length <= 2) return numeros;
+        if (numeros.length <= 5) return numeros.substring(0, 2) + '.' + numeros.substring(2);
+        if (numeros.length <= 8) return numeros.substring(0, 2) + '.' + numeros.substring(2, 5) + '.' + numeros.substring(5);
+        if (numeros.length <= 12) return numeros.substring(0, 2) + '.' + numeros.substring(2, 5) + '.' + numeros.substring(5, 8) + '/' + numeros.substring(8);
+        return numeros.substring(0, 2) + '.' + numeros.substring(2, 5) + '.' + numeros.substring(5, 8) + '/' + numeros.substring(8, 12) + '-' + numeros.substring(12, 14);
     }
 }
 
 function configurarFormatacaoCpfCnpj() {
     var input = document.getElementById('orcamentoCnpj');
-    if (!input) return;
+    if (!input) {
+        console.warn('Campo CPF/CNPJ nao encontrado');
+        return;
+    }
     
-    input.addEventListener('input', function() {
-        var valor = this.value.replace(/\D/g, '');
-        if (valor.length === 0) {
+    // Remove qualquer listener anterior
+    var novoInput = input.cloneNode(true);
+    input.parentNode.replaceChild(novoInput, input);
+    input = document.getElementById('orcamentoCnpj');
+    
+    input.addEventListener('input', function(e) {
+        var pos = this.selectionStart || 0;
+        var raw = this.value.replace(/\D/g, '');
+        if (raw.length === 0) {
             this.value = '';
             return;
         }
-        if (valor.length <= 11) {
-            if (valor.length <= 3) {
-                this.value = valor;
-            } else if (valor.length <= 6) {
-                this.value = valor.substring(0, 3) + '.' + valor.substring(3);
-            } else if (valor.length <= 9) {
-                this.value = valor.substring(0, 3) + '.' + valor.substring(3, 6) + '.' + valor.substring(6);
-            } else {
-                this.value = valor.substring(0, 3) + '.' + valor.substring(3, 6) + '.' + valor.substring(6, 9) + '-' + valor.substring(9, 11);
-            }
-        } else {
-            if (valor.length <= 2) {
-                this.value = valor;
-            } else if (valor.length <= 5) {
-                this.value = valor.substring(0, 2) + '.' + valor.substring(2);
-            } else if (valor.length <= 8) {
-                this.value = valor.substring(0, 2) + '.' + valor.substring(2, 5) + '.' + valor.substring(5);
-            } else if (valor.length <= 12) {
-                this.value = valor.substring(0, 2) + '.' + valor.substring(2, 5) + '.' + valor.substring(5, 8) + '/' + valor.substring(8);
-            } else {
-                this.value = valor.substring(0, 2) + '.' + valor.substring(2, 5) + '.' + valor.substring(5, 8) + '/' + valor.substring(8, 12) + '-' + valor.substring(12, 14);
-            }
-        }
+        var formatted = formatarCpfCnpj(raw);
+        this.value = formatted;
+        // Ajusta a posição do cursor
+        var newPos = formatted.length - (raw.length - pos);
+        if (newPos < 0) newPos = 0;
+        this.setSelectionRange(newPos, newPos);
     });
     
     input.addEventListener('blur', function() {
-        var valor = this.value.replace(/\D/g, '');
-        if (valor.length > 0) {
-            this.value = formatarCpfCnpj(valor);
+        var raw = this.value.replace(/\D/g, '');
+        if (raw.length > 0) {
+            this.value = formatarCpfCnpj(raw);
         }
     });
+}
+
+// ============================================================
+// FUNCAO PARA FORMATAR VALORES MONETARIOS
+// ============================================================
+
+function formatarValorMonetario(valor) {
+    if (!valor) return '0,00';
+    var num = parseFloat(valor.toString().replace(/[^\d,]/g, '').replace(',', '.'));
+    if (isNaN(num)) return '0,00';
+    return num.toFixed(2).replace('.', ',');
+}
+
+function configurarFormatacaoValor() {
+    var inputs = document.querySelectorAll('.item-valor');
+    for (var i = 0; i < inputs.length; i++) {
+        (function(input) {
+            input.addEventListener('blur', function() {
+                var raw = this.value.replace(/[^\d,]/g, '').replace(',', '.');
+                var num = parseFloat(raw);
+                if (!isNaN(num) && num > 0) {
+                    this.value = num.toFixed(2).replace('.', ',');
+                } else if (this.value.trim() === '') {
+                    this.value = '0,00';
+                }
+                // Dispara recalculo
+                var idx = parseInt(this.dataset.index);
+                if (!isNaN(idx) && window.orcamentoItens[idx]) {
+                    window.orcamentoItens[idx].valor_unitario = parseFloat(this.value.replace(',', '.')) || 0;
+                    recalcularTotais();
+                }
+            });
+        })(inputs[i]);
+    }
 }
 
 // ============================================================
@@ -271,13 +306,17 @@ function carregarOrcamentos() {
 // ============================================================
 
 function adicionarItemLinha() {
+    console.log('adicionarItemLinha chamado');
     var tbody = document.getElementById("orcamentoItemsBody");
-    if (!tbody) return;
+    if (!tbody) {
+        console.error('orcamentoItemsBody nao encontrado');
+        return;
+    }
     
     var index = window.orcamentoItens.length;
     var linha = document.createElement("tr");
     
-    var html = "";
+    var html = '';
     html += '<td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 6px; text-align:center; background:#d4d0c8; font-weight:700; font-size:0.65rem; font-family:\'Courier New\',monospace;">' + (index + 1) + '</td>';
     html += '<td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px;"><input type="text" class="item-descricao" placeholder="Descricao do servico" data-index="' + index + '" style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; width:100%; background:#f0f0f0; font-family:\'Courier New\',monospace; font-size:0.7rem; color:#000000; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.08);"></td>';
     html += '<td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px;"><input type="text" class="item-unidade" value="UN" data-index="' + index + '" style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; width:38px; background:#f0f0f0; font-family:\'Courier New\',monospace; font-size:0.7rem; color:#000000; text-align:center; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.08);"></td>';
@@ -292,7 +331,9 @@ function adicionarItemLinha() {
     
     atualizarIndicesItens();
     configurarEventosItens();
+    configurarFormatacaoValor();
     recalcularTotais();
+    console.log('Item adicionado, total de itens:', window.orcamentoItens.length);
 }
 
 function removerItemLinha(index) {
@@ -368,20 +409,28 @@ function configurarEventosItens() {
     
     var valores = tbody.querySelectorAll(".item-valor");
     for (var i = 0; i < valores.length; i++) {
-        valores[i].oninput = function() {
-            var idx = parseInt(this.dataset.index);
-            if (!isNaN(idx) && window.orcamentoItens[idx]) {
-                var valor = this.value.replace(/[^\d,]/g, "").replace(",", ".");
-                window.orcamentoItens[idx].valor_unitario = parseFloat(valor) || 0;
-                recalcularTotais();
-            }
-        };
-        valores[i].addEventListener("blur", function() {
-            var idx = parseInt(this.dataset.index);
-            if (!isNaN(idx) && window.orcamentoItens[idx]) {
-                this.value = formatarMoedaGlobal(window.orcamentoItens[idx].valor_unitario).replace("R$ ", "");
-            }
-        });
+        (function(input) {
+            input.oninput = function() {
+                var idx = parseInt(this.dataset.index);
+                if (!isNaN(idx) && window.orcamentoItens[idx]) {
+                    var valor = this.value.replace(/[^\d,]/g, "").replace(",", ".");
+                    window.orcamentoItens[idx].valor_unitario = parseFloat(valor) || 0;
+                    recalcularTotais();
+                }
+            };
+            input.addEventListener("blur", function() {
+                var idx = parseInt(this.dataset.index);
+                if (!isNaN(idx) && window.orcamentoItens[idx]) {
+                    var val = window.orcamentoItens[idx].valor_unitario;
+                    if (val > 0) {
+                        this.value = formatarMoedaGlobal(val).replace("R$ ", "");
+                    } else {
+                        this.value = "0,00";
+                    }
+                    recalcularTotais();
+                }
+            });
+        })(valores[i]);
     }
     
     var removeBtns = tbody.querySelectorAll(".remover-item");
@@ -515,7 +564,7 @@ function carregarOrcamentoParaEdicao(id) {
         for (var k = 0; k < window.orcamentoItens.length; k++) {
             var item = window.orcamentoItens[k];
             var linha = document.createElement("tr");
-            var html = "";
+            var html = '';
             html += '<td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 6px; text-align:center; background:#d4d0c8; font-weight:700; font-size:0.65rem; font-family:\'Courier New\',monospace;">' + (k + 1) + '</td>';
             html += '<td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px;"><input type="text" class="item-descricao" value="' + (item.descricao || "") + '" data-index="' + k + '" style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; width:100%; background:#f0f0f0; font-family:\'Courier New\',monospace; font-size:0.7rem; color:#000000; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.08);"></td>';
             html += '<td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px;"><input type="text" class="item-unidade" value="' + (item.unidade || "UN") + '" data-index="' + k + '" style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:2px 4px; width:38px; background:#f0f0f0; font-family:\'Courier New\',monospace; font-size:0.7rem; color:#000000; text-align:center; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.08);"></td>';
@@ -530,6 +579,7 @@ function carregarOrcamentoParaEdicao(id) {
             adicionarItemLinha();
         }
         configurarEventosItens();
+        configurarFormatacaoValor();
         atualizarIndicesItens();
     }
     document.getElementById("orcamentoFormTitle").textContent = "Editando: " + (orcamento.numero || "Orcamento");
@@ -546,6 +596,7 @@ function carregarOrcamentoParaEdicao(id) {
 }
 
 function salvarOrcamento() {
+    console.log('salvarOrcamento chamado');
     try {
         var cliente = document.getElementById("orcamentoCliente") ? document.getElementById("orcamentoCliente").value.trim() : "";
         var cnpj = document.getElementById("orcamentoCnpj") ? document.getElementById("orcamentoCnpj").value.trim() : "";
@@ -559,6 +610,9 @@ function salvarOrcamento() {
         if (descontoInput) {
             desconto = parseFloat(descontoInput.value.replace(/[^\d,]/g, "").replace(",", ".")) || 0;
         }
+        
+        console.log('Cliente:', cliente, 'Itens:', window.orcamentoItens.length);
+        
         if (!cliente) {
             mostrarNotificacao("Informe o nome do cliente!", "warning");
             return;
@@ -567,6 +621,7 @@ function salvarOrcamento() {
             mostrarNotificacao("Adicione pelo menos um item!", "warning");
             return;
         }
+        
         var subtotal = calcularTotalItens(window.orcamentoItens);
         var total = subtotal - (desconto || 0);
         
@@ -594,6 +649,8 @@ function salvarOrcamento() {
             itens: itens,
             updated_at: new Date().toISOString()
         };
+        
+        console.log('Dados do orcamento:', orcamentoData);
         
         if (window.orcamentoEditandoId) {
             var index = -1;
@@ -647,9 +704,10 @@ function salvarOrcamento() {
             resetOrcamentoForm();
             switchOrcamentoTab("list");
         }
+        console.log('Orcamento salvo com sucesso!');
     } catch (error) {
         console.error("Erro ao salvar orcamento:", error);
-        mostrarNotificacao("Erro ao salvar orcamento!", "error");
+        mostrarNotificacao("Erro ao salvar orcamento: " + error.message, "error");
     }
 }
 
@@ -718,6 +776,130 @@ function listarOrcamentos() {
 }
 
 // ============================================================
+// FUNCAO GERAR RECIBO
+// ============================================================
+
+function gerarRecibo(id) {
+    console.log('gerarRecibo chamado para id:', id);
+    var orc = null;
+    for (var i = 0; i < window.orcamentos.length; i++) {
+        if (window.orcamentos[i].id === id) {
+            orc = window.orcamentos[i];
+            break;
+        }
+    }
+    if (!orc) {
+        mostrarNotificacao("Orcamento nao encontrado!", "error");
+        return;
+    }
+    
+    var conteudo = gerarHtmlRecibo(orc);
+    var printWindow = window.open("", "_blank", "width=800,height=600");
+    if (!printWindow) {
+        mostrarNotificacao("Bloqueie o pop-up e tente novamente!", "error");
+        return;
+    }
+    var doc = printWindow.document;
+    doc.write('<!DOCTYPE html><html><head><title>NOTA DE RECIBO ' + (orc.numero || "") + '</title>');
+    doc.write('<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">');
+    doc.write('<style>body { padding: 20px; font-family: \'Courier New\', monospace; background: #f0f0f0; } ');
+    doc.write('.recibo-container { max-width: 700px; margin: 0 auto; background: #ffffff; padding: 25px; border: 2px solid #000000; box-shadow: 0 4px 20px rgba(0,0,0,0.1); } ');
+    doc.write('.recibo-header { text-align: center; border-bottom: 2px solid #000000; padding-bottom: 12px; margin-bottom: 15px; } ');
+    doc.write('.recibo-header h1 { font-size: 1.6rem; margin: 0; color: #0a2e4d; text-transform: uppercase; letter-spacing: 3px; } ');
+    doc.write('.recibo-header .numero { font-size: 0.85rem; color: #666; margin-top: 4px; } ');
+    doc.write('.recibo-corpo { padding: 8px 0; } ');
+    doc.write('.recibo-linha { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px dashed #ccc; } ');
+    doc.write('.recibo-linha .label { font-weight: 700; color: #0a2e4d; } ');
+    doc.write('.recibo-linha .valor { font-weight: 600; } ');
+    doc.write('.recibo-total { font-size: 1.1rem; background: #0a2e4d; color: #fff; padding: 8px 15px; text-align: center; margin: 12px 0; } ');
+    doc.write('.recibo-footer { margin-top: 15px; padding-top: 12px; border-top: 2px solid #000000; font-size: 0.65rem; text-align: center; color: #666; } ');
+    doc.write('.recibo-assinaturas { display: flex; justify-content: space-between; margin-top: 25px; padding-top: 8px; } ');
+    doc.write('.recibo-assinaturas div { text-align: center; width: 45%; } ');
+    doc.write('.recibo-assinaturas .linha { border-top: 1px solid #000000; width: 80%; margin: 25px auto 5px; } ');
+    doc.write('.recibo-legal { font-size: 0.6rem; color: #555; margin-top: 12px; text-align: justify; } ');
+    doc.write('.btn-win98 { background: #d4d0c8; color: #000000; border: 2px solid #404040; border-top-color: #808080; border-left-color: #808080; padding: 4px 14px; cursor: pointer; font-family: \'Courier New\', monospace; font-weight: 700; font-size: 0.75rem; } ');
+    doc.write('.btn-win98:hover { background: #ece9d8; } ');
+    doc.write('.btn-win98:active { border-top-color: #404040; border-left-color: #404040; border-bottom-color: #808080; border-right-color: #808080; transform: translateY(1px); } ');
+    doc.write('.no-print { display: inline-block; } ');
+    doc.write('@media print { body { background: #ffffff; } .recibo-container { box-shadow: none; } .no-print { display: none !important; } }');
+    doc.write('</style>');
+    doc.write('</head><body>' + conteudo + '</body></html>');
+    doc.close();
+}
+
+function gerarHtmlRecibo(orc) {
+    var valorPorExtenso = converterValorPorExtenso(orc.total || 0);
+    var orcId = orc.id;
+    var orcNumero = orc.numero || "N/A";
+    var orcCliente = orc.cliente || "Nao informado";
+    var orcTotal = orc.total || 0;
+    var orcData = orc.data || "";
+    var orcCnpj = orc.cnpj || "";
+    var orcEndereco = orc.endereco || "";
+    
+    var itensHtml = "";
+    for (var i = 0; i < orc.itens.length; i++) {
+        var item = orc.itens[i];
+        itensHtml += '<div style="font-size:0.7rem; padding:2px 0; border-bottom:1px dotted #eee;">';
+        itensHtml += (i + 1) + '. ' + (item.descricao || "Item") + ' - ' + (item.quantidade || 1) + 'x ' + formatarMoedaGlobal(item.valor_unitario || 0);
+        itensHtml += ' = ' + formatarMoedaGlobal((item.quantidade || 0) * (item.valor_unitario || 0));
+        itensHtml += '</div>';
+    }
+    
+    var html = "";
+    html += '<div class="recibo-container">';
+    html += '<div class="recibo-header">';
+    html += '<h1>NOTA DE RECIBO</h1>';
+    html += '<div class="numero"><strong>N:</strong> ' + orcNumero + ' | <strong>Data:</strong> ' + formatarDataGlobal(orcData) + '</div>';
+    html += '<div style="font-size:0.75rem; color:#666;">' + ORCAMENTO_CONFIG.empresa.nome + ' - CNPJ: ' + ORCAMENTO_CONFIG.empresa.cnpj + '</div>';
+    html += '</div>';
+    html += '<div class="recibo-corpo">';
+    html += '<p style="text-align:center; font-size:0.85rem; margin-bottom:8px;"><strong>RECEBEMOS DE:</strong></p>';
+    html += '<div class="recibo-linha"><span class="label">CLIENTE:</span><span class="valor">' + orcCliente + '</span></div>';
+    if (orcCnpj) {
+        html += '<div class="recibo-linha"><span class="label">CNPJ/CPF:</span><span class="valor">' + orcCnpj + '</span></div>';
+    }
+    if (orcEndereco) {
+        html += '<div class="recibo-linha"><span class="label">ENDEREÇO:</span><span class="valor">' + orcEndereco + '</span></div>';
+    }
+    html += '<div style="height:8px;"></div>';
+    html += '<div class="recibo-total">VALOR RECEBIDO: <strong>' + formatarMoedaGlobal(orcTotal) + '</strong></div>';
+    html += '<div style="text-align:center; font-size:0.75rem; margin:4px 0 12px;"><strong>Por Extenso:</strong> ' + valorPorExtenso + '</div>';
+    html += '<div style="margin:8px 0; padding:6px; background:#f5f5f5; border:1px solid #ddd;">';
+    html += '<p style="font-weight:700; margin-bottom:4px; font-size:0.7rem;">REFERENTE A:</p>';
+    html += itensHtml;
+    html += '</div>';
+    html += '<div style="margin:8px 0; padding:6px; background:#f0f4f8; border:1px solid #d4d0c8;">';
+    html += '<p style="font-weight:700; margin-bottom:3px; font-size:0.7rem;">DADOS DO PRESTADOR:</p>';
+    html += '<div style="font-size:0.65rem;">';
+    html += '<strong>PROPONENTE:</strong> ' + ORCAMENTO_CONFIG.proponente.nome + '<br>';
+    html += '<strong>CNPJ:</strong> ' + ORCAMENTO_CONFIG.proponente.cnpj + '<br>';
+    html += '<strong>ENDEREÇO:</strong> ' + ORCAMENTO_CONFIG.proponente.endereco + '<br>';
+    html += '<strong>PIX:</strong> ' + ORCAMENTO_CONFIG.proponente.pix;
+    html += '</div></div>';
+    html += '<div class="recibo-assinaturas">';
+    html += '<div><div class="linha"></div><strong>Recebedor</strong><br><span style="font-size:0.6rem;">' + ORCAMENTO_CONFIG.proponente.nome + '</span></div>';
+    html += '<div><div class="linha"></div><strong>Cliente</strong><br><span style="font-size:0.6rem;">' + orcCliente + '</span></div>';
+    html += '</div>';
+    html += '<div class="recibo-legal">';
+    html += '<p><strong>DISPOSITIVO LEGAL:</strong></p>';
+    html += '<p>O presente recibo tem validade como documento de quitação de prestação de serviços, nos termos do Art. 320 do Código Civil Brasileiro (Lei n 10.406/2002), e do Art. 6, inciso III, da Lei n 8.078/1990 (Código de Defesa do Consumidor).</p>';
+    html += '</div>';
+    html += '<div class="recibo-footer">';
+    html += '<p>' + ORCAMENTO_CONFIG.empresa.nome + ' - Assistencia Tecnica Independente</p>';
+    html += '<p>CNPJ: ' + ORCAMENTO_CONFIG.empresa.cnpj + ' | Tel: ' + ORCAMENTO_CONFIG.empresa.telefone + ' | Site: ' + ORCAMENTO_CONFIG.empresa.site + '</p>';
+    html += '<p>Documento gerado em ' + formatarDataHoraGlobal(new Date().toISOString()) + '</p>';
+    html += '</div>';
+    html += '<div class="text-center no-print" style="margin-top:15px; text-align:center;">';
+    html += '<button class="btn-win98" onclick="window.print()"><i class="fas fa-print"></i> Imprimir</button> ';
+    html += '<button class="btn-win98" onclick="window.close()">Fechar</button>';
+    html += '</div>';
+    html += '</div>';
+    
+    return html;
+}
+
+// ============================================================
 // FUNCOES DE VISUALIZACAO
 // ============================================================
 
@@ -767,12 +949,10 @@ function gerarHtmlOrcamento(orc) {
     
     var html = "";
     html += '<div style="font-family:\'Courier New\',monospace; font-size:0.75rem; color:#000000;">';
-    
     html += '<div style="text-align:center; padding:8px 0; margin-bottom:10px; background:#0a2e4d; color:#ffffff; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080;">';
     html += '<h2 style="margin:0; font-family:\'Courier New\',monospace; font-weight:700; font-size:1.2rem; letter-spacing:3px;">NOTA DE ORCAMENTO</h2>';
     html += '<div style="font-size:0.65rem; opacity:0.8;">' + (orc.numero || "N/A") + ' | ' + formatarDataGlobal(orc.data) + '</div>';
     html += '</div>';
-    
     html += '<div style="display:flex; align-items:center; gap:12px; padding:6px 10px; margin-bottom:8px; background:#f0f0f0; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; box-shadow: inset 1px 1px 4px rgba(0,0,0,0.1);">';
     html += '<div style="flex-shrink:0;"><img src="' + ORCAMENTO_CONFIG.empresa.logo + '" alt="ECD Eletronica" style="max-height:50px; width:auto; border:1px solid #808080; padding:3px; background:#ffffff;"></div>';
     html += '<div style="flex:1;"><strong style="font-size:0.9rem; color:#0a2e4d;">' + ORCAMENTO_CONFIG.empresa.nome + '</strong><br>';
@@ -780,7 +960,6 @@ function gerarHtmlOrcamento(orc) {
     html += ORCAMENTO_CONFIG.empresa.endereco + ' - CEP: ' + ORCAMENTO_CONFIG.empresa.cep;
     html += '<br>Site: ' + ORCAMENTO_CONFIG.empresa.site + '</div>';
     html += '</div>';
-    
     html += '<div style="background:#d4d0c8; padding:4px 10px; margin-bottom:6px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; box-shadow: inset 1px 1px 4px rgba(0,0,0,0.1);">';
     html += '<div style="display:grid; grid-template-columns:1fr 1fr; gap:4px; font-size:0.65rem;">';
     html += '<div><strong>PROPONENTE:</strong> ' + ORCAMENTO_CONFIG.proponente.nome + '</div>';
@@ -790,7 +969,6 @@ function gerarHtmlOrcamento(orc) {
     html += '<div style="text-align:right;"><strong>E-MAIL:</strong> ' + ORCAMENTO_CONFIG.proponente.email + '</div>';
     html += '<div style="grid-column:1/3;"><strong>PIX:</strong> ' + ORCAMENTO_CONFIG.proponente.pix + '</div>';
     html += '</div></div>';
-    
     html += '<div style="background:#d4d0c8; padding:4px 10px; margin-bottom:6px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; box-shadow: inset 1px 1px 4px rgba(0,0,0,0.1);">';
     html += '<div style="display:grid; grid-template-columns:1fr 1fr; gap:4px; font-size:0.65rem;">';
     html += '<div><strong>CLIENTE:</strong> ' + (orc.cliente || "Nao informado") + '</div>';
@@ -800,7 +978,6 @@ function gerarHtmlOrcamento(orc) {
     html += '<div style="text-align:right;"><strong>PRAZO:</strong> ' + formatarDataGlobal(orc.prazo) + '</div>';
     html += '<div><strong>STATUS:</strong> <span style="background:' + statusColor + '; color:#fff; padding:0 8px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; font-weight:700; font-size:0.6rem;">' + (orc.status || "Pendente") + '</span></div>';
     html += '</div></div>';
-    
     html += '<div style="overflow-x:auto; background:#d4d0c8; padding:3px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; box-shadow: inset 2px 2px 6px rgba(0,0,0,0.12);">';
     html += '<table style="width:100%; border-collapse:collapse; background:#ffffff; font-family:\'Courier New\',monospace; font-size:0.65rem;">';
     html += '<thead><tr style="background:#d4d0c8; border-bottom:2px solid #404040;">';
@@ -811,7 +988,6 @@ function gerarHtmlOrcamento(orc) {
     html += '<th style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:right; font-weight:700;">Valor Unit.</th>';
     html += '<th style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:right; font-weight:700;">Subtotal</th>';
     html += '</tr></thead><tbody>';
-    
     for (var i = 0; i < orc.itens.length; i++) {
         var item = orc.itens[i];
         var subtotal = (item.quantidade || 0) * (item.valor_unitario || 0);
@@ -824,7 +1000,6 @@ function gerarHtmlOrcamento(orc) {
         html += '<td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:right;">' + formatarMoedaGlobal(subtotal) + '</td>';
         html += '</tr>';
     }
-    
     html += '</tbody><tfoot>';
     html += '<tr><td colspan="5" style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:right; background:#f0f0f0;"><strong>Subtotal</strong></td>';
     html += '<td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:right; background:#f0f0f0;"><strong>' + formatarMoedaGlobal(orc.subtotal || 0) + '</strong></td></tr>';
@@ -833,41 +1008,16 @@ function gerarHtmlOrcamento(orc) {
     html += '<tr style="background:#d4e6f1;"><td colspan="5" style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:right; font-weight:700; font-size:0.8rem;"><strong>TOTAL GERAL</strong></td>';
     html += '<td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:right; font-weight:700; font-size:0.8rem;"><strong>' + formatarMoedaGlobal(orc.total || 0) + '</strong></td></tr>';
     html += '</tfoot></table></div>';
-    
     if (orc.observacoes) {
         html += '<div style="background:#d4d0c8; padding:4px 10px; margin-top:6px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; box-shadow: inset 1px 1px 4px rgba(0,0,0,0.1);">';
         html += '<strong>Observacoes:</strong><br>' + orc.observacoes;
         html += '</div>';
     }
-    
-    html += '<div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px;">';
-    html += '<div style="background:#d4d0c8; padding:6px 10px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; box-shadow: inset 1px 1px 4px rgba(0,0,0,0.1); text-align:center;">';
-    html += '<strong style="display:block; margin-bottom:4px; font-size:0.7rem;">PIX para Pagamento</strong>';
-    html += '<div style="background:#ffffff; padding:6px; display:inline-block; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080;">';
-    html += '<img src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=00020126580014BR.GOV.BCB.PIX0136' + ORCAMENTO_CONFIG.banco.pix + '5204000053039865802BR5913ECD Eletronica6009SAO PAULO61080540900062290525ECD' + orc.numero.replace(/-/g, '') + '6304' + Math.floor(Math.random() * 9000 + 1000) + '" alt="QR Code PIX" style="max-width:100px; height:auto;" crossorigin="anonymous">';
-    html += '</div>';
-    html += '<div style="margin-top:4px; font-size:0.6rem; font-weight:700;">Chave PIX: ' + ORCAMENTO_CONFIG.banco.pix + '</div>';
-    html += '</div>';
-    html += '<div style="background:#d4d0c8; padding:6px 10px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; box-shadow: inset 1px 1px 4px rgba(0,0,0,0.1);">';
-    html += '<strong style="display:block; margin-bottom:4px; font-size:0.7rem;">Dados para Pagamento</strong>';
-    html += '<div style="font-size:0.6rem; line-height:1.5;">';
-    html += '<strong>Banco:</strong> ' + ORCAMENTO_CONFIG.banco.nome + '<br>';
-    html += '<strong>Agencia:</strong> ' + ORCAMENTO_CONFIG.banco.agencia + '<br>';
-    html += '<strong>Conta:</strong> ' + ORCAMENTO_CONFIG.banco.conta + ' (' + ORCAMENTO_CONFIG.banco.tipo + ')<br>';
-    html += '<strong>PIX (Chave):</strong> ' + ORCAMENTO_CONFIG.banco.pix + '<br>';
-    html += '<strong>CNPJ:</strong> ' + ORCAMENTO_CONFIG.empresa.cnpj + '<br>';
-    html += '<hr style="border-color:#808080; margin:4px 0;">';
-    html += '<div style="background:#ffffff; padding:3px 6px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; text-align:center;">';
-    html += '<strong>Valor: ' + formatarMoedaGlobal(orc.total || 0) + '</strong>';
-    html += '</div>';
-    html += '</div></div></div>';
-    
     html += '<div style="text-align:center; margin-top:8px; padding-top:6px; border-top:2px solid #808080; font-size:0.5rem; color:#404040; font-family:\'Courier New\',monospace;">';
     html += '<p style="margin:1px 0;">' + ORCAMENTO_CONFIG.empresa.nome + ' - Assistencia Tecnica Independente</p>';
     html += '<p style="margin:1px 0;">CNPJ: ' + ORCAMENTO_CONFIG.empresa.cnpj + ' | Tel: ' + ORCAMENTO_CONFIG.empresa.telefone + ' | Site: ' + ORCAMENTO_CONFIG.empresa.site + '</p>';
     html += '<p style="margin:1px 0;">Documento gerado em ' + formatarDataHoraGlobal(new Date().toISOString()) + '</p>';
     html += '</div></div>';
-    
     return html;
 }
 
@@ -971,10 +1121,6 @@ function gerarPDFOrcamento(id) {
     }
 }
 
-// ============================================================
-// WHATSAPP DO ORCAMENTO
-// ============================================================
-
 function enviarWhatsAppOrcamento(id) {
     var orc = null;
     for (var i = 0; i < window.orcamentos.length; i++) {
@@ -988,94 +1134,6 @@ function enviarWhatsAppOrcamento(id) {
         return;
     }
     
-    if (typeof html2canvas === "undefined") {
-        mostrarNotificacao("Carregando biblioteca de imagem...", "info");
-        var script = document.createElement("script");
-        script.src = "https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js";
-        script.onload = function() { enviarWhatsAppOrcamento(id); };
-        script.onerror = function() { enviarWhatsAppMensagem(orc); };
-        document.head.appendChild(script);
-        return;
-    }
-    
-    mostrarNotificacao("Gerando imagem do orcamento...", "info");
-    
-    try {
-        var conteudo = gerarHtmlOrcamento(orc);
-        var container = document.createElement("div");
-        container.innerHTML = conteudo;
-        container.style.padding = "20px";
-        container.style.background = "#ffffff";
-        container.style.width = "100%";
-        container.style.maxWidth = "800px";
-        container.style.margin = "0 auto";
-        container.style.fontFamily = "'Courier New', monospace";
-        container.style.fontSize = "12px";
-        container.style.boxSizing = "border-box";
-        container.style.position = "relative";
-        
-        var imagens = container.querySelectorAll("img");
-        for (var i = 0; i < imagens.length; i++) {
-            imagens[i].crossOrigin = "anonymous";
-            imagens[i].setAttribute("crossOrigin", "anonymous");
-        }
-        
-        container.style.position = "absolute";
-        container.style.left = "-9999px";
-        container.style.top = "0";
-        document.body.appendChild(container);
-        
-        var options = {
-            scale: 2,
-            useCORS: true,
-            allowTaint: true,
-            logging: false,
-            backgroundColor: "#ffffff",
-            width: 800,
-            height: container.scrollHeight + 40,
-            scrollY: 0,
-            scrollX: 0,
-            windowWidth: 800,
-            onclone: function(clonedDoc, element) {
-                var imgs = element.querySelectorAll("img");
-                for (var i = 0; i < imgs.length; i++) {
-                    imgs[i].crossOrigin = "anonymous";
-                }
-            }
-        };
-        
-        html2canvas(container, options)
-            .then(function(canvas) {
-                if (container.parentNode) {
-                    document.body.removeChild(container);
-                }
-                var imageDataUrl = canvas.toDataURL("image/png");
-                var link = document.createElement("a");
-                link.href = imageDataUrl;
-                link.download = "Orcamento_" + (orc.numero || "ECD") + ".png";
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                mostrarNotificacao("Imagem baixada!", "success");
-                enviarWhatsAppMensagem(orc);
-            })
-            .catch(function(error) {
-                console.error("Erro ao gerar imagem:", error);
-                if (container.parentNode) {
-                    document.body.removeChild(container);
-                }
-                mostrarNotificacao("Erro ao gerar imagem. Enviando mensagem...", "warning");
-                enviarWhatsAppMensagem(orc);
-            });
-            
-    } catch (error) {
-        console.error("Erro:", error);
-        mostrarNotificacao("Erro ao gerar imagem. Enviando mensagem...", "error");
-        enviarWhatsAppMensagem(orc);
-    }
-}
-
-function enviarWhatsAppMensagem(orc) {
     var telefone = ORCAMENTO_CONFIG.empresa.whatsapp;
     var mensagem = "*" + ORCAMENTO_CONFIG.empresa.nome + "*\n";
     mensagem += "Orcamento: " + (orc.numero || "N/A") + "\n";
@@ -1140,10 +1198,6 @@ function switchOrcamentoTab(tab) {
         }
     }
 }
-
-// ============================================================
-// FUNCAO TOGGLE DO PAINEL - CORRIGIDA
-// ============================================================
 
 function toggleOrcamentoPanel() {
     console.log("Botao clicado! Solicitando senha...");
@@ -1293,12 +1347,23 @@ function initializeOrcamento() {
     var panel = document.getElementById("orcamentoPanel");
     if (panel) panel.style.display = "none";
     
+    // Garantir que o botão toggle funcione
     var toggleBtn = document.querySelector(".orcamento-toggle");
     if (toggleBtn) {
         toggleBtn.onclick = function(e) {
             e.preventDefault();
             e.stopPropagation();
             toggleOrcamentoPanel();
+        };
+    }
+    
+    // Garantir que o botão Adicionar Item funcione
+    var addBtn = document.getElementById("orcamentoAddItemBtn");
+    if (addBtn) {
+        addBtn.onclick = function(e) {
+            e.preventDefault();
+            console.log('Botao Adicionar Item clicado!');
+            adicionarItemLinha();
         };
     }
     
@@ -1324,14 +1389,8 @@ function initializeOrcamento() {
     if (form) {
         form.onsubmit = function(e) {
             e.preventDefault();
+            console.log('Formulario submetido!');
             salvarOrcamento();
-        };
-    }
-    
-    var addBtn = document.getElementById("orcamentoAddItemBtn");
-    if (addBtn) {
-        addBtn.onclick = function() {
-            adicionarItemLinha();
         };
     }
     
@@ -1346,7 +1405,7 @@ function initializeOrcamento() {
 }
 
 // ============================================================
-// EXPOSICAO GLOBAL
+// EXPOSICAO GLOBAL - GARANTIR QUE TODAS AS FUNCOES ESTEJAM DISPONIVEIS
 // ============================================================
 
 window.toggleOrcamentoPanel = toggleOrcamentoPanel;
@@ -1367,6 +1426,10 @@ window.duplicarOrcamento = duplicarOrcamento;
 window.mostrarNotificacao = mostrarNotificacao;
 window.fecharModalWin98 = fecharModalWin98;
 window.gerarRecibo = gerarRecibo;
+window.formatarCpfCnpj = formatarCpfCnpj;
+window.configurarFormatacaoCpfCnpj = configurarFormatacaoCpfCnpj;
+
+console.log('orcamento.js v3.5 carregado - CORRECAO COMPLETA!');
 
 // ============================================================
 // INICIALIZAR
@@ -1377,5 +1440,3 @@ if (document.readyState === "loading") {
 } else {
     initializeOrcamento();
 }
-
-console.log("orcamento.js v3.4 carregado - CORRECAO DE SINTAXE!");
