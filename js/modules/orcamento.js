@@ -1,6 +1,6 @@
 // js/modules/orcamento.js - Sistema de Orçamento para ECD Eletrônica
-// Versao ESTAVEL v4.4 - CORRECAO: WhatsApp e PDF do Recibo, Dados Pagamento
-console.log('orcamento.js carregado - Versao ESTAVEL v4.4');
+// Versao ESTAVEL v4.5 - CORRECAO: PDF do Recibo com html2pdf funcional
+console.log('orcamento.js carregado - Versao ESTAVEL v4.5');
 
 // ============================================================
 // CONFIGURACOES
@@ -859,7 +859,7 @@ function listarOrcamentos() {
 }
 
 // ============================================================
-// FUNCAO GERAR RECIBO - CORRIGIDA COM BOTOES FUNCIONAIS
+// FUNCAO GERAR RECIBO - CORRIGIDA COM PDF FUNCIONAL
 // ============================================================
 
 function gerarRecibo(id) {
@@ -968,7 +968,7 @@ function gerarRecibo(id) {
     doc.write('  window.open(url, "_blank");');
     doc.write('}');
     
-    // Funcao GERAR PDF DO RECIBO
+    // Funcao GERAR PDF DO RECIBO - CARREGA BIBLIOTECAS SE NECESSARIO
     doc.write('function gerarReciboPDF() {');
     doc.write('  var container = document.querySelector(".recibo-container");');
     doc.write('  if (typeof html2pdf !== "undefined") {');
@@ -986,7 +986,22 @@ function gerarRecibo(id) {
     doc.write('      alert("Erro ao gerar PDF: " + error);');
     doc.write('    });');
     doc.write('  } else {');
-    doc.write('    alert("Para gerar o PDF do Recibo, utilize a opção Imprimir e selecione \'Salvar como PDF\' no destino da impressão.");');
+    doc.write('    // Carregar bibliotecas e tentar novamente');
+    doc.write('    alert("Carregando bibliotecas para PDF... Aguarde um momento.");');
+    doc.write('    var scripts = [');
+    doc.write('      "https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js",');
+    doc.write('      "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js",');
+    doc.write('      "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"');
+    doc.write('    ];');
+    doc.write('    var loaded = 0;');
+    doc.write('    function carregarScript(url) {');
+    doc.write('      var script = document.createElement("script");');
+    doc.write('      script.src = url;');
+    doc.write('      script.onload = function() { loaded++; if (loaded === scripts.length) { setTimeout(function() { gerarReciboPDF(); }, 500); } };');
+    doc.write('      script.onerror = function() { alert("Erro ao carregar bibliotecas. Utilize Imprimir e salve como PDF."); };');
+    doc.write('      document.head.appendChild(script);');
+    doc.write('    }');
+    doc.write('    for (var i = 0; i < scripts.length; i++) { carregarScript(scripts[i]); }');
     doc.write('  }');
     doc.write('}');
     doc.write('</script>');
@@ -1023,14 +1038,12 @@ function gerarHtmlRecibo(orc) {
     var html = "";
     html += '<div class="recibo-container">';
     
-    // CABECALHO
     html += '<div class="recibo-header">';
     html += '<h1>NOTA DE RECIBO</h1>';
     html += '<div class="numero"><strong>N:</strong> ' + orcNumero + ' | <strong>Data:</strong> ' + formatarDataGlobal(orcData) + '</div>';
     html += '<div style="font-size:0.75rem; color:#666;">' + ORCAMENTO_CONFIG.empresa.nome + ' - CNPJ: ' + ORCAMENTO_CONFIG.empresa.cnpj + '</div>';
     html += '</div>';
     
-    // CORPO
     html += '<div class="recibo-corpo">';
     html += '<p style="text-align:center; font-size:0.85rem; margin-bottom:8px;"><strong>RECEBEMOS DE:</strong></p>';
     html += '<div class="recibo-linha"><span class="label">CLIENTE:</span><span class="valor">' + orcCliente + '</span></div>';
@@ -1048,7 +1061,6 @@ function gerarHtmlRecibo(orc) {
     html += itensHtml;
     html += '</div>';
     
-    // DADOS DO PRESTADOR
     html += '<div style="margin:8px 0; padding:6px; background:#f0f4f8; border:1px solid #d4d0c8;">';
     html += '<p style="font-weight:700; margin-bottom:3px; font-size:0.7rem;">DADOS DO PRESTADOR:</p>';
     html += '<div style="font-size:0.65rem;">';
@@ -1058,19 +1070,16 @@ function gerarHtmlRecibo(orc) {
     html += '<strong>PIX:</strong> ' + ORCAMENTO_CONFIG.proponente.pix;
     html += '</div></div>';
     
-    // ASSINATURAS
     html += '<div class="recibo-assinaturas">';
     html += '<div><div class="linha"></div><strong>Recebedor</strong><br><span style="font-size:0.6rem;">' + ORCAMENTO_CONFIG.proponente.nome + '</span></div>';
     html += '<div><div class="linha"></div><strong>Cliente</strong><br><span style="font-size:0.6rem;">' + orcCliente + '</span></div>';
     html += '</div>';
     
-    // DISPOSITIVO LEGAL
     html += '<div class="recibo-legal">';
     html += '<p><strong>DISPOSITIVO LEGAL:</strong></p>';
     html += '<p>O presente recibo tem validade como documento de quitação de prestação de serviços, nos termos do Art. 320 do Código Civil Brasileiro (Lei n 10.406/2002), e do Art. 6, inciso III, da Lei n 8.078/1990 (Código de Defesa do Consumidor).</p>';
     html += '</div>';
     
-    // RODAPE
     html += '<div class="recibo-footer">';
     html += '<p>' + ORCAMENTO_CONFIG.empresa.nome + ' - Assistência Técnica Independente</p>';
     html += '<p>CNPJ: ' + ORCAMENTO_CONFIG.empresa.cnpj + ' | Tel: ' + ORCAMENTO_CONFIG.empresa.telefone + ' | Site: ' + ORCAMENTO_CONFIG.empresa.site + '</p>';
@@ -1082,7 +1091,7 @@ function gerarHtmlRecibo(orc) {
 }
 
 // ============================================================
-// FUNCOES WHATSAPP E PDF DO RECIBO (globais)
+// FUNCOES WHATSAPP E PDF DO RECIBO (globais - fallback)
 // ============================================================
 
 function enviarWhatsAppRecibo(id) {
@@ -1248,12 +1257,7 @@ function gerarHtmlOrcamento(orc) {
     html += '<td style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:right; font-weight:700; font-size:0.8rem;"><strong>' + formatarMoedaGlobal(orc.total || 0) + '</strong></td></tr>';
     html += '</tfoot></table></div>';
     
-    // ========================================
-    // QR CODE PIX E DADOS PARA PAGAMENTO
-    // ========================================
     html += '<div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px;">';
-    
-    // Coluna 1: QR Code PIX
     html += '<div style="background:#d4d0c8; padding:6px 10px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; box-shadow: inset 1px 1px 4px rgba(0,0,0,0.1); text-align:center;">';
     html += '<strong style="display:block; margin-bottom:4px; font-size:0.7rem;">PIX para Pagamento</strong>';
     html += '<div style="background:#ffffff; padding:6px; display:inline-block; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080;">';
@@ -1261,8 +1265,6 @@ function gerarHtmlOrcamento(orc) {
     html += '</div>';
     html += '<div style="margin-top:4px; font-size:0.6rem; font-weight:700;">Chave PIX: ' + ORCAMENTO_CONFIG.banco.pix + '</div>';
     html += '</div>';
-    
-    // Coluna 2: Dados para Pagamento
     html += '<div style="background:#d4d0c8; padding:6px 10px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; box-shadow: inset 1px 1px 4px rgba(0,0,0,0.1);">';
     html += '<strong style="display:block; margin-bottom:4px; font-size:0.7rem;">Dados para Pagamento</strong>';
     html += '<div style="font-size:0.6rem; line-height:1.5;">';
@@ -1693,7 +1695,7 @@ window.gerarRecibo = gerarRecibo;
 window.enviarWhatsAppRecibo = enviarWhatsAppRecibo;
 window.gerarPDFRecibo = gerarPDFRecibo;
 
-console.log('orcamento.js v4.4 carregado - RECIBO CORRIGIDO, DADOS PAGAMENTO OK!');
+console.log('orcamento.js v4.5 carregado - PDF do Recibo com carregamento automatico!');
 
 // ============================================================
 // INICIALIZAR
