@@ -1,6 +1,6 @@
 // js/modules/orcamento.js - Sistema de Orçamento para ECD Eletrônica
-// Versao ESTAVEL v3.5 - CORRECAO: CPF/CNPJ, Adicionar Item, Formatacao Valores, Salvar
-console.log('orcamento.js carregado - Versao ESTAVEL v3.5');
+// Versao ESTAVEL v3.6 - CORRECAO: Desconto formatado, WhatsApp com imagem
+console.log('orcamento.js carregado - Versao ESTAVEL v3.6');
 
 // ============================================================
 // CONFIGURACOES
@@ -169,20 +169,18 @@ function calcularTotalItens(itens) {
 }
 
 // ============================================================
-// FUNCAO DE FORMATACAO CPF/CNPJ - CORRIGIDA
+// FUNCAO DE FORMATACAO CPF/CNPJ
 // ============================================================
 
 function formatarCpfCnpj(valor) {
     if (!valor) return '';
     var numeros = valor.replace(/\D/g, '');
     if (numeros.length <= 11) {
-        // CPF: 000.000.000-00
         if (numeros.length <= 3) return numeros;
         if (numeros.length <= 6) return numeros.substring(0, 3) + '.' + numeros.substring(3);
         if (numeros.length <= 9) return numeros.substring(0, 3) + '.' + numeros.substring(3, 6) + '.' + numeros.substring(6);
         return numeros.substring(0, 3) + '.' + numeros.substring(3, 6) + '.' + numeros.substring(6, 9) + '-' + numeros.substring(9, 11);
     } else {
-        // CNPJ: 00.000.000/0000-00
         if (numeros.length <= 2) return numeros;
         if (numeros.length <= 5) return numeros.substring(0, 2) + '.' + numeros.substring(2);
         if (numeros.length <= 8) return numeros.substring(0, 2) + '.' + numeros.substring(2, 5) + '.' + numeros.substring(5);
@@ -198,7 +196,6 @@ function configurarFormatacaoCpfCnpj() {
         return;
     }
     
-    // Remove qualquer listener anterior
     var novoInput = input.cloneNode(true);
     input.parentNode.replaceChild(novoInput, input);
     input = document.getElementById('orcamentoCnpj');
@@ -212,7 +209,6 @@ function configurarFormatacaoCpfCnpj() {
         }
         var formatted = formatarCpfCnpj(raw);
         this.value = formatted;
-        // Ajusta a posição do cursor
         var newPos = formatted.length - (raw.length - pos);
         if (newPos < 0) newPos = 0;
         this.setSelectionRange(newPos, newPos);
@@ -227,15 +223,45 @@ function configurarFormatacaoCpfCnpj() {
 }
 
 // ============================================================
-// FUNCAO PARA FORMATAR VALORES MONETARIOS
+// FUNCAO PARA FORMATAR CAMPO DESCONTO
 // ============================================================
 
-function formatarValorMonetario(valor) {
-    if (!valor) return '0,00';
-    var num = parseFloat(valor.toString().replace(/[^\d,]/g, '').replace(',', '.'));
-    if (isNaN(num)) return '0,00';
-    return num.toFixed(2).replace('.', ',');
+function configurarFormatacaoDesconto() {
+    var input = document.getElementById('orcamentoDesconto');
+    if (!input) return;
+    
+    var novoInput = input.cloneNode(true);
+    input.parentNode.replaceChild(novoInput, input);
+    input = document.getElementById('orcamentoDesconto');
+    
+    input.addEventListener('blur', function() {
+        var raw = this.value.replace(/[^\d,]/g, '').replace(',', '.');
+        var num = parseFloat(raw);
+        if (!isNaN(num) && num > 0) {
+            this.value = num.toFixed(2).replace('.', ',');
+        } else if (this.value.trim() === '' || this.value === '0' || this.value === '0,00') {
+            this.value = '0,00';
+        } else {
+            var onlyNum = parseFloat(this.value.replace(/[^\d,]/g, '').replace(',', '.'));
+            if (!isNaN(onlyNum) && onlyNum > 0) {
+                this.value = onlyNum.toFixed(2).replace('.', ',');
+            } else {
+                this.value = '0,00';
+            }
+        }
+        recalcularTotais();
+    });
+    
+    input.addEventListener('input', function() {
+        // Apenas permite números e vírgula
+        this.value = this.value.replace(/[^\d,]/g, '');
+        recalcularTotais();
+    });
 }
+
+// ============================================================
+// FUNCAO PARA FORMATAR VALORES MONETARIOS DOS ITENS
+// ============================================================
 
 function configurarFormatacaoValor() {
     var inputs = document.querySelectorAll('.item-valor');
@@ -249,7 +275,6 @@ function configurarFormatacaoValor() {
                 } else if (this.value.trim() === '') {
                     this.value = '0,00';
                 }
-                // Dispara recalculo
                 var idx = parseInt(this.dataset.index);
                 if (!isNaN(idx) && window.orcamentoItens[idx]) {
                     window.orcamentoItens[idx].valor_unitario = parseFloat(this.value.replace(',', '.')) || 0;
@@ -471,7 +496,8 @@ function recalcularTotais() {
     var descontoInput = document.getElementById("orcamentoDesconto");
     var desconto = 0;
     if (descontoInput) {
-        desconto = parseFloat(descontoInput.value.replace(/[^\d,]/g, "").replace(",", ".")) || 0;
+        var descontoStr = descontoInput.value.replace(/[^\d,]/g, "").replace(",", ".");
+        desconto = parseFloat(descontoStr) || 0;
         if (desconto > subtotalGeral) desconto = subtotalGeral;
     }
     var total = subtotalGeral - desconto;
@@ -519,6 +545,8 @@ function resetOrcamentoForm() {
     }
     var cancelBtn = document.getElementById("orcamentoCancelBtn");
     if (cancelBtn) cancelBtn.style.display = "none";
+    
+    configurarFormatacaoDesconto();
     recalcularTotais();
 }
 
@@ -592,6 +620,8 @@ function carregarOrcamentoParaEdicao(id) {
     var cancelBtn = document.getElementById("orcamentoCancelBtn");
     if (cancelBtn) cancelBtn.style.display = "inline-block";
     window.orcamentoEditandoId = id;
+    
+    configurarFormatacaoDesconto();
     recalcularTotais();
 }
 
@@ -829,11 +859,7 @@ function gerarRecibo(id) {
 
 function gerarHtmlRecibo(orc) {
     var valorPorExtenso = converterValorPorExtenso(orc.total || 0);
-    var orcId = orc.id;
-    var orcNumero = orc.numero || "N/A";
     var orcCliente = orc.cliente || "Nao informado";
-    var orcTotal = orc.total || 0;
-    var orcData = orc.data || "";
     var orcCnpj = orc.cnpj || "";
     var orcEndereco = orc.endereco || "";
     
@@ -850,7 +876,7 @@ function gerarHtmlRecibo(orc) {
     html += '<div class="recibo-container">';
     html += '<div class="recibo-header">';
     html += '<h1>NOTA DE RECIBO</h1>';
-    html += '<div class="numero"><strong>N:</strong> ' + orcNumero + ' | <strong>Data:</strong> ' + formatarDataGlobal(orcData) + '</div>';
+    html += '<div class="numero"><strong>N:</strong> ' + (orc.numero || "N/A") + ' | <strong>Data:</strong> ' + formatarDataGlobal(orc.data) + '</div>';
     html += '<div style="font-size:0.75rem; color:#666;">' + ORCAMENTO_CONFIG.empresa.nome + ' - CNPJ: ' + ORCAMENTO_CONFIG.empresa.cnpj + '</div>';
     html += '</div>';
     html += '<div class="recibo-corpo">';
@@ -863,7 +889,7 @@ function gerarHtmlRecibo(orc) {
         html += '<div class="recibo-linha"><span class="label">ENDEREÇO:</span><span class="valor">' + orcEndereco + '</span></div>';
     }
     html += '<div style="height:8px;"></div>';
-    html += '<div class="recibo-total">VALOR RECEBIDO: <strong>' + formatarMoedaGlobal(orcTotal) + '</strong></div>';
+    html += '<div class="recibo-total">VALOR RECEBIDO: <strong>' + formatarMoedaGlobal(orc.total || 0) + '</strong></div>';
     html += '<div style="text-align:center; font-size:0.75rem; margin:4px 0 12px;"><strong>Por Extenso:</strong> ' + valorPorExtenso + '</div>';
     html += '<div style="margin:8px 0; padding:6px; background:#f5f5f5; border:1px solid #ddd;">';
     html += '<p style="font-weight:700; margin-bottom:4px; font-size:0.7rem;">REFERENTE A:</p>';
@@ -897,6 +923,128 @@ function gerarHtmlRecibo(orc) {
     html += '</div>';
     
     return html;
+}
+
+// ============================================================
+// FUNCAO WHATSAPP - GERAR IMAGEM E ENVIO MANUAL
+// ============================================================
+
+function enviarWhatsAppOrcamento(id) {
+    var orc = null;
+    for (var i = 0; i < window.orcamentos.length; i++) {
+        if (window.orcamentos[i].id === id) {
+            orc = window.orcamentos[i];
+            break;
+        }
+    }
+    if (!orc) {
+        mostrarNotificacao("Orcamento nao encontrado!", "error");
+        return;
+    }
+    
+    if (typeof html2canvas === "undefined") {
+        mostrarNotificacao("Carregando biblioteca de imagem...", "info");
+        var script = document.createElement("script");
+        script.src = "https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js";
+        script.onload = function() { enviarWhatsAppOrcamento(id); };
+        script.onerror = function() { enviarWhatsAppMensagem(orc); };
+        document.head.appendChild(script);
+        return;
+    }
+    
+    mostrarNotificacao("Gerando imagem do orcamento...", "info");
+    
+    try {
+        var conteudo = gerarHtmlOrcamento(orc);
+        var container = document.createElement("div");
+        container.innerHTML = conteudo;
+        container.style.padding = "20px";
+        container.style.background = "#ffffff";
+        container.style.width = "100%";
+        container.style.maxWidth = "800px";
+        container.style.margin = "0 auto";
+        container.style.fontFamily = "'Courier New', monospace";
+        container.style.fontSize = "12px";
+        container.style.boxSizing = "border-box";
+        container.style.position = "relative";
+        
+        var imagens = container.querySelectorAll("img");
+        for (var i = 0; i < imagens.length; i++) {
+            imagens[i].crossOrigin = "anonymous";
+            imagens[i].setAttribute("crossOrigin", "anonymous");
+        }
+        
+        container.style.position = "absolute";
+        container.style.left = "-9999px";
+        container.style.top = "0";
+        document.body.appendChild(container);
+        
+        var options = {
+            scale: 2,
+            useCORS: true,
+            allowTaint: true,
+            logging: false,
+            backgroundColor: "#ffffff",
+            width: 800,
+            height: container.scrollHeight + 40,
+            scrollY: 0,
+            scrollX: 0,
+            windowWidth: 800,
+            onclone: function(clonedDoc, element) {
+                var imgs = element.querySelectorAll("img");
+                for (var i = 0; i < imgs.length; i++) {
+                    imgs[i].crossOrigin = "anonymous";
+                }
+            }
+        };
+        
+        html2canvas(container, options)
+            .then(function(canvas) {
+                if (container.parentNode) {
+                    document.body.removeChild(container);
+                }
+                var imageDataUrl = canvas.toDataURL("image/png");
+                var link = document.createElement("a");
+                link.href = imageDataUrl;
+                link.download = "Orcamento_" + (orc.numero || "ECD") + ".png";
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                mostrarNotificacao("Imagem baixada! Envie manualmente no WhatsApp.", "success");
+                enviarWhatsAppMensagem(orc);
+            })
+            .catch(function(error) {
+                console.error("Erro ao gerar imagem:", error);
+                if (container.parentNode) {
+                    document.body.removeChild(container);
+                }
+                mostrarNotificacao("Erro ao gerar imagem. Enviando mensagem...", "warning");
+                enviarWhatsAppMensagem(orc);
+            });
+            
+    } catch (error) {
+        console.error("Erro:", error);
+        mostrarNotificacao("Erro ao gerar imagem. Enviando mensagem...", "error");
+        enviarWhatsAppMensagem(orc);
+    }
+}
+
+function enviarWhatsAppMensagem(orc) {
+    var telefone = ORCAMENTO_CONFIG.empresa.whatsapp;
+    var mensagem = "*" + ORCAMENTO_CONFIG.empresa.nome + "*\n";
+    mensagem += "Orcamento: " + (orc.numero || "N/A") + "\n";
+    mensagem += "Data: " + formatarDataGlobal(orc.data) + "\n";
+    mensagem += "Cliente: " + (orc.cliente || "Nao informado") + "\n";
+    mensagem += "Total: " + formatarMoedaGlobal(orc.total || 0) + "\n";
+    mensagem += "\n*Pagamento via PIX:* " + ORCAMENTO_CONFIG.banco.pix;
+    mensagem += "\n*Site:* " + ORCAMENTO_CONFIG.empresa.site;
+    mensagem += "\n\n*Assistencia Tecnica Independente*";
+    mensagem += "\n" + ORCAMENTO_CONFIG.empresa.telefone;
+    
+    var mensagemCodificada = encodeURIComponent(mensagem);
+    var url = "https://wa.me/" + telefone + "?text=" + mensagemCodificada;
+    window.open(url, "_blank");
+    mostrarNotificacao("Mensagem enviada via WhatsApp!", "info");
 }
 
 // ============================================================
@@ -1121,36 +1269,6 @@ function gerarPDFOrcamento(id) {
     }
 }
 
-function enviarWhatsAppOrcamento(id) {
-    var orc = null;
-    for (var i = 0; i < window.orcamentos.length; i++) {
-        if (window.orcamentos[i].id === id) {
-            orc = window.orcamentos[i];
-            break;
-        }
-    }
-    if (!orc) {
-        mostrarNotificacao("Orcamento nao encontrado!", "error");
-        return;
-    }
-    
-    var telefone = ORCAMENTO_CONFIG.empresa.whatsapp;
-    var mensagem = "*" + ORCAMENTO_CONFIG.empresa.nome + "*\n";
-    mensagem += "Orcamento: " + (orc.numero || "N/A") + "\n";
-    mensagem += "Data: " + formatarDataGlobal(orc.data) + "\n";
-    mensagem += "Cliente: " + (orc.cliente || "Nao informado") + "\n";
-    mensagem += "Total: " + formatarMoedaGlobal(orc.total || 0) + "\n";
-    mensagem += "\n*Pagamento via PIX:* " + ORCAMENTO_CONFIG.banco.pix;
-    mensagem += "\n*Site:* " + ORCAMENTO_CONFIG.empresa.site;
-    mensagem += "\n\n*Assistencia Tecnica Independente*";
-    mensagem += "\n" + ORCAMENTO_CONFIG.empresa.telefone;
-    
-    var mensagemCodificada = encodeURIComponent(mensagem);
-    var url = "https://wa.me/" + telefone + "?text=" + mensagemCodificada;
-    window.open(url, "_blank");
-    mostrarNotificacao("Mensagem enviada via WhatsApp!", "info");
-}
-
 // ============================================================
 // FUNCOES DE INTERFACE
 // ============================================================
@@ -1347,7 +1465,6 @@ function initializeOrcamento() {
     var panel = document.getElementById("orcamentoPanel");
     if (panel) panel.style.display = "none";
     
-    // Garantir que o botão toggle funcione
     var toggleBtn = document.querySelector(".orcamento-toggle");
     if (toggleBtn) {
         toggleBtn.onclick = function(e) {
@@ -1357,7 +1474,6 @@ function initializeOrcamento() {
         };
     }
     
-    // Garantir que o botão Adicionar Item funcione
     var addBtn = document.getElementById("orcamentoAddItemBtn");
     if (addBtn) {
         addBtn.onclick = function(e) {
@@ -1395,6 +1511,7 @@ function initializeOrcamento() {
     }
     
     configurarFormatacaoCpfCnpj();
+    configurarFormatacaoDesconto();
     
     setTimeout(function() {
         switchOrcamentoTab("list");
@@ -1405,7 +1522,7 @@ function initializeOrcamento() {
 }
 
 // ============================================================
-// EXPOSICAO GLOBAL - GARANTIR QUE TODAS AS FUNCOES ESTEJAM DISPONIVEIS
+// EXPOSICAO GLOBAL
 // ============================================================
 
 window.toggleOrcamentoPanel = toggleOrcamentoPanel;
@@ -1426,10 +1543,8 @@ window.duplicarOrcamento = duplicarOrcamento;
 window.mostrarNotificacao = mostrarNotificacao;
 window.fecharModalWin98 = fecharModalWin98;
 window.gerarRecibo = gerarRecibo;
-window.formatarCpfCnpj = formatarCpfCnpj;
-window.configurarFormatacaoCpfCnpj = configurarFormatacaoCpfCnpj;
 
-console.log('orcamento.js v3.5 carregado - CORRECAO COMPLETA!');
+console.log('orcamento.js v3.6 carregado - CORRECAO: Desconto formatado, WhatsApp com imagem!');
 
 // ============================================================
 // INICIALIZAR
