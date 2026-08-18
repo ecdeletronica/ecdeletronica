@@ -1,6 +1,6 @@
 // js/modules/orcamento.js - Sistema de Orçamento para ECD Eletrônica
-// Versao ESTAVEL v4.1 - CORRECAO: Botao Salvar/Atualizar, Novo com Voltar
-console.log('orcamento.js carregado - Versao ESTAVEL v4.1');
+// Versao ESTAVEL v4.2 - CORRECAO: Acentuacao, Botao Atualizar, Duplicacao
+console.log('orcamento.js carregado - Versao ESTAVEL v4.2');
 
 // ============================================================
 // CONFIGURACOES
@@ -492,7 +492,7 @@ function recalcularTotais() {
 }
 
 // ============================================================
-// FUNCOES DO FORMULARIO - COM BOTOES CORRETOS
+// FUNCOES DO FORMULARIO - CORRIGIDAS (acentuacao e botoes)
 // ============================================================
 
 function resetOrcamentoForm() {
@@ -521,14 +521,14 @@ function resetOrcamentoForm() {
     window.orcamentoEditandoId = null;
     
     var titulo = document.getElementById("orcamentoFormTitle");
-    if (titulo) titulo.textContent = "Novo Orcamento";
+    if (titulo) titulo.textContent = "Novo Orçamento";
     
     var submitBtn = document.getElementById("orcamentoSubmitBtn");
     if (submitBtn) {
-        submitBtn.innerHTML = '<i class="fas fa-save"></i> Salvar Orcamento';
+        submitBtn.innerHTML = '<i class="fas fa-save"></i> Criar Orçamento';
         submitBtn.style.background = "#27ae60";
         submitBtn.style.color = "#ffffff";
-        submitBtn.title = "Salvar novo orcamento";
+        submitBtn.title = "Criar novo orçamento";
     }
     
     var cancelBtn = document.getElementById("orcamentoCancelBtn");
@@ -551,7 +551,7 @@ function carregarOrcamentoParaEdicao(id) {
         }
     }
     if (!orcamento) {
-        mostrarNotificacao("Orcamento nao encontrado!", "error");
+        mostrarNotificacao("Orçamento não encontrado!", "error");
         return;
     }
     
@@ -607,23 +607,23 @@ function carregarOrcamentoParaEdicao(id) {
         atualizarIndicesItens();
     }
     
-    document.getElementById("orcamentoFormTitle").textContent = "Editando: " + (orcamento.numero || "Orcamento");
+    document.getElementById("orcamentoFormTitle").textContent = "Editando: " + (orcamento.numero || "Orçamento");
     
     var submitBtn = document.getElementById("orcamentoSubmitBtn");
     if (submitBtn) {
-        submitBtn.innerHTML = '<i class="fas fa-save"></i> Atualizar Orcamento';
+        submitBtn.innerHTML = '<i class="fas fa-save"></i> Atualizar Orçamento';
         submitBtn.style.background = "#f39c12";
         submitBtn.style.color = "#ffffff";
-        submitBtn.title = "Salvar alteracoes no orcamento";
+        submitBtn.title = "Salvar alterações no orçamento";
     }
     
     var cancelBtn = document.getElementById("orcamentoCancelBtn");
     if (cancelBtn) {
         cancelBtn.style.display = "inline-block";
         cancelBtn.innerHTML = '<i class="fas fa-undo"></i> Voltar';
-        cancelBtn.title = "Cancelar edicao e voltar para lista";
+        cancelBtn.title = "Cancelar edição e voltar para lista";
         cancelBtn.onclick = function() {
-            if (confirm("Cancelar edicao? As alteracoes nao salvas serao perdidas.")) {
+            if (confirm("Cancelar edição? As alterações não salvas serão perdidas.")) {
                 resetOrcamentoForm();
                 switchOrcamentoTab("list");
                 listarOrcamentos();
@@ -634,11 +634,13 @@ function carregarOrcamentoParaEdicao(id) {
     window.orcamentoEditandoId = id;
     configurarFormatacaoDesconto();
     recalcularTotais();
-    console.log('Orcamento carregado para edicao, itens:', window.orcamentoItens.length);
+    console.log('Orçamento carregado para edição, itens:', window.orcamentoItens.length);
 }
 
 function salvarOrcamento() {
     console.log('salvarOrcamento chamado');
+    console.log('Modo edição?', window.orcamentoEditandoId ? 'Sim (ID: ' + window.orcamentoEditandoId + ')' : 'Não');
+    
     try {
         var cliente = document.getElementById("orcamentoCliente") ? document.getElementById("orcamentoCliente").value.trim() : "";
         var cnpj = document.getElementById("orcamentoCnpj") ? document.getElementById("orcamentoCnpj").value.trim() : "";
@@ -691,11 +693,13 @@ function salvarOrcamento() {
             updated_at: new Date().toISOString()
         };
         
-        console.log('Dados do orcamento:', orcamentoData);
-        console.log('Modo edicao?', window.orcamentoEditandoId ? 'Sim' : 'Nao');
+        console.log('Dados do orçamento:', orcamentoData);
+        console.log('Total de itens:', itens.length);
         
+        // ============================================================
+        // MODO EDICAO - ATUALIZAR ORCAMENTO EXISTENTE
+        // ============================================================
         if (window.orcamentoEditandoId) {
-            // MODO EDICAO - ATUALIZAR ORCAMENTO EXISTENTE
             var index = -1;
             for (var j = 0; j < window.orcamentos.length; j++) {
                 if (window.orcamentos[j].id === window.orcamentoEditandoId) {
@@ -703,8 +707,11 @@ function salvarOrcamento() {
                     break;
                 }
             }
+            
             if (index !== -1) {
-                console.log('Atualizando orcamento no indice:', index);
+                console.log('Atualizando orçamento no índice:', index);
+                console.log('Orçamento original:', window.orcamentos[index]);
+                
                 // Mantem o numero e data de criacao originais
                 var original = window.orcamentos[index];
                 window.orcamentos[index] = {
@@ -724,17 +731,26 @@ function salvarOrcamento() {
                     itens: orcamentoData.itens,
                     updated_at: orcamentoData.updated_at
                 };
+                
+                console.log('Orçamento atualizado:', window.orcamentos[index]);
+                console.log('Total de itens após atualização:', window.orcamentos[index].itens.length);
+                
                 salvarOrcamentos();
-                mostrarNotificacao("Orcamento atualizado com sucesso!", "success");
+                mostrarNotificacao("Orçamento atualizado com sucesso!", "success");
                 listarOrcamentos();
                 resetOrcamentoForm();
                 switchOrcamentoTab("list");
+                window.orcamentoEditandoId = null;
             } else {
-                mostrarNotificacao("Erro: Orcamento nao encontrado para atualizar!", "error");
+                console.error('Orçamento não encontrado para atualizar! ID:', window.orcamentoEditandoId);
+                mostrarNotificacao("Erro: Orçamento não encontrado para atualizar!", "error");
             }
-        } else {
-            // MODO CRIACAO - NOVO ORCAMENTO
-            console.log('Criando novo orcamento');
+        } 
+        // ============================================================
+        // MODO CRIACAO - NOVO ORCAMENTO
+        // ============================================================
+        else {
+            console.log('Criando novo orçamento');
             var novoOrcamento = {
                 id: "orc_" + Date.now(),
                 numero: gerarNumeroOrcamento(),
@@ -752,17 +768,20 @@ function salvarOrcamento() {
                 created_at: new Date().toISOString(),
                 updated_at: orcamentoData.updated_at
             };
+            console.log('Novo orçamento criado:', novoOrcamento);
+            console.log('Total de itens:', novoOrcamento.itens.length);
+            
             window.orcamentos.unshift(novoOrcamento);
             salvarOrcamentos();
-            mostrarNotificacao("Orcamento criado com sucesso!", "success");
+            mostrarNotificacao("Orçamento criado com sucesso!", "success");
             listarOrcamentos();
             resetOrcamentoForm();
             switchOrcamentoTab("list");
         }
-        console.log('Operacao concluida com sucesso!');
+        console.log('Operação concluída com sucesso!');
     } catch (error) {
-        console.error("Erro ao salvar orcamento:", error);
-        mostrarNotificacao("Erro ao salvar orcamento: " + error.message, "error");
+        console.error("Erro ao salvar orçamento:", error);
+        mostrarNotificacao("Erro ao salvar orçamento: " + error.message, "error");
     }
 }
 
@@ -778,9 +797,9 @@ function listarOrcamentos() {
         var emptyHtml = "";
         emptyHtml += '<div style="text-align:center; padding:20px 0; background:#d4d0c8; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; box-shadow: inset 2px 2px 8px rgba(0,0,0,0.15);">';
         emptyHtml += '<i class="fas fa-file-invoice" style="font-size:2rem; color:#404040;"></i>';
-        emptyHtml += '<p style="margin-top:8px; color:#404040; font-family:\'Courier New\',monospace; font-weight:700; font-size:0.85rem;">Nenhum orcamento cadastrado.</p>';
+        emptyHtml += '<p style="margin-top:8px; color:#404040; font-family:\'Courier New\',monospace; font-weight:700; font-size:0.85rem;">Nenhum orçamento cadastrado.</p>';
         emptyHtml += '<button class="btn-win98" onclick="window.switchOrcamentoTab(\'form\')" style="margin-top:6px; font-size:0.75rem; background:#d4d0c8; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:4px 16px; cursor:pointer; font-family:\'Courier New\',monospace; font-weight:700;">';
-        emptyHtml += '<i class="fas fa-plus"></i> Criar Primeiro Orcamento';
+        emptyHtml += '<i class="fas fa-plus"></i> Criar Primeiro Orçamento';
         emptyHtml += '</button></div>';
         container.innerHTML = emptyHtml;
         return;
@@ -795,7 +814,7 @@ function listarOrcamentos() {
     html += '<th style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:left; color:#000000; font-weight:700;">Data</th>';
     html += '<th style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:left; color:#000000; font-weight:700;">Status</th>';
     html += '<th style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:right; color:#000000; font-weight:700;">Total</th>';
-    html += '<th style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:center; color:#000000; font-weight:700;">Acoes</th>';
+    html += '<th style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:center; color:#000000; font-weight:700;">Ações</th>';
     html += '</tr></thead><tbody>';
     
     for (var i = 0; i < window.orcamentos.length; i++) {
@@ -824,7 +843,7 @@ function listarOrcamentos() {
     
     html += '</tbody></table></div>';
     html += '<div style="margin-top:6px; font-size:0.65rem; color:#404040; font-family:\'Courier New\',monospace; font-weight:700;">';
-    html += '<i class="fas fa-info-circle"></i> Total: ' + window.orcamentos.length + ' orcamento(s)';
+    html += '<i class="fas fa-info-circle"></i> Total: ' + window.orcamentos.length + ' orçamento(s)';
     html += '</div>';
     
     container.innerHTML = html;
@@ -844,7 +863,7 @@ function gerarRecibo(id) {
         }
     }
     if (!orc) {
-        mostrarNotificacao("Orcamento nao encontrado!", "error");
+        mostrarNotificacao("Orçamento não encontrado!", "error");
         return;
     }
     
@@ -884,7 +903,7 @@ function gerarRecibo(id) {
 
 function gerarHtmlRecibo(orc) {
     var valorPorExtenso = converterValorPorExtenso(orc.total || 0);
-    var orcCliente = orc.cliente || "Nao informado";
+    var orcCliente = orc.cliente || "Não informado";
     var orcCnpj = orc.cnpj || "";
     var orcEndereco = orc.endereco || "";
     var orcNumero = orc.numero || "N/A";
@@ -939,7 +958,7 @@ function gerarHtmlRecibo(orc) {
     html += '<p>O presente recibo tem validade como documento de quitação de prestação de serviços, nos termos do Art. 320 do Código Civil Brasileiro (Lei n 10.406/2002), e do Art. 6, inciso III, da Lei n 8.078/1990 (Código de Defesa do Consumidor).</p>';
     html += '</div>';
     html += '<div class="recibo-footer">';
-    html += '<p>' + ORCAMENTO_CONFIG.empresa.nome + ' - Assistencia Tecnica Independente</p>';
+    html += '<p>' + ORCAMENTO_CONFIG.empresa.nome + ' - Assistência Técnica Independente</p>';
     html += '<p>CNPJ: ' + ORCAMENTO_CONFIG.empresa.cnpj + ' | Tel: ' + ORCAMENTO_CONFIG.empresa.telefone + ' | Site: ' + ORCAMENTO_CONFIG.empresa.site + '</p>';
     html += '<p>Documento gerado em ' + formatarDataHoraGlobal(new Date().toISOString()) + '</p>';
     html += '</div>';
@@ -968,7 +987,7 @@ function enviarWhatsAppRecibo(id) {
         }
     }
     if (!orc) {
-        mostrarNotificacao("Orcamento nao encontrado!", "error");
+        mostrarNotificacao("Orçamento não encontrado!", "error");
         return;
     }
     
@@ -976,7 +995,7 @@ function enviarWhatsAppRecibo(id) {
     var mensagem = "*" + ORCAMENTO_CONFIG.empresa.nome + "*\n";
     mensagem += "NOTA DE RECIBO: " + (orc.numero || "N/A") + "\n";
     mensagem += "Data: " + formatarDataGlobal(orc.data) + "\n";
-    mensagem += "Cliente: " + (orc.cliente || "Nao informado") + "\n";
+    mensagem += "Cliente: " + (orc.cliente || "Não informado") + "\n";
     mensagem += "Valor: " + formatarMoedaGlobal(orc.total || 0) + "\n";
     mensagem += "Por Extenso: " + converterValorPorExtenso(orc.total || 0) + "\n";
     mensagem += "\n*ITENS:*\n";
@@ -985,7 +1004,7 @@ function enviarWhatsAppRecibo(id) {
         mensagem += (i+1) + '. ' + (item.descricao || "Item") + ' - ' + (item.quantidade || 1) + 'x ' + formatarMoedaGlobal(item.valor_unitario || 0) + ' = ' + formatarMoedaGlobal((item.quantidade || 0) * (item.valor_unitario || 0)) + '\n';
     }
     mensagem += "\n*PIX:* " + ORCAMENTO_CONFIG.proponente.pix;
-    mensagem += "\n\n*Assistencia Tecnica Independente*";
+    mensagem += "\n\n*Assistência Técnica Independente*";
     mensagem += "\n" + ORCAMENTO_CONFIG.empresa.telefone;
     
     var mensagemCodificada = encodeURIComponent(mensagem);
@@ -1004,11 +1023,11 @@ function gerarPDFRecibo(id) {
         }
     }
     if (!orc) {
-        mostrarNotificacao("Orcamento nao encontrado!", "error");
+        mostrarNotificacao("Orçamento não encontrado!", "error");
         return;
     }
     
-    alert("Para gerar o PDF do Recibo, utilize a opcao Imprimir e selecione 'Salvar como PDF' no destino da impressao.");
+    alert("Para gerar o PDF do Recibo, utilize a opção Imprimir e selecione 'Salvar como PDF' no destino da impressão.");
 }
 
 // ============================================================
@@ -1024,7 +1043,7 @@ function verOrcamento(id) {
         }
     }
     if (!orc) {
-        mostrarNotificacao("Orcamento nao encontrado!", "error");
+        mostrarNotificacao("Orçamento não encontrado!", "error");
         return;
     }
     
@@ -1032,7 +1051,7 @@ function verOrcamento(id) {
     modalHtml += '<div class="modal-win98" id="orcamentoModal" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:10001; display:flex; align-items:center; justify-content:center; padding:20px;">';
     modalHtml += '<div class="modal-win98-content" style="max-width:900px; width:95%; background:#ece9d8; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; box-shadow: 4px 4px 20px rgba(0,0,0,0.3);">';
     modalHtml += '<div class="modal-win98-header" style="background:#000080; color:#ffffff; padding:4px 10px; display:flex; justify-content:space-between; align-items:center; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080;">';
-    modalHtml += '<span class="modal-win98-title" style="font-family:\'Courier New\',monospace; font-weight:700; font-size:0.85rem;"><i class="fas fa-file-invoice"></i> Orcamento ' + (orc.numero || "") + '</span>';
+    modalHtml += '<span class="modal-win98-title" style="font-family:\'Courier New\',monospace; font-weight:700; font-size:0.85rem;"><i class="fas fa-file-invoice"></i> Orçamento ' + (orc.numero || "") + '</span>';
     modalHtml += '<button class="modal-win98-close" onclick="window.fecharModalWin98(\'orcamentoModal\')" style="background:#c0c0c0; color:#000000; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:0 8px; cursor:pointer; font-size:1rem; font-weight:700; font-family:\'Courier New\',monospace;">x</button>';
     modalHtml += '</div>';
     modalHtml += '<div class="modal-win98-body" style="background:#d4d0c8; padding:12px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; max-height:60vh; overflow-y:auto;">';
@@ -1062,7 +1081,7 @@ function gerarHtmlOrcamento(orc) {
     var html = "";
     html += '<div style="font-family:\'Courier New\',monospace; font-size:0.75rem; color:#000000;">';
     html += '<div style="text-align:center; padding:8px 0; margin-bottom:10px; background:#0a2e4d; color:#ffffff; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080;">';
-    html += '<h2 style="margin:0; font-family:\'Courier New\',monospace; font-weight:700; font-size:1.2rem; letter-spacing:3px;">NOTA DE ORCAMENTO</h2>';
+    html += '<h2 style="margin:0; font-family:\'Courier New\',monospace; font-weight:700; font-size:1.2rem; letter-spacing:3px;">NOTA DE ORÇAMENTO</h2>';
     html += '<div style="font-size:0.65rem; opacity:0.8;">' + (orc.numero || "N/A") + ' | ' + formatarDataGlobal(orc.data) + '</div>';
     html += '</div>';
     html += '<div style="display:flex; align-items:center; gap:12px; padding:6px 10px; margin-bottom:8px; background:#f0f0f0; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; box-shadow: inset 1px 1px 4px rgba(0,0,0,0.1);">';
@@ -1083,9 +1102,9 @@ function gerarHtmlOrcamento(orc) {
     html += '</div></div>';
     html += '<div style="background:#d4d0c8; padding:4px 10px; margin-bottom:6px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; box-shadow: inset 1px 1px 4px rgba(0,0,0,0.1);">';
     html += '<div style="display:grid; grid-template-columns:1fr 1fr; gap:4px; font-size:0.65rem;">';
-    html += '<div><strong>CLIENTE:</strong> ' + (orc.cliente || "Nao informado") + '</div>';
-    html += '<div style="text-align:right;"><strong>CNPJ/CPF:</strong> ' + (orc.cnpj || "Nao informado") + '</div>';
-    html += '<div style="grid-column:1/3;"><strong>ENDEREÇO:</strong> ' + (orc.endereco || "Nao informado") + '</div>';
+    html += '<div><strong>CLIENTE:</strong> ' + (orc.cliente || "Não informado") + '</div>';
+    html += '<div style="text-align:right;"><strong>CNPJ/CPF:</strong> ' + (orc.cnpj || "Não informado") + '</div>';
+    html += '<div style="grid-column:1/3;"><strong>ENDEREÇO:</strong> ' + (orc.endereco || "Não informado") + '</div>';
     html += '<div><strong>DATA:</strong> ' + formatarDataGlobal(orc.data) + '</div>';
     html += '<div style="text-align:right;"><strong>PRAZO:</strong> ' + formatarDataGlobal(orc.prazo) + '</div>';
     html += '<div><strong>STATUS:</strong> <span style="background:' + statusColor + '; color:#fff; padding:0 8px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; font-weight:700; font-size:0.6rem;">' + (orc.status || "Pendente") + '</span></div>';
@@ -1094,7 +1113,7 @@ function gerarHtmlOrcamento(orc) {
     html += '<table style="width:100%; border-collapse:collapse; background:#ffffff; font-family:\'Courier New\',monospace; font-size:0.65rem;">';
     html += '<thead><tr style="background:#d4d0c8; border-bottom:2px solid #404040;">';
     html += '<th style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:center; font-weight:700;">Item</th>';
-    html += '<th style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:left; font-weight:700;">Descricao</th>';
+    html += '<th style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:left; font-weight:700;">Descrição</th>';
     html += '<th style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:center; font-weight:700;">UN</th>';
     html += '<th style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:center; font-weight:700;">Quant.</th>';
     html += '<th style="border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; padding:3px 6px; text-align:right; font-weight:700;">Valor Unit.</th>';
@@ -1122,11 +1141,11 @@ function gerarHtmlOrcamento(orc) {
     html += '</tfoot></table></div>';
     if (orc.observacoes) {
         html += '<div style="background:#d4d0c8; padding:4px 10px; margin-top:6px; border:2px solid #404040; border-top-color:#808080; border-left-color:#808080; box-shadow: inset 1px 1px 4px rgba(0,0,0,0.1);">';
-        html += '<strong>Observacoes:</strong><br>' + orc.observacoes;
+        html += '<strong>Observações:</strong><br>' + orc.observacoes;
         html += '</div>';
     }
     html += '<div style="text-align:center; margin-top:8px; padding-top:6px; border-top:2px solid #808080; font-size:0.5rem; color:#404040; font-family:\'Courier New\',monospace;">';
-    html += '<p style="margin:1px 0;">' + ORCAMENTO_CONFIG.empresa.nome + ' - Assistencia Tecnica Independente</p>';
+    html += '<p style="margin:1px 0;">' + ORCAMENTO_CONFIG.empresa.nome + ' - Assistência Técnica Independente</p>';
     html += '<p style="margin:1px 0;">CNPJ: ' + ORCAMENTO_CONFIG.empresa.cnpj + ' | Tel: ' + ORCAMENTO_CONFIG.empresa.telefone + ' | Site: ' + ORCAMENTO_CONFIG.empresa.site + '</p>';
     html += '<p style="margin:1px 0;">Documento gerado em ' + formatarDataHoraGlobal(new Date().toISOString()) + '</p>';
     html += '</div></div>';
@@ -1146,7 +1165,7 @@ function imprimirOrcamento(id) {
         }
     }
     if (!orc) {
-        mostrarNotificacao("Orcamento nao encontrado!", "error");
+        mostrarNotificacao("Orçamento não encontrado!", "error");
         return;
     }
     
@@ -1157,7 +1176,7 @@ function imprimirOrcamento(id) {
         return;
     }
     var doc = printWindow.document;
-    doc.write('<!DOCTYPE html><html><head><title>Orcamento ' + (orc.numero || "") + '</title>');
+    doc.write('<!DOCTYPE html><html><head><title>Orçamento ' + (orc.numero || "") + '</title>');
     doc.write('<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">');
     doc.write('<style>body { padding: 20px; font-family: \'Courier New\', monospace; background: #ffffff; } @media print { .no-print { display: none !important; } } .modal-win98 { background: #d4d0c8; border: 2px solid #404040; border-top-color: #808080; border-left-color: #808080; padding: 8px; box-shadow: inset 2px 2px 8px rgba(0,0,0,0.15); } .btn-win98 { background: #d4d0c8; color: #000000; border: 2px solid #404040; border-top-color: #808080; border-left-color: #808080; padding: 4px 16px; cursor: pointer; font-family: \'Courier New\', monospace; font-weight: 700; }</style>');
     doc.write('</head><body>' + conteudo);
@@ -1179,7 +1198,7 @@ function gerarPDFOrcamento(id) {
         }
     }
     if (!orc) {
-        mostrarNotificacao("Orcamento nao encontrado!", "error");
+        mostrarNotificacao("Orçamento não encontrado!", "error");
         return;
     }
     
@@ -1199,7 +1218,7 @@ function gerarPDFOrcamento(id) {
         if (typeof html2pdf !== "undefined") {
             var opt = {
                 margin: [10, 10, 10, 10],
-                filename: "Orcamento_" + (orc.numero || "ECD") + ".pdf",
+                filename: "Orçamento_" + (orc.numero || "ECD") + ".pdf",
                 image: { type: "jpeg", quality: 0.95 },
                 html2canvas: { scale: 2, useCORS: true, logging: false, backgroundColor: "#ffffff", allowTaint: true, width: 800, height: 1100, scrollY: 0 },
                 jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
@@ -1215,7 +1234,7 @@ function gerarPDFOrcamento(id) {
             var printWindow = window.open("", "_blank", "width=800,height=600");
             if (printWindow) {
                 var doc = printWindow.document;
-                doc.write('<!DOCTYPE html><html><head><title>Orcamento ' + (orc.numero || "") + '</title>');
+                doc.write('<!DOCTYPE html><html><head><title>Orçamento ' + (orc.numero || "") + '</title>');
                 doc.write('<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">');
                 doc.write('<style>body { padding: 20px; font-family: \'Courier New\', monospace; background: #ffffff; }</style>');
                 doc.write('</head><body>' + conteudo);
@@ -1238,19 +1257,19 @@ function enviarWhatsAppOrcamento(id) {
         }
     }
     if (!orc) {
-        mostrarNotificacao("Orcamento nao encontrado!", "error");
+        mostrarNotificacao("Orçamento não encontrado!", "error");
         return;
     }
     
     var telefone = ORCAMENTO_CONFIG.empresa.whatsapp;
     var mensagem = "*" + ORCAMENTO_CONFIG.empresa.nome + "*\n";
-    mensagem += "Orcamento: " + (orc.numero || "N/A") + "\n";
+    mensagem += "Orçamento: " + (orc.numero || "N/A") + "\n";
     mensagem += "Data: " + formatarDataGlobal(orc.data) + "\n";
-    mensagem += "Cliente: " + (orc.cliente || "Nao informado") + "\n";
+    mensagem += "Cliente: " + (orc.cliente || "Não informado") + "\n";
     mensagem += "Total: " + formatarMoedaGlobal(orc.total || 0) + "\n";
     mensagem += "\n*Pagamento via PIX:* " + ORCAMENTO_CONFIG.banco.pix;
     mensagem += "\n*Site:* " + ORCAMENTO_CONFIG.empresa.site;
-    mensagem += "\n\n*Assistencia Tecnica Independente*";
+    mensagem += "\n\n*Assistência Técnica Independente*";
     mensagem += "\n" + ORCAMENTO_CONFIG.empresa.telefone;
     
     var mensagemCodificada = encodeURIComponent(mensagem);
@@ -1308,12 +1327,12 @@ function switchOrcamentoTab(tab) {
 }
 
 function toggleOrcamentoPanel() {
-    console.log("Botao clicado! Solicitando senha...");
+    console.log("Botão clicado! Solicitando senha...");
     
     var panel = document.getElementById("orcamentoPanel");
     if (!panel) {
-        console.error("Painel nao encontrado!");
-        alert("Erro: Painel de orcamentos nao encontrado!");
+        console.error("Painel não encontrado!");
+        alert("Erro: Painel de orçamentos não encontrado!");
         return;
     }
     
@@ -1322,10 +1341,10 @@ function toggleOrcamentoPanel() {
         return;
     }
     
-    var password = prompt("Acesso ao Painel de Orcamentos\n\nDigite a senha:");
+    var password = prompt("Acesso ao Painel de Orçamentos\n\nDigite a senha:");
     
     if (password === null) {
-        console.log("Usuario cancelou a senha.");
+        console.log("Usuário cancelou a senha.");
         return;
     }
     
@@ -1363,7 +1382,7 @@ function toggleOrcamentoPanel() {
 // ============================================================
 
 function excluirOrcamento(id) {
-    if (!confirm("Tem certeza que deseja excluir este orcamento?")) return;
+    if (!confirm("Tem certeza que deseja excluir este orçamento?")) return;
     var novosOrcamentos = [];
     for (var i = 0; i < window.orcamentos.length; i++) {
         if (window.orcamentos[i].id !== id) {
@@ -1373,7 +1392,7 @@ function excluirOrcamento(id) {
     window.orcamentos = novosOrcamentos;
     salvarOrcamentos();
     listarOrcamentos();
-    mostrarNotificacao("Orcamento excluido!", "success");
+    mostrarNotificacao("Orçamento excluído!", "success");
 }
 
 function duplicarOrcamento(id) {
@@ -1385,14 +1404,14 @@ function duplicarOrcamento(id) {
         }
     }
     if (!original) {
-        mostrarNotificacao("Orcamento nao encontrado!", "error");
+        mostrarNotificacao("Orçamento não encontrado!", "error");
         return;
     }
     
     var novo = {
         id: "orc_" + Date.now(),
         numero: gerarNumeroOrcamento(),
-        cliente: original.cliente + " (copia)",
+        cliente: original.cliente + " (cópia)",
         cnpj: original.cnpj || "",
         endereco: original.endereco || "",
         data: original.data || "",
@@ -1419,7 +1438,7 @@ function duplicarOrcamento(id) {
     window.orcamentos.unshift(novo);
     salvarOrcamentos();
     listarOrcamentos();
-    mostrarNotificacao("Orcamento duplicado!", "success");
+    mostrarNotificacao("Orçamento duplicado!", "success");
 }
 
 // ============================================================
@@ -1468,7 +1487,7 @@ function initializeOrcamento() {
     if (addBtn) {
         addBtn.onclick = function(e) {
             e.preventDefault();
-            console.log('Botao Adicionar Item clicado!');
+            console.log('Botão Adicionar Item clicado!');
             adicionarItemLinha();
         };
     }
@@ -1477,7 +1496,7 @@ function initializeOrcamento() {
     if (cancelBtn) {
         cancelBtn.onclick = function() {
             if (window.orcamentoEditandoId) {
-                if (confirm("Cancelar edicao? As alteracoes nao salvas serao perdidas.")) {
+                if (confirm("Cancelar edição? As alterações não salvas serão perdidas.")) {
                     resetOrcamentoForm();
                     switchOrcamentoTab("list");
                     listarOrcamentos();
@@ -1496,7 +1515,7 @@ function initializeOrcamento() {
     if (form) {
         form.onsubmit = function(e) {
             e.preventDefault();
-            console.log('Formulario submetido!');
+            console.log('Formulário submetido!');
             salvarOrcamento();
         };
     }
@@ -1537,7 +1556,7 @@ window.gerarRecibo = gerarRecibo;
 window.enviarWhatsAppRecibo = enviarWhatsAppRecibo;
 window.gerarPDFRecibo = gerarPDFRecibo;
 
-console.log('orcamento.js v4.1 carregado - BOTAO SALVAR/ATUALIZAR CORRIGIDO!');
+console.log('orcamento.js v4.2 carregado - ACENTUACAO, BOTAO ATUALIZAR, DUPLICACAO CORRIGIDOS!');
 
 // ============================================================
 // INICIALIZAR
